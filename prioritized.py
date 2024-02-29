@@ -50,6 +50,10 @@ class PrioritizedPlanningSolver(object):
                     if id != len(path) - 1:
                         travel = [path[id+1], path[id]]
                         constraints.append({'positive': False, 'agent': agent, 'loc': travel, 'timestep': id+1})
+                    else:
+                        for dt in range(20):
+                            constraints.append(
+                                {'positive': False, 'agent': agent, 'loc': [path[-1]], 'timestep': id + dt})
 
 
             ##############################
