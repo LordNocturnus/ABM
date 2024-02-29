@@ -41,8 +41,15 @@ class PrioritizedPlanningSolver(object):
                 raise BaseException('No solutions')
             result.append(path)
 
-            for id, path_vertex in enumerate(path, start=0):
-                constraints.append({'positive': True, 'agent': i, 'loc': [path_vertex], 'timestep': id})
+            for id, path_vertex in enumerate(path):
+
+                for agent in range(i+1, self.num_of_agents):
+
+                    constraints.append({'positive': False, 'agent': agent, 'loc': [path_vertex], 'timestep': id})
+
+                    if id != len(path) - 1:
+                        travel = [path[id+1], path[id]]
+                        constraints.append({'positive': False, 'agent': agent, 'loc': travel, 'timestep': id+1})
 
 
             ##############################
