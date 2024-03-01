@@ -1,5 +1,8 @@
+import numpy as np
 import time as timer
-from single_agent_planner import compute_heuristics, a_star, get_sum_of_cost
+from single_agent_planner import compute_heuristics, a_star, get_sum_of_cost, get_location
+
+import warnings
 
 
 class PrioritizedPlanningSolver(object):
@@ -42,18 +45,32 @@ class PrioritizedPlanningSolver(object):
             result.append(path)
 
             for id, path_vertex in enumerate(path):
+                if id == len(path) - 1:
+                    for dt in range(20):
+                        constraints.append(
+                            {'positive': True, 'agent': i, 'loc': [path[-1]], 'timestep': id + dt})
+                constraints.append({'positive': True, 'agent': i, 'loc': [path_vertex, path[min(id+1, len(path)-1)]], 'timestep': id + 1})
 
-                for agent in range(i+1, self.num_of_agents):
 
-                    constraints.append({'positive': False, 'agent': agent, 'loc': [path_vertex], 'timestep': id})
+                """for agent in range(i+1, self.num_of_agents):
+
+                    #constraints.append({'positive': False, 'agent': agent, 'loc': [path_vertex], 'timestep': id})
 
                     if id != len(path) - 1:
-                        travel = [path[id+1], path[id]]
-                        constraints.append({'positive': False, 'agent': agent, 'loc': travel, 'timestep': id+1})
+                        pass
+                        #travel = [path[id+1], path[id]]
+                        #constraints.append({'positive': False, 'agent': agent, 'loc': travel, 'timestep': id+1})
                     else:
                         for dt in range(20):
                             constraints.append(
-                                {'positive': False, 'agent': agent, 'loc': [path[-1]], 'timestep': id + dt})
+                                {'positive': False, 'agent': agent, 'loc': [path[-1]], 'timestep': id + dt})#"""
+
+            for p in result[:-1]:
+                for i in range(max(len(path), len(p))):
+                    if np.linalg.norm(np.asarray(get_location(p, i)) - np.asarray(get_location(path, i))) < 0.7:
+                        with warnings.catch_warnings():
+                            warnings.simplefilter("always")
+                            warnings.warn("COLLISION!!!")
 
 
             ##############################
