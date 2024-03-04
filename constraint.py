@@ -2,42 +2,41 @@ import collections.abc as abc
 import typing
 
 
-class PositionConstraint:
+class Constraint:
 
-    def __init__(self, positive: bool, agent: int, loc: abc.Sequence[int, int], step: int) -> None:
+    def __init__(self,
+                 positive: bool,
+                 agent: int,
+                 step: int,
+                 loc_1: abc.Sequence[int] | None,
+                 loc_2: abc.Sequence[int] | None = None,
+                 duration: int = 1) -> None:
         self.positive = positive
         self.agent = agent
-        self.loc = loc
+        if loc_1 is None:
+            raise ValueError("Constraint can not have 'None' at location 0")
+        self.loc_1 = loc_1
+        self.loc_2 = loc_2
+        if self.edge and duration != 1:
+            raise ValueError("Edge constraints can not have a duration")
         self.step = step
+        self.duration = duration
 
-    def compile_constraint(self, agent: int) -> "PositionConstraint":
+    @property
+    def edge(self) -> bool:
+        return self.loc_1 is not None
+
+    def compile_constraint(self, agent: int) -> abc.Iterator["Constraint"]:
         if agent == self.agent:
-            return self
-        elif self.positive:
-            return PositionConstraint(False, agent, self.loc, self.step)
-
-
-class EdgeConstraint:
-
-    def __init__(self, positive: bool, agent: int, loc: abc.MutableSequence[abc.Sequence[int, int]], step: int) -> None:
-        self.positive = positive
-        self.agent = agent
-        self.loc = loc
-        self.step = step
-
-    def compile_constraint(self, agent: int) -> typing.Optional[typing.Union[abc.Sequence["PositionConstraint"], "EdgeConstraint"]]:
-        if agent == self.agent:
-            if self.positive:
-                return (
-                    PositionConstraint(True, self.agent, self.loc[0], self.step - 1),
-                    PositionConstraint(True, self.agent, self.loc[1], self.step)
-                )
+            if self.positive and self.edge:
+                yield Constraint(True, agent, self.step - 1, self.loc_1)
+                yield Constraint(True, agent, self.step, self.loc_2)
             else:
-                return self
+                yield self
         elif self.positive:
-            return (
-                PositionConstraint(False, agent, self.loc[0], self.step - 1),
-                PositionConstraint(False, agent, self.loc[1], self.step)
-            )
-
-
+            if self.edge:
+                yield Constraint(False, agent, self.step - 1, self.loc_1)
+                yield Constraint(False, agent, self.step, self.loc_2)
+                yield Constraint(False, agent, self.step, self.loc_1, self.loc_2)
+            else:
+                yield Constraint(False, agent, self.step, self.loc_1, duration=self.duration)
