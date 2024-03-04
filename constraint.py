@@ -37,6 +37,6 @@ class Constraint:
             if self.edge:
                 yield Constraint(False, agent, self.step - 1, self.loc_1)
                 yield Constraint(False, agent, self.step, self.loc_2)
-                yield Constraint(False, agent, self.step, self.loc_1, self.loc_2)
+                yield Constraint(False, agent, self.step, self.loc_2, self.loc_1)
             else:
                 yield Constraint(False, agent, self.step, self.loc_1, duration=self.duration)
