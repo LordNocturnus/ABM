@@ -1,5 +1,5 @@
 import numpy as np
-from globals import PRIMEX, PRIMEY
+import utils
 
 
 class MapGenerator(object):
@@ -15,16 +15,12 @@ class MapGenerator(object):
         xrange = np.arange(0, self.shape[0])
         yrange = np.arange(0, self.shape[1])
         xgrid, ygrid = np.meshgrid(yrange, xrange)
-        self.candidates = (xgrid * PRIMEX + ygrid * PRIMEY)[self.map == 1]
+        self.candidates = utils.pos_to_prime(xgrid, ygrid)[self.map == 1]
 
     def generate(self, agents=7):
-        starts = self.rng.choice(self.candidates, agents)
-        starts_y = (starts % PRIMEX) / 2
-        starts_x = (starts - starts_y * PRIMEY) / PRIMEX
+        starts_x, starts_y = utils.prime_to_pos(self.rng.choice(self.candidates, agents))
 
-        goals = self.rng.choice(self.candidates, agents)
-        goals_y = (goals % PRIMEX) / 2
-        goals_x = (goals - goals_y * PRIMEY) / PRIMEX
+        goals_x, goals_y = utils.prime_to_pos(self.rng.choice(self.candidates, agents))
 
         agents = np.transpose(np.asarray([starts_x, starts_y, goals_x, goals_y]))
         ret = self.lines
