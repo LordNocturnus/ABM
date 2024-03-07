@@ -81,33 +81,32 @@ def import_mapf_instance(filename: str) -> tuple[list[list[bool]], list[tuple[in
     """
     if not Path(filename).is_file():
         raise BaseException(filename + " does not exist.")
-    f = open(filename, 'r')
-    # first line: #rows #columns
-    line = f.readline()
-    rows, columns = [int(x) for x in line.split(' ')]
-    rows = int(rows)
-    # #rows lines with the map
-    my_map: list[list[bool]] = []
-    for r in range(rows):
+    with open(filename, 'r') as f:
+        # first line: #rows #columns
         line = f.readline()
-        my_map.append([])
-        for cell in line:
-            if cell == '@':
-                my_map[-1].append(True)
-            elif cell == '.':
-                my_map[-1].append(False)
-    # #agents
-    line = f.readline()
-    num_agents = int(line)
-    # #agents lines with the start/goal positions
-    starts = []
-    goals = []
-    for a in range(num_agents):
+        rows, columns = [int(x) for x in line.split(' ')]
+        rows = int(rows)
+        # #rows lines with the map
+        my_map: list[list[bool]] = []
+        for r in range(rows):
+            line = f.readline()
+            my_map.append([])
+            for cell in line:
+                if cell == '@':
+                    my_map[-1].append(True)
+                elif cell == '.':
+                    my_map[-1].append(False)
+        # #agents
         line = f.readline()
-        sx, sy, gx, gy = [int(x) for x in line.split(' ')]
-        starts.append((sx, sy))
-        goals.append((gx, gy))
-    f.close()
+        num_agents = int(line)
+        # #agents lines with the start/goal positions
+        starts = []
+        goals = []
+        for a in range(num_agents):
+            line = f.readline()
+            sx, sy, gx, gy = [int(x) for x in line.split(' ')]
+            starts.append((sx, sy))
+            goals.append((gx, gy))
     return my_map, starts, goals
 
 
@@ -157,7 +156,6 @@ if __name__ == '__main__':
 
         cost = get_sum_of_cost(paths)
         result_file.write("{},{}\n".format(file, cost))
-
 
         if not args.batch:
             print("***Test paths on a simulation***")
