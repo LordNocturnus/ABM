@@ -8,8 +8,8 @@ class Constraint:
                  positive: bool,
                  agent: int,
                  step: int,
-                 loc_1: abc.Sequence[int] | None,
-                 loc_2: abc.Sequence[int] | None = None,
+                 loc_1: typing.Optional[abc.Sequence[int]],
+                 loc_2: typing.Optional[abc.Sequence[int]] = None,
                  duration: int = 1) -> None:
         self.positive = positive
         self.agent = agent
