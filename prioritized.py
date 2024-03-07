@@ -1,3 +1,5 @@
+import typing
+import math
 import numpy as np  # type: ignore
 import time as timer
 
@@ -36,30 +38,7 @@ class PrioritizedPlanningSolver(object):
         """ Finds paths for all agents from their start locations to their goal locations."""
 
         start_time = timer.time()
-        result = []
-        constraint_list: list[constraints.Constraint] = []
-
-        for i in range(self.num_of_agents):  # Find path for each agent
-            path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
-                          i, constraint_list)
-            if path is None:
-                raise BaseException('No solutions')
-            result.append(path)
-
-            for id, path_vertex in enumerate(path):
-                """if id == len(path) - 1:
-                    for dt in range(20):
-                        constraint_list.append(
-                            {'positive': True, 'agent': i, 'loc': [path[-1]], 'timestep': id + dt})"""
-                #constraint_list.append({'positive': True, 'agent': i, 'loc': [path_vertex, path[min(id+1, len(path)-1)]], 'timestep': id + 1})
-                constraint_list.append(Constraint(True, i, id + 1, path_vertex, path[min(id + 1, len(path) - 1)]))
-
-            for p in result[:-1]:
-                for i in range(max(len(path), len(p))):
-                    if np.linalg.norm(np.asarray(get_location(p, i)) - np.asarray(get_location(path, i))) < 0.7:
-                        with warnings.catch_warnings():
-                            warnings.simplefilter("always")
-                            warnings.warn("COLLISION!!!")
+        result = find_restricted_path(self.my_map, self.starts, self.goals, self.heuristics)
 
 
             ##############################
@@ -79,3 +58,41 @@ class PrioritizedPlanningSolver(object):
         print("Sum of costs:    {}".format(get_sum_of_cost(result)))
         print(result)
         return result
+
+
+def find_restricted_path(my_map: list[list[bool]],
+                         starts: list[tuple[int, int]],
+                         goals: list[tuple[int, int]],
+                         heuristics: list[dict[tuple[int, int], int]],
+                         depth: int = 1) -> list[list[tuple[int, int]]]:
+    result = []
+    constraint_list: list[constraints.Constraint] = []
+    if depth == math.factorial(len(starts)):
+        raise BaseException('No solutions')
+
+    for a, start in enumerate(starts):  # Find path for each agent
+        path = a_star(my_map, start, goals[a], heuristics[a],
+                      a, constraint_list)
+        if path is None:
+            raise BaseException('No solutions')
+        result.append(path)
+
+        for t, path_vertex in enumerate(path):
+            if t == len(path) - 1:
+                for dt in range(20):
+                    constraint_list.append(Constraint(True, a, t + dt, path_vertex, path[min(t + 1, len(path) - 1)]))
+                    # constraint_list.append({'positive': True, 'agent': a, 'loc': [path[-1]], 'timestep': t + dt})#"""
+            # constraint_list.append({'positive': True, 'agent': a, 'loc': [path_vertex, path[min(i+1, len(path)-1)]], 'timestep': i + 1})
+            constraint_list.append(Constraint(True, a, t + 1, path_vertex, path[min(t + 1, len(path) - 1)]))
+
+        for a2, p in enumerate(result[:-1]):
+            for t in range(max(len(path), len(p))):
+                if np.linalg.norm(np.asarray(get_location(p, t)) - np.asarray(get_location(path, t))) < 0.7:
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("always")
+                        warnings.warn(f"COLLISION ON DEPTH {depth}!!!")
+                    starts[a], starts[a2] = starts[a2], starts[a]
+                    goals[a], goals[a2] = goals[a2], goals[a]
+                    heuristics[a], heuristics[a2] = heuristics[a2], heuristics[a]
+                    return find_restricted_path(my_map, starts, goals, heuristics, depth + 1)
+    return result

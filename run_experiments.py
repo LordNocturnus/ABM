@@ -156,6 +156,7 @@ if __name__ == '__main__':
 
         cost = get_sum_of_cost(paths)
         result_file.write("{},{}\n".format(file, cost))
+        print("######################################################################################################")
 
         if not args.batch:
             print("***Test paths on a simulation***")
