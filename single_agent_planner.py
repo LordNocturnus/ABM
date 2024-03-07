@@ -208,8 +208,9 @@ def a_star(my_map, start_loc, goal_loc, h_values, agent, constraints):
             if child_loc[0] < 0 or child_loc[0] >= len(my_map) \
                or child_loc[1] < 0 or child_loc[1] >= len(my_map[0]):
                continue
-            if my_map[child_loc[0]][child_loc[1]] or is_constrained(curr['loc'], child_loc, curr['timestep'] + 1,
-                                                                  constraint_table):
+            if my_map[child_loc[0]][child_loc[1]]:
+                continue
+            if is_constrained(curr['loc'], child_loc, curr['timestep'] + 1, constraint_table):
                 continue
             child = {'loc': child_loc,
                     'g_val': curr['g_val'] + 1,

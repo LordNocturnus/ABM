@@ -1,7 +1,8 @@
 """
 Two prime numbers are used to encode both the x and y coordinate into a single integer
 """
-import numpy.typing as npt
+import numpy.typing as npt  # type: ignore
+#import numba as nb # type: ignore
 
 PRIMEX = 461
 
@@ -11,10 +12,12 @@ DIRECTIONS = ((0, -1), (1, 0), (0, 1), (-1, 0), (0, 0))
 PRIMEDIRECTIONS = (-PRIMEY, PRIMEX, PRIMEY, -PRIMEX, 0)
 
 
+#@nb.jit(nopython=True)  # type: ignore
 def pos_to_prime(x: int | npt.NDArray[int], y: int | npt.NDArray[int]) -> int | npt.NDArray[int]:
     return x * PRIMEX + y * PRIMEY
 
 
+#@nb.jit(nopython=True)  # type: ignore
 def prime_to_pos(prime: int | npt.NDArray[int]) -> tuple[int, int] | tuple[npt.NDArray[int], npt.NDArray[int]]:
     y = (prime % PRIMEX) // (PRIMEY - PRIMEX)
     x = (prime - y * PRIMEY) // PRIMEX

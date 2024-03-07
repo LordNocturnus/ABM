@@ -40,3 +40,39 @@ class Constraint:
                 yield Constraint(False, agent, self.step, self.loc_2, self.loc_1)
             else:
                 yield Constraint(False, agent, self.step, self.loc_1, duration=self.duration)
+
+
+class ConstraintTable:
+
+    def __init__(self, constraints: list[Constraint], agent: int) -> None:
+        self.constraints = []
+        for constraint in constraints:
+            for c in constraint.compile_constraint(agent):
+                self.constraints.append(c)
+        self.constraints.sort(key=lambda x: x.step)
+
+    def is_constrained(self, current_loc: tuple[int, int], next_loc: tuple[int, int], step: int) -> bool:
+        for c in self.constraints:
+            if c.step < step:
+                continue
+            elif c.step > step:
+                break
+            if c.positive: # positive constraint
+                if c.loc_1 != next_loc:
+                    return True
+            elif c.loc_2 is None: # negative vertex constrain
+                if c.loc_1 == next_loc:
+                    return True
+            elif c.loc_1 == current_loc and c.loc_2 == next_loc: # negative edge constraint
+                return True
+        return False
+
+    def __len__(self) -> int:
+        try:
+            return self.constraints[-1].step
+        except IndexError:
+            return 0
+
+
+
+

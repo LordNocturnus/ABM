@@ -3,18 +3,19 @@ This file contains the DistributedAgent class that can be used to implement indi
 
 Code in this file is just provided as guidance, you are free to deviate from it.
 """
+import typing
 
 class DistributedAgent(object):
     """DistributedAgent object to be used in the distributed planner."""
 
-    def __init__(self, my_map, start, goal, heuristics, agent_id):
+    def __init__(self, my_map: typing.Any, start: tuple[int, int], goal: tuple[int, int], heuristics: typing.Any, agent_id: int) -> None:
         """
         my_map   - list of lists specifying obstacle positions
         starts      - (x1, y1) start location
         goals       - (x1, y1) goal location
         heuristics  - heuristic to goal location
         """
-
+        raise NotImplementedError
         self.my_map = my_map
         self.start = start
         self.goal = goal

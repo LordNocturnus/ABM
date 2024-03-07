@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
-from matplotlib.patches import Circle, Rectangle
-import matplotlib.pyplot as plt
-import numpy as np
+from matplotlib.patches import Circle, Rectangle  # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
+import numpy as np  # type: ignore
+import numpy.typing as npt  # type: ignore
 from matplotlib import animation
+import typing
 
 Colors = ['green', 'blue', 'orange']
 
 
 class Animation:
-    def __init__(self, my_map, starts, goals, paths):
+    def __init__(self, my_map: npt.NDArray[int],
+                 starts: list[tuple[int, int]],
+                 goals: list[tuple[int, int]],
+                 paths: typing.Optional[list[list[tuple[int, int]]]]) -> None:
         self.my_map = np.flip(np.transpose(my_map), 1)
         self.starts = []
         for start in starts:
@@ -16,7 +21,7 @@ class Animation:
         self.goals = []
         for goal in goals:
             self.goals.append((goal[1], len(self.my_map[0]) - 1 - goal[0]))
-        self.paths = []
+        self.paths: list[list[tuple[int, int]]] = []
         if paths:
             for path in paths:
                 self.paths.append([])
@@ -61,7 +66,7 @@ class Animation:
                                     edgecolor='black')
             self.agents[i].original_face_color = Colors[i % len(Colors)]
             self.patches.append(self.agents[i])
-            self.T = max(self.T, len(paths[i]) - 1)
+            self.T = max(self.T, len(self.paths[i]) - 1)
             self.agent_names[i] = self.ax.text(starts[i][0], starts[i][1] + 0.25, name)
             self.agent_names[i].set_horizontalalignment('center')
             self.agent_names[i].set_verticalalignment('center')
@@ -73,7 +78,7 @@ class Animation:
                                                  interval=100,
                                                  blit=True)
 
-    def save(self, file_name, speed):
+    def save(self, file_name: str, speed: int) -> None:
         self.animation.save(
             file_name,
             fps=10 * speed,
@@ -81,17 +86,17 @@ class Animation:
             savefig_kwargs={"pad_inches": 0, "bbox_inches": "tight"})
 
     @staticmethod
-    def show():
+    def show() -> None:
         plt.show()
 
-    def init_func(self):
+    def init_func(self) -> typing.Any:
         for p in self.patches:
             self.ax.add_patch(p)
         for a in self.artists:
             self.ax.add_artist(a)
         return self.patches + self.artists
 
-    def animate_func(self, t):
+    def animate_func(self, t: int) -> typing.Any:
         for k in range(len(self.paths)):
             pos = self.get_state(t / 10, self.paths[k])
             self.agents[k].center = (pos[0], pos[1])
@@ -117,7 +122,7 @@ class Animation:
         return self.patches + self.artists
 
     @staticmethod
-    def get_state(t, path):
+    def get_state(t: float, path: list[tuple[int, int]]) -> npt.NDArray[np.floating]:
         if int(t) <= 0:
             return np.array(path[0])
         elif int(t) >= len(path):

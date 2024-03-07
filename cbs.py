@@ -1,10 +1,12 @@
 import time as timer
 import heapq
 import random
-from single_agent_planner import compute_heuristics, a_star, get_location, get_sum_of_cost
+import typing
+
+from single_agent_planner_v2 import compute_heuristics, a_star, get_location, get_sum_of_cost
 
 
-def detect_collision(path1, path2):
+def detect_collision(path1: list[tuple[int, int]], path2: list[tuple[int, int]]) -> None:
     ##############################
     # Task 3.1: Return the first collision that occurs between two robot paths (or None if there is no collision)
     #           There are two types of collisions: vertex collision and edge collision.
@@ -15,7 +17,7 @@ def detect_collision(path1, path2):
     pass
 
 
-def detect_collisions(paths):
+def detect_collisions(paths: list[list[tuple[int, int]]]) -> None:
     ##############################
     # Task 3.1: Return a list of first collisions between all robot pairs.
     #           A collision can be represented as dictionary that contains the id of the two robots, the vertex or edge
@@ -25,7 +27,7 @@ def detect_collisions(paths):
     pass
 
 
-def standard_splitting(collision):
+def standard_splitting(collision: typing.Any) -> None:
     ##############################
     # Task 3.2: Return a list of (two) constraints to resolve the given collision
     #           Vertex collision: the first constraint prevents the first agent to be at the specified location at the
@@ -38,7 +40,7 @@ def standard_splitting(collision):
     pass
 
 
-def disjoint_splitting(collision):
+def disjoint_splitting(collision: typing.Any) -> None:
     ##############################
     # Task 4.1: Return a list of (two) constraints to resolve the given collision
     #           Vertex collision: the first constraint enforces one agent to be at the specified location at the
@@ -55,7 +57,7 @@ def disjoint_splitting(collision):
 class CBSSolver(object):
     """The high-level search of CBS."""
 
-    def __init__(self, my_map, starts, goals):
+    def __init__(self, my_map: list[list[bool]], starts: list[tuple[int, int]], goals: list[tuple[int, int]]) -> None:
         """my_map   - list of lists specifying obstacle positions
         starts      - [(x1, y1), (x2, y2), ...] list of start locations
         goals       - [(x1, y1), (x2, y2), ...] list of goal locations
@@ -68,33 +70,34 @@ class CBSSolver(object):
 
         self.num_of_generated = 0
         self.num_of_expanded = 0
-        self.CPU_time = 0
+        self.CPU_time: float = 0.0
+        self.start_time: float = 0.0
 
-        self.open_list = []
+        self.open_list: list[typing.Any] = []
 
         # compute heuristics for the low-level search
         self.heuristics = []
         for goal in self.goals:
             self.heuristics.append(compute_heuristics(my_map, goal))
 
-    def push_node(self, node):
+    def push_node(self, node: typing.Any) -> None:
         heapq.heappush(self.open_list, (node['cost'], len(node['collisions']), self.num_of_generated, node))
         print("Generate node {}".format(self.num_of_generated))
         self.num_of_generated += 1
 
-    def pop_node(self):
+    def pop_node(self) -> typing.Any:
         _, _, id, node = heapq.heappop(self.open_list)
         print("Expand node {}".format(id))
         self.num_of_expanded += 1
         return node
 
-    def find_solution(self, disjoint=True):
+    def find_solution(self, disjoint: bool=True) -> list[list[tuple[int, int]]]:
         """ Finds paths for all agents from their start locations to their goal locations
 
         disjoint    - use disjoint splitting or not
         """
 
-        self.start_time = timer.time()
+        """self.start_time = timer.time()
 
         # Generate the root node
         # constraints   - list of constraints
@@ -133,10 +136,10 @@ class CBSSolver(object):
         #           Ensure to create a copy of any objects that your child nodes might inherit
 
         self.print_results(root)
-        return root['paths']
+        return root['paths']"""
+        return []
 
-
-    def print_results(self, node):
+    def print_results(self, node: typing.Any) -> None:
         print("\n Found a solution! \n")
         CPU_time = timer.time() - self.start_time
         print("CPU time (s):    {:.2f}".format(CPU_time))

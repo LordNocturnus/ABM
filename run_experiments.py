@@ -7,17 +7,21 @@ Note: To make the animation work in Spyder you should set graphics backend to 'A
 #!/usr/bin/python
 import argparse
 import glob
+import os
 from pathlib import Path
 from cbs import CBSSolver
 from independent import IndependentSolver
 from prioritized import PrioritizedPlanningSolver
 from distributed import DistributedPlanningSolver # Placeholder for Distributed Planning
 from visualize import Animation
-from single_agent_planner import get_sum_of_cost
+from single_agent_planner_v2 import get_sum_of_cost
 
 SOLVER = "Independent"
 
-def print_mapf_instance(my_map, starts, goals):
+
+def print_mapf_instance(my_map: list[list[bool]],
+                        starts: list[tuple[int, int]],
+                        goals: list[tuple[int, int]]) -> None:
     """
     Prints start location and goal location of all agents, using @ for an obstacle, . for a open cell, and 
     a number for the start location of each agent.
@@ -34,7 +38,8 @@ def print_mapf_instance(my_map, starts, goals):
     print_locations(my_map, goals)
 
 
-def print_locations(my_map, locations):
+def print_locations(my_map: list[list[bool]],
+                    locations: list[tuple[int, int]]) -> None:
     """
     See docstring print_mapf_instance function above.
     """
@@ -54,7 +59,7 @@ def print_locations(my_map, locations):
     print(to_print)
 
 
-def import_mapf_instance(filename):
+def import_mapf_instance(filename: str) -> tuple[list[list[bool]], list[tuple[int, int]], list[tuple[int, int]]]:
     """
     Imports mapf instance from instances folder. Expects input as a .txt file in the following format:
         Line1: #rows #columns (number of rows and columns)
@@ -74,17 +79,15 @@ def import_mapf_instance(filename):
         1 1 1 5         # agent 1 starts at (1,1) and has (1,5) as goal
         1 2 1 4         # agent 2 starts at (1,2) and has (1,4) as goal
     """
-    f = Path(filename)
-    if not f.is_file():
+    if not Path(filename).is_file():
         raise BaseException(filename + " does not exist.")
     f = open(filename, 'r')
     # first line: #rows #columns
     line = f.readline()
     rows, columns = [int(x) for x in line.split(' ')]
     rows = int(rows)
-    columns = int(columns)
     # #rows lines with the map
-    my_map = []
+    my_map: list[list[bool]] = []
     for r in range(rows):
         line = f.readline()
         my_map.append([])
@@ -139,16 +142,16 @@ if __name__ == '__main__':
             paths = cbs.find_solution(args.disjoint)
         elif args.solver == "Independent":
             print("***Run Independent***")
-            solver = IndependentSolver(my_map, starts, goals)
-            paths = solver.find_solution()
+            indep = IndependentSolver(my_map, starts, goals)
+            paths = indep.find_solution()
         elif args.solver == "Prioritized":
             print("***Run Prioritized***")
-            solver = PrioritizedPlanningSolver(my_map, starts, goals)
-            paths = solver.find_solution()
+            prio = PrioritizedPlanningSolver(my_map, starts, goals)
+            paths = prio.find_solution()
         elif args.solver == "Distributed":  # Wrapper of distributed planning solver class
             print("***Run Distributed Planning***")
-            solver = DistributedPlanningSolver(my_map, starts, goals, ...) #!!!TODO: add your own distributed planning implementation here.
-            paths = solver.find_solution()
+            distri = DistributedPlanningSolver(my_map, starts, goals) #!!!TODO: add your own distributed planning implementation here.
+            paths = distri.find_solution()
         else: 
             raise RuntimeError("Unknown solver!")
 
