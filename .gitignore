@@ -160,3 +160,6 @@ cython_debug/
 .idea/
 
 results.csv
+
+# Vscode setting folder
+.vscode
