@@ -37,7 +37,8 @@ def detect_collisions(paths: list[list[tuple[int, int]]]) -> None:
         for agent_2 in range(agent_1 + 1, len(paths)):
             collisions.append(detect_collision(agent_1, agent_2, paths[agent_1], paths[agent_2]))
 
-    return collisions
+    return [el for el in collisions if el is not None]
+    # return collisions
 
 
 def standard_splitting(collision: typing.Any) -> None:
@@ -157,23 +158,25 @@ class CBSSolver(object):
             if not curr['collisions']:
                 return curr['paths']
 
-            constraints = standard_splitting(curr['collisions'][0])
+            for collision in curr['collisions']:
 
-            for constraint in constraints:
+                one_collision = standard_splitting(collision)
 
-                Q = {'constraints': curr['constraints'] + [constraint],
-                     'paths': curr['paths']}
+                for collision_constraint in one_collision:
 
-                i = constraint['agent']
+                    Q = {'constraints': curr['constraints'] + [collision_constraint],
+                         'paths': curr['paths']}
 
-                path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
-                              i, Q['constraints'])
+                    i = collision_constraint['agent']
 
-                if path:
-                    Q['paths'][i] = path
-                    Q['collisions'] = detect_collisions(Q['paths'])
-                    Q['cost'] = get_sum_of_cost(Q['paths'])
-                    self.push_node(Q)
+                    path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
+                                  i, Q['constraints'])
+
+                    if path:
+                        Q['paths'][i] = path
+                        Q['collisions'] = detect_collisions(Q['paths'])
+                        Q['cost'] = get_sum_of_cost(Q['paths'])
+                        self.push_node(Q)
 
             curr = self.pop_node()
 
