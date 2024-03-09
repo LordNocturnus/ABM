@@ -3,7 +3,7 @@ import heapq
 import random
 import typing
 
-from single_agent_planner_v2 import compute_heuristics, a_star, get_location, get_sum_of_cost
+from single_agent_planner import compute_heuristics, a_star, get_location, get_sum_of_cost
 
 
 def detect_collision(agent1: int, agent2: int, path1: list[tuple[int, int]], path2: list[tuple[int, int]]) -> None:
@@ -17,7 +17,7 @@ def detect_collision(agent1: int, agent2: int, path1: list[tuple[int, int]], pat
     for i in range(max(len(path1), len(path2))):
         # Vertex collision
         if get_location(path1, i) == get_location(path2, i):
-            return {'a1': agent1 + 1, 'a2': agent2 + 1, 'loc': [get_location(path1, i)], 'timestep': i}
+            return {'a1': agent1, 'a2': agent2, 'loc': [get_location(path1, i)], 'timestep': i}
         # Edge collision
         # elif [get_location(path1, i), get_location(path1, i+1)] == [get_location(path2, i + 1), get_location(path2, i)]:
         #     return {'a1': agent1 + 1, 'a2': agent2 + 1, 'loc': [get_location(path1, i), get_location(path1, i+1)], 'timestep': i}
@@ -48,8 +48,8 @@ def standard_splitting(collision: typing.Any) -> None:
     #           Edge collision: the first constraint prevents the first agent to traverse the specified edge at the
     #                          specified timestep, and the second constraint prevents the second agent to traverse the
     #                          specified edge at the specified timestep
-    out = [{'agent': collision['a1'], 'loc': collision['loc'], 'timestep': collision['timestep']},
-           {'agent': collision['a2'], 'loc': collision['loc'], 'timestep': collision['timestep']}]
+    out = [{'positive': False, 'agent': collision['a1'], 'loc': collision['loc'], 'timestep': collision['timestep']},
+           {'positive': False, 'agent': collision['a2'], 'loc': collision['loc'], 'timestep': collision['timestep']}]
     return out
 
 
@@ -148,8 +148,34 @@ class CBSSolver(object):
         #                standard_splitting function). Add a new child node to your open list for each constraint
         #           Ensure to create a copy of any objects that your child nodes might inherit
 
-        self.print_results(root)
-        return root['paths']
+
+        curr = self.pop_node()
+
+        while curr:
+
+            if not curr['collisions']:
+                return curr['paths']
+
+            constraints = standard_splitting(curr['collisions'][0])
+
+            for constraint in constraints:
+
+                Q = {'constraints': curr['constraints'] + [constraint],
+                     'paths': curr['paths']}
+
+                i = constraint['agent']
+
+                path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
+                              i, Q['constraints'])
+
+                if path:
+                    Q['paths'][i] = path
+                    Q['collisions'] = detect_collisions(Q['paths'])
+                    Q['cost'] = get_sum_of_cost(Q['paths'])
+                    self.push_node(Q)
+
+        # self.print_results(root)
+        # return root['paths']
         return []
 
     def print_results(self, node: typing.Any) -> None:
