@@ -51,7 +51,7 @@ def standard_splitting(collision: typing.Any) -> None:
     #                          specified timestep, and the second constraint prevents the second agent to traverse the
     #                          specified edge at the specified timestep
     out = [{'positive': False, 'agent': collision['a1'], 'loc': collision['loc'], 'timestep': collision['timestep']},
-           {'positive': False, 'agent': collision['a2'], 'loc': list(reversed(collision['loc'])), 'timestep': collision['timestep']}]
+           {'positive': False, 'agent': collision['a2'], 'loc': collision['loc'][::-1], 'timestep': collision['timestep']}]
     return out
 
 
@@ -150,22 +150,22 @@ class CBSSolver(object):
         #                standard_splitting function). Add a new child node to your open list for each constraint
         #           Ensure to create a copy of any objects that your child nodes might inherit
 
+        while self.open_list:
 
-        curr = self.pop_node()
+            P = self.pop_node()
 
-        while curr:
+            if not P['collisions']:
+                return P['paths']
 
-            if not curr['collisions']:
-                return curr['paths']
-
-            for collision in curr['collisions']:
+            for collision in P['collisions']:
 
                 one_collision = standard_splitting(collision)
 
+                # Solve collision
                 for collision_constraint in one_collision:
 
-                    Q = {'constraints': curr['constraints'] + [collision_constraint],
-                         'paths': curr['paths']}
+                    Q = {'constraints': P['constraints'] + [collision_constraint],
+                         'paths': P['paths']}
 
                     i = collision_constraint['agent']
 
@@ -178,10 +178,10 @@ class CBSSolver(object):
                         Q['cost'] = get_sum_of_cost(Q['paths'])
                         self.push_node(Q)
 
-            curr = self.pop_node()
-
         # self.print_results(root)
         # return root['paths']
+
+        # Return nothing if no solution is found
         return []
 
     def print_results(self, node: typing.Any) -> None:
