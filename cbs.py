@@ -6,7 +6,7 @@ import typing
 from single_agent_planner_v2 import compute_heuristics, a_star, get_location, get_sum_of_cost
 
 
-def detect_collision(path1: list[tuple[int, int]], path2: list[tuple[int, int]]) -> None:
+def detect_collision(agent1: int, agent2: int, path1: list[tuple[int, int]], path2: list[tuple[int, int]]) -> None:
     ##############################
     # Task 3.1: Return the first collision that occurs between two robot paths (or None if there is no collision)
     #           There are two types of collisions: vertex collision and edge collision.
@@ -14,7 +14,13 @@ def detect_collision(path1: list[tuple[int, int]], path2: list[tuple[int, int]])
     #           An edge collision occurs if the robots swap their location at the same timestep.
     #           You should use "get_location(path, t)" to get the location of a robot at time t.
 
-    pass
+    for i in range(max(len(path1), len(path2))):
+        # Vertex collision
+        if get_location(path1, i) == get_location(path2, i):
+            return {'a1': agent1 + 1, 'a2': agent2 + 1, 'loc': [get_location(path1, i)], 'timestep': i}
+        # Edge collision
+        # elif [get_location(path1, i), get_location(path1, i+1)] == [get_location(path2, i + 1), get_location(path2, i)]:
+        #     return {'a1': agent1 + 1, 'a2': agent2 + 1, 'loc': [get_location(path1, i), get_location(path1, i+1)], 'timestep': i}
 
 
 def detect_collisions(paths: list[list[tuple[int, int]]]) -> None:
@@ -24,7 +30,13 @@ def detect_collisions(paths: list[list[tuple[int, int]]]) -> None:
     #           causing the collision, and the timestep at which the collision occurred.
     #           You should use your detect_collision function to find a collision between two robots.
 
-    pass
+    collisions = []
+
+    for agent_1 in range(len(paths)):
+        for agent_2 in range(agent_1 + 1, len(paths)):
+            collisions.append(detect_collision(agent_1, agent_2, paths[agent_1], paths[agent_2]))
+
+    return collisions
 
 
 def standard_splitting(collision: typing.Any) -> None:
@@ -36,8 +48,9 @@ def standard_splitting(collision: typing.Any) -> None:
     #           Edge collision: the first constraint prevents the first agent to traverse the specified edge at the
     #                          specified timestep, and the second constraint prevents the second agent to traverse the
     #                          specified edge at the specified timestep
-
-    pass
+    out = [{'agent': collision['a1'], 'loc': collision['loc'], 'timestep': collision['timestep']},
+           {'agent': collision['a2'], 'loc': collision['loc'], 'timestep': collision['timestep']}]
+    return out
 
 
 def disjoint_splitting(collision: typing.Any) -> None:
@@ -97,7 +110,7 @@ class CBSSolver(object):
         disjoint    - use disjoint splitting or not
         """
 
-        """self.start_time = timer.time()
+        self.start_time = timer.time()
 
         # Generate the root node
         # constraints   - list of constraints
@@ -136,7 +149,7 @@ class CBSSolver(object):
         #           Ensure to create a copy of any objects that your child nodes might inherit
 
         self.print_results(root)
-        return root['paths']"""
+        return root['paths']
         return []
 
     def print_results(self, node: typing.Any) -> None:
