@@ -18,9 +18,10 @@ def detect_collision(agent1: int, agent2: int, path1: list[tuple[int, int]], pat
         # Vertex collision
         if get_location(path1, i) == get_location(path2, i):
             return {'a1': agent1, 'a2': agent2, 'loc': [get_location(path1, i)], 'timestep': i}
+        
         # Edge collision
-        # elif [get_location(path1, i), get_location(path1, i+1)] == [get_location(path2, i + 1), get_location(path2, i)]:
-        #     return {'a1': agent1 + 1, 'a2': agent2 + 1, 'loc': [get_location(path1, i), get_location(path1, i+1)], 'timestep': i}
+        elif [get_location(path1, i), get_location(path1, i+1)] == [get_location(path2, i + 1), get_location(path2, i)]:
+            return {'a1': agent1, 'a2': agent2, 'loc': [get_location(path1, i), get_location(path1, i+1)], 'timestep': i}
 
 
 def detect_collisions(paths: list[list[tuple[int, int]]]) -> None:
@@ -49,7 +50,7 @@ def standard_splitting(collision: typing.Any) -> None:
     #                          specified timestep, and the second constraint prevents the second agent to traverse the
     #                          specified edge at the specified timestep
     out = [{'positive': False, 'agent': collision['a1'], 'loc': collision['loc'], 'timestep': collision['timestep']},
-           {'positive': False, 'agent': collision['a2'], 'loc': collision['loc'], 'timestep': collision['timestep']}]
+           {'positive': False, 'agent': collision['a2'], 'loc': list(reversed(collision['loc'])), 'timestep': collision['timestep']}]
     return out
 
 
@@ -173,6 +174,8 @@ class CBSSolver(object):
                     Q['collisions'] = detect_collisions(Q['paths'])
                     Q['cost'] = get_sum_of_cost(Q['paths'])
                     self.push_node(Q)
+
+            curr = self.pop_node()
 
         # self.print_results(root)
         # return root['paths']
