@@ -2,6 +2,7 @@ import time as timer
 import heapq
 import random
 import typing
+from copy import deepcopy
 
 from single_agent_planner import compute_heuristics, a_star, get_location, get_sum_of_cost
 
@@ -21,7 +22,9 @@ def detect_collision(agent1: int, agent2: int, path1: list[tuple[int, int]], pat
         
         # Edge collision
         elif [get_location(path1, i), get_location(path1, i+1)] == [get_location(path2, i + 1), get_location(path2, i)]:
-            return {'a1': agent1, 'a2': agent2, 'loc': [get_location(path1, i), get_location(path1, i+1)], 'timestep': i}
+            return {'a1': agent1, 'a2': agent2, 'loc': [get_location(path1, i), get_location(path1, i+1)], 'timestep': i + 1}
+
+    return None
 
 
 def detect_collisions(paths: list[list[tuple[int, int]]]) -> None:
@@ -155,6 +158,7 @@ class CBSSolver(object):
             P = self.pop_node()
 
             if not P['collisions']:
+                print(f"Constraint utelised {P['constraints']}")
                 return P['paths']
 
             for collision in P['collisions']:
@@ -164,8 +168,8 @@ class CBSSolver(object):
                 # Solve collision
                 for collision_constraint in one_collision:
 
-                    Q = {'constraints': P['constraints'] + [collision_constraint],
-                         'paths': P['paths']}
+                    Q = {'constraints': deepcopy(P['constraints']) + [collision_constraint],
+                         'paths': deepcopy(P['paths'])}
 
                     i = collision_constraint['agent']
 
