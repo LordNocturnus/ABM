@@ -71,10 +71,10 @@ def a_star(my_map: list[list[bool]],
     """
 
     constraint_table = constraints.ConstraintTable(constraint_list, agent)
-    open_list: list["Node"] = []
+    open_list: list["AStarNode"] = []
     closed_list = dict()
     earliest_goal_timestep = 0
-    root = Node(start_loc, 0, h_values[start_loc], 0)
+    root = AStarNode(start_loc, 0, h_values[start_loc], 0)
     heapq.heappush(open_list, root)
     closed_list[(root.loc, root.step)] = root
     while len(open_list) > 0:
@@ -98,7 +98,7 @@ def a_star(my_map: list[list[bool]],
                 continue
             if constraint_table.is_constrained(curr.loc, child_loc, curr.step + 1):
                 continue
-            child = Node(child_loc, curr.g_val + 1, h_values[child_loc], curr.step + 1, curr)
+            child = AStarNode(child_loc, curr.g_val + 1, h_values[child_loc], curr.step + 1, curr)
             if (child.loc, child.step) in closed_list:
                 existing_node = closed_list[(child.loc, child.step)]
                 if child < existing_node:
@@ -111,14 +111,14 @@ def a_star(my_map: list[list[bool]],
     return None  # Failed to find solutions
 
 
-class Node:
+class AStarNode:
 
     def __init__(self,
                  loc: tuple[int, int],
                  g_val: float,
                  h_val: float,
                  step: int,
-                 parent: typing.Optional["Node"] = None) -> None:
+                 parent: typing.Optional["AStarNode"] = None) -> None:
         self.loc = loc
         self.g_val = g_val
         self.h_val = h_val
@@ -135,7 +135,7 @@ class Node:
     def score(self) -> float:
         return self.g_val + self.h_val
 
-    def __lt__(self, other: "Node") -> bool:
+    def __lt__(self, other: "AStarNode") -> bool:
         """Return true is "self" is better than "other"."""
         if self.score == other.score:
             if self.h_val == other.h_val:

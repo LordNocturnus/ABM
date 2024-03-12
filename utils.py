@@ -2,6 +2,7 @@
 Two prime numbers are used to encode both the x and y coordinate into a single integer
 """
 import numpy.typing as npt  # type: ignore
+import numpy as np
 #import numba as nb # type: ignore
 
 PRIMEX = 461
@@ -10,6 +11,8 @@ PRIMEY = 463
 
 DIRECTIONS = ((0, -1), (1, 0), (0, 1), (-1, 0), (0, 0))
 PRIMEDIRECTIONS = (-PRIMEY, PRIMEX, PRIMEY, -PRIMEX, 0)
+
+RNG = np.random.default_rng(0)
 
 
 #@nb.jit(nopython=True)  # type: ignore
