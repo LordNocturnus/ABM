@@ -20,7 +20,7 @@ colors = ['r','c','b','g']
 obstacles = [(5,0), (6,0), (7,0), (6,1), (6,2)]
 
 # View distance
-r = 4
+r = 6
 
 def detect_in_range(timestep: int, paths: list[list[tuple]], range: int) -> list[list]:
     
@@ -76,6 +76,8 @@ ax.set_aspect('equal', adjustable='box')
 plt.legend()
 plt.show()
 
+# Code for vision with blocking by obstacle
+
 class Ray:
 
     def __init__(self, start: tuple, end: tuple) -> None:
@@ -95,15 +97,29 @@ class Ray:
         
         for x in np.linspace(self.start_x, self.end_x, self.reso, endpoint=True):
             
-            y = math.tan(self.slope) * x  
+            # Evaluate all points on the ray, and detect if any point intersect with an obstacle.
+            # If this is the case false is retured and the therfore the end point cannot be accessed.
+            if self.slope != math.pi / 2 and self.slope != - math.pi / 2:
+                y = math.tan(self.slope) * x 
+
+                for obstacle in obstacles:
+                    if obstacle[1] - 0.5 < x < obstacle[1] + 0.5 and obstacle[0] - 0.5 < y < obstacle[0] + 0.5:
+                        return False
             
-            for obstacle in obstacles:
-                if obstacle[1] - 0.5 < x < obstacle[1] + 0.5 and obstacle[0] - 0.5 < y < obstacle[0] + 0.5:
-                    return False
+            # For angles 90 and -90 the y values need to called manualy, afterwards the various y values can be 
+            # used to check if an obstacle is located on any of these points, to determine if the ray is blocked
+            else:
+
+                for y in np.linspace(self.start_y, self.end_y, self.reso, endpoint=True):
+            
+                    for obstacle in obstacles:
+                        
+                        if obstacle[1] - 0.5 < x < obstacle[1] + 0.5 and obstacle[0] - 0.5 < y < obstacle[0] + 0.5:
+                            return False
 
         return True
 
-obstacles = [(1,-1), (1,0), (1,1), (0,1), (-1,1), (-1,0), (-1,-1)]
+obstacles = [(1,1), (-1,2), (-2,2), (-2,1), (-1,-1), (1,-3), (2,-3), (2,1)]
 agent = (0,0)   # (y,x)
 
 fig, ax = plt.subplots()
@@ -118,13 +134,13 @@ for i in range(-r,r+1):
 
             line = Ray((0, 0), (j+agent[1], i+agent[0]))
 
+            # Visualise points the agent can see 
             if line.check_view(obstacles):
+                # Point can be seen
                 ax.scatter(i,j,color='b')
             else:
+                # Point cannot be seen
                 ax.scatter(i,j,color='r')
-
-        else:
-            continue
 
 # Visualise objects
 for obstacle in obstacles:
