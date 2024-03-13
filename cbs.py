@@ -159,6 +159,7 @@ class CBSSolver(object):
 
             if not P['collisions']:
                 print(f"Constraint utelised {P['constraints']}")
+                print(f"Paths utelised {P['paths']}")
                 return P['paths']
 
             for collision in P['collisions']:
