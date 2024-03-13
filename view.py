@@ -6,7 +6,7 @@ import math
 get_y = lambda coords: [loc[0] for loc in coords]
 get_x = lambda coords: [loc[1] for loc in coords]
 
-# Agents
+# Agents [(y,x), (y,x), (y,x)]
 agent1 = [(0,0), (0,1), (0,2), (1,2), (2,2)]
 agent2 = [(1,1), (1,2), (1,3), (2,3), (2,2)]
 agent3 = [(5,1), (5,2), (5,3), (6,3), (6,4)]
@@ -20,7 +20,7 @@ colors = ['r','c','b','g']
 obstacles = [(5,0), (6,0), (7,0), (6,1), (6,2)]
 
 # View distance
-r = 2
+r = 4
 
 def detect_in_range(timestep: int, paths: list[list[tuple]], range: int) -> list[list]:
     
@@ -69,6 +69,66 @@ for id, agent in enumerate(agents):
 for obstacle in obstacles:
 
     rect = plt.Rectangle((obstacle[1]-0.5, obstacle[0]-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='k')
+    ax.add_patch(rect)
+
+fig.gca().invert_yaxis()
+ax.set_aspect('equal', adjustable='box')
+plt.legend()
+plt.show()
+
+class Ray:
+
+    def __init__(self, start: tuple, end: tuple) -> None:
+        self.start_x = start[1]
+        self.start_y = start[0]
+        self.end_x = end[1]
+        self.end_y = end[0]
+
+        try:
+            self.slope = (self.end_y - self.start_y) / (self.end_x - self.start_x)
+        except ZeroDivisionError:
+            self.slope = 0
+
+    def check_view(self, obstacles: list[tuple[int]]) -> bool:
+        for obstacle in obstacles:
+            if self.end_x == obstacle[1] and self.end_y == obstacle[0]:
+                return False
+        
+        for y in range(self.start_y, self.end_y + 1):
+            x = round(self.slope * (y - self.start_y) + self.start_x)
+            for obstacle in obstacles:
+                if x == obstacle[1] and y == obstacle[0]:
+                    return False
+
+        return True
+
+obstacles = [(1,0), (1,-1), (1,1)]
+agent = (0,0)   # (y,x)
+
+fig, ax = plt.subplots()
+
+for i in range(-r,r+1):
+    for j in range(-r,r+1):
+        if i == 0  and j == 0:
+            continue
+        elif math.sqrt(i**2 + j**2) <= r:
+            # Evaulate ray from origin to end point
+            # Goal is to determine if the end point can be seen/ evaluated
+
+            line = Ray((0, 0), (i+agent[1], j+agent[0]))
+
+            if line.check_view(obstacles):
+                ax.scatter(j,i,color='b')
+            else:
+                ax.scatter(j,i,color='r')
+
+        else:
+            continue
+
+# Visualise objects
+for obstacle in obstacles:
+
+    rect = plt.Rectangle((obstacle[1]-0.5, obstacle[0]-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
     ax.add_patch(rect)
 
 fig.gca().invert_yaxis()
