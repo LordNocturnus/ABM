@@ -84,8 +84,10 @@ class Ray:
         self.end_x = end[1]
         self.end_y = end[0]
 
+        self.reso = 1
+
         try:
-            self.slope = (self.end_y - self.start_y) / (self.end_x - self.start_x)
+            self.slope = (self.end_x - self.start_x) / (self.end_y - self.start_y)
         except ZeroDivisionError:
             self.slope = 0
 
@@ -94,7 +96,7 @@ class Ray:
             if self.end_x == obstacle[1] and self.end_y == obstacle[0]:
                 return False
         
-        for y in range(self.start_y, self.end_y + 1):
+        for y in np.arange(self.start_y, self.end_y + self.reso, self.reso):
             x = round(self.slope * (y - self.start_y) + self.start_x)
             for obstacle in obstacles:
                 if x == obstacle[1] and y == obstacle[0]:
@@ -102,7 +104,7 @@ class Ray:
 
         return True
 
-obstacles = [(1,0), (1,-1), (1,1)]
+obstacles = [(1,-1), (1,0), (1,1)]
 agent = (0,0)   # (y,x)
 
 fig, ax = plt.subplots()
@@ -115,12 +117,12 @@ for i in range(-r,r+1):
             # Evaulate ray from origin to end point
             # Goal is to determine if the end point can be seen/ evaluated
 
-            line = Ray((0, 0), (i+agent[1], j+agent[0]))
+            line = Ray((0, 0), (j+agent[1], i+agent[0]))
 
             if line.check_view(obstacles):
-                ax.scatter(j,i,color='b')
+                ax.scatter(i,j,color='b')
             else:
-                ax.scatter(j,i,color='r')
+                ax.scatter(i,j,color='r')
 
         else:
             continue
