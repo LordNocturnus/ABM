@@ -84,7 +84,7 @@ class Ray:
         self.end_x = end[1]
         self.end_y = end[0]
 
-        self.reso = 1
+        self.reso = 0.1
 
         try:
             self.slope = (self.end_x - self.start_x) / (self.end_y - self.start_y)
@@ -97,9 +97,9 @@ class Ray:
                 return False
         
         for y in np.arange(self.start_y, self.end_y + self.reso, self.reso):
-            x = round(self.slope * (y - self.start_y) + self.start_x)
+            x = self.slope * (y - self.start_y) + self.start_x
             for obstacle in obstacles:
-                if x == obstacle[1] and y == obstacle[0]:
+                if obstacle[1] - 0.5 < x < obstacle[1] + 0.5 and obstacle[0] - 0.5 < y < obstacle[0] + 0.5:
                     return False
 
         return True
@@ -132,6 +132,7 @@ for obstacle in obstacles:
 
     rect = plt.Rectangle((obstacle[1]-0.5, obstacle[0]-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
     ax.add_patch(rect)
+plt.scatter(0,0,color='c')
 
 fig.gca().invert_yaxis()
 ax.set_aspect('equal', adjustable='box')
