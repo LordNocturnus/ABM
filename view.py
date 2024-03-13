@@ -84,27 +84,26 @@ class Ray:
         self.end_x = end[1]
         self.end_y = end[0]
 
-        self.reso = 0.1
+        self.reso = 10
 
-        try:
-            self.slope = (self.end_x - self.start_x) / (self.end_y - self.start_y)
-        except ZeroDivisionError:
-            self.slope = 0
+        self.slope = math.atan2(self.end_y - self.start_y, self.end_x - self.start_x)
 
     def check_view(self, obstacles: list[tuple[int]]) -> bool:
         for obstacle in obstacles:
             if self.end_x == obstacle[1] and self.end_y == obstacle[0]:
                 return False
         
-        for y in np.arange(self.start_y, self.end_y + self.reso, self.reso):
-            x = self.slope * (y - self.start_y) + self.start_x
+        for x in np.linspace(self.start_x, self.end_x, self.reso, endpoint=True):
+            
+            y = math.tan(self.slope) * x  
+            
             for obstacle in obstacles:
                 if obstacle[1] - 0.5 < x < obstacle[1] + 0.5 and obstacle[0] - 0.5 < y < obstacle[0] + 0.5:
                     return False
 
         return True
 
-obstacles = [(1,-1), (1,0), (1,1)]
+obstacles = [(1,-1), (1,0), (1,1), (0,1), (-1,1), (-1,0), (-1,-1)]
 agent = (0,0)   # (y,x)
 
 fig, ax = plt.subplots()
