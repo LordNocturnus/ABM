@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import matplotlib.lines as mline
 import numpy as np
 import math
 
@@ -20,7 +22,7 @@ colors = ['r','c','b','g']
 obstacles = [(5,0), (6,0), (7,0), (6,1), (6,2)]
 
 # View distance
-r = 6
+r = 8
 
 def detect_in_range(timestep: int, paths: list[list[tuple]], range: int) -> list[list]:
     
@@ -86,7 +88,7 @@ class Ray:
         self.end_x = end[1]
         self.end_y = end[0]
 
-        self.reso = 10
+        self.reso = 50
 
         self.slope = math.atan2(self.end_y - self.start_y, self.end_x - self.start_x)
 
@@ -100,7 +102,7 @@ class Ray:
             # Evaluate all points on the ray, and detect if any point intersect with an obstacle.
             # If this is the case false is retured and the therfore the end point cannot be accessed.
             if self.slope != math.pi / 2 and self.slope != - math.pi / 2:
-                y = math.tan(self.slope) * x 
+                y = math.tan(self.slope) * (x - self.start_x) + self.start_y 
 
                 for obstacle in obstacles:
                     if obstacle[1] - 0.5 < x < obstacle[1] + 0.5 and obstacle[0] - 0.5 < y < obstacle[0] + 0.5:
@@ -120,36 +122,40 @@ class Ray:
         return True
 
 obstacles = [(1,1), (-1,2), (-2,2), (-2,1), (-1,-1), (1,-3), (2,-3), (2,1)]
-agent = (0,0)   # (y,x)
+agent = (2,-1)   # (y,x)
 
 fig, ax = plt.subplots()
 
 for i in range(-r,r+1):
     for j in range(-r,r+1):
-        if i == 0  and j == 0:
-            continue
+        if i == 0 and j == 0:
+            print(f"in at {i=}, {j=}")
+            plt.scatter(agent[1],agent[0],color='c')
         elif math.sqrt(i**2 + j**2) <= r:
             # Evaulate ray from origin to end point
             # Goal is to determine if the end point can be seen/ evaluated
 
-            line = Ray((0, 0), (j+agent[1], i+agent[0]))
+            line = Ray(agent, (j+agent[0], i+agent[1]))
 
             # Visualise points the agent can see 
             if line.check_view(obstacles):
                 # Point can be seen
-                ax.scatter(i,j,color='b')
+                ax.scatter(i+agent[1], j+agent[0],color='b')
             else:
                 # Point cannot be seen
-                ax.scatter(i,j,color='r')
+                ax.scatter(i+agent[1], j+agent[0],color='r')
 
 # Visualise objects
 for obstacle in obstacles:
 
     rect = plt.Rectangle((obstacle[1]-0.5, obstacle[0]-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
     ax.add_patch(rect)
-plt.scatter(0,0,color='c')
+# plt.scatter(agent[1],agent[0],color='c')
 
 fig.gca().invert_yaxis()
 ax.set_aspect('equal', adjustable='box')
-plt.legend()
+legend_elements = [mline.Line2D([0], [0], marker='o', color='w', label='Agent',markerfacecolor='c', markersize=7),
+                   mline.Line2D([0], [0], marker='o', color='w', label='Observable',markerfacecolor='b', markersize=7),
+                   mline.Line2D([0], [0], marker='o', color='w', label='Not observable',markerfacecolor='r', markersize=7)]
+ax.legend(handles=legend_elements)
 plt.show()
