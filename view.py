@@ -98,10 +98,10 @@ class Box:
 class Ray:
 
     def __init__(self, start: tuple, end: tuple) -> None:
-        self.start_x = start[1] # x00
-        self.start_y = start[0] # y00
-        self.end_x = end[1]     # x10
-        self.end_y = end[0]     # y10
+        self.start_x = start[1]
+        self.start_y = start[0]
+        self.end_x = end[1]
+        self.end_y = end[0]
 
     def check_view(self, obstacles: list[tuple[int]]) -> bool:
         
