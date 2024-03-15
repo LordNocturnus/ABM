@@ -78,7 +78,7 @@ ax.set_aspect('equal', adjustable='box')
 plt.legend()
 plt.show()
 
-# Code for vision with blocking by obstacle
+### Code for vision with blocking by obstacle ###
 
 class Box:
 
@@ -162,9 +162,6 @@ class Ray:
         
         return True
                 
-
-
-
 # Obstacles within the map
 obstacles = [(1,1), (-1,2), (-2,2), (-2,1), (-1,-1), (1,-3), (2,-3), (2,1)]
 obstacles = [Box(obstacle) for obstacle in obstacles]
