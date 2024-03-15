@@ -80,19 +80,35 @@ plt.show()
 
 # Code for vision with blocking by obstacle
 
+class Box:
+
+    def __init__(self, location) -> None:
+        self.x = location[1]
+        self.y = location[0]
+        self.segments = self.bounds
+    
+    @property
+    def bounds(self):
+        out = [[(self.y + 0.5, self.x + 0.5), (self.y + 0.5, self.x - 0.5)],
+               [(self.y + 0.5, self.x + 0.5), (self.y - 0.5, self.x + 0.5)],
+               [(self.y - 0.5, self.x - 0.5), (self.y - 0.5, self.x + 0.5)],
+               [(self.y - 0.5, self.x - 0.5), (self.y + 0.5, self.x - 0.5)]]
+        return out
+
 class Ray:
 
     def __init__(self, start: tuple, end: tuple) -> None:
-        self.start_x = start[1]
-        self.start_y = start[0]
-        self.end_x = end[1]
-        self.end_y = end[0]
+        self.start_x = start[1] # x00
+        self.start_y = start[0] # y00
+        self.end_x = end[1]     # x10
+        self.end_y = end[0]     # y10
 
+    def check_view(self, obstacles: list[tuple[int]]) -> bool:
+        
         self.reso = 50
 
         self.slope = math.atan2(self.end_y - self.start_y, self.end_x - self.start_x)
-
-    def check_view(self, obstacles: list[tuple[int]]) -> bool:
+        
         for obstacle in obstacles:
             if self.end_x == obstacle[1] and self.end_y == obstacle[0]:
                 return False
@@ -120,8 +136,43 @@ class Ray:
                             return False
 
         return True
+    
+    def check_view_v2(self, obstacles: list[object]) -> bool:
 
+        y00, x00 = self.start_y, self.start_x
+        y01, x01 = self.end_y - self.start_y, self.end_x - self.start_x
+        
+        for obstacle in obstacles:
+
+            for segment in obstacle.segments:
+
+                y10, x10 = segment[0][0], segment[0][1]
+                y11, x11 = segment[1][0] - segment[0][0], segment[1][1] - segment[0][1]
+                
+                # d = x11 y01 - x01 y11 : if 0 two lines are parralel  
+                d = x11 * y01 - x01 * y11
+                if d == 0:
+                    continue
+
+                s = (1/d) * ((x00 - x10) * y01 - (y00 - y10) * x01)
+                t = - (1/d) * (-(x00 - x10) * y11 + (y00 - y10) * x11)
+
+                if 0 <= s <= 1 and 0 <= t <= 1:
+                    return False
+        
+        return True
+                
+
+
+
+# Obstacles within the map
 obstacles = [(1,1), (-1,2), (-2,2), (-2,1), (-1,-1), (1,-3), (2,-3), (2,1)]
+obstacles = [Box(obstacle) for obstacle in obstacles]
+
+# View distance
+r = 20
+
+# location of main agent in the space 
 agent = (2,-1)   # (y,x)
 
 fig, ax = plt.subplots()
@@ -129,8 +180,9 @@ fig, ax = plt.subplots()
 for i in range(-r,r+1):
     for j in range(-r,r+1):
         if i == 0 and j == 0:
-            print(f"in at {i=}, {j=}")
+            
             plt.scatter(agent[1],agent[0],color='c')
+        
         elif math.sqrt(i**2 + j**2) <= r:
             # Evaulate ray from origin to end point
             # Goal is to determine if the end point can be seen/ evaluated
@@ -138,7 +190,7 @@ for i in range(-r,r+1):
             line = Ray(agent, (j+agent[0], i+agent[1]))
 
             # Visualise points the agent can see 
-            if line.check_view(obstacles):
+            if line.check_view_v2(obstacles):
                 # Point can be seen
                 ax.scatter(i+agent[1], j+agent[0],color='b')
             else:
@@ -148,7 +200,7 @@ for i in range(-r,r+1):
 # Visualise objects
 for obstacle in obstacles:
 
-    rect = plt.Rectangle((obstacle[1]-0.5, obstacle[0]-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
+    rect = plt.Rectangle((obstacle.x-0.5, obstacle.y-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
     ax.add_patch(rect)
 # plt.scatter(agent[1],agent[0],color='c')
 
