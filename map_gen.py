@@ -23,11 +23,18 @@ class MapGenerator(object):
         goals_x, goals_y = utils.prime_to_pos(self.rng.choice(self.candidates, agents))
 
         agents = np.transpose(np.asarray([starts_x, starts_y, goals_x, goals_y]))
+
         ret = self.lines
         ret.append(f"{len(agents)}\n")
         for agent in agents:
             ret.append(f"{int(agent[0])} {int(agent[1])} {int(agent[2])} {int(agent[3])}\n")
-        return "".join(ret)
+
+        self.str_output = "".join(ret)
+
+        starts = [(starts_y[i], starts_x[i]) for i in range(len(agents))]
+        goals = [(goals_y[i], goals_x[i]) for i in range(len(agents))]
+
+        return self.map ^ 1, starts, goals
 
     @property
     def shape(self):
@@ -43,6 +50,9 @@ class MapGenerator(object):
             res[line == 1] = "."
             ret.append(" ".join(res) + "\n")
         return ret
+
+    def strformat(self):
+        return self.str_output
 
 
 
