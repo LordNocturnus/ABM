@@ -4,6 +4,15 @@ import matplotlib.lines as mline
 import numpy as np
 import math
 
+def generate_view_map() -> dict[list[tuple[int,int]]]:
+    
+    view_map = {}
+
+    # Evaluate view for all posible locations Precomp step, to reduce computational requirements. 
+    view_map["y" ,"x"] = agent_vision()
+    
+    return view_map
+
 def fov(timestep: int, paths: list[list[tuple[int, int]]], view_radius: int) -> list[list]:
     
     locations = [path[timestep] for path in paths]

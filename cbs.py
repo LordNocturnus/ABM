@@ -69,7 +69,17 @@ def disjoint_splitting(collision: typing.Any) -> None:
     #                          specified edge at the specified timestep
     #           Choose the agent randomly
 
-    pass
+    val = random.random()
+
+    if 0 <= val <= 0.5:
+        rng_agent = collision['a1']
+    elif 0.5 <= val <= 1:
+        rng_agent = collision['a2']
+
+    out = [{'positive': True, 'agent': rng_agent, 'loc': collision['loc'], 'timestep': collision['timestep']},
+           {'positive': False, 'agent': rng_agent, 'loc': collision['loc'], 'timestep': collision['timestep']}]
+
+    return out
 
 
 class CBSSolver(object):
@@ -100,12 +110,12 @@ class CBSSolver(object):
 
     def push_node(self, node: typing.Any) -> None:
         heapq.heappush(self.open_list, (node['cost'], len(node['collisions']), self.num_of_generated, node))
-        print("Generate node {}".format(self.num_of_generated))
+        # print("Generate node {}".format(self.num_of_generated))
         self.num_of_generated += 1
 
     def pop_node(self) -> typing.Any:
         _, _, id, node = heapq.heappop(self.open_list)
-        print("Expand node {}".format(id))
+        # print("Expand node {}".format(id))
         self.num_of_expanded += 1
         return node
 
@@ -165,6 +175,7 @@ class CBSSolver(object):
             for collision in P['collisions']:
 
                 one_collision = standard_splitting(collision)
+                one_collision = disjoint_splitting(collision)
 
                 # Solve collision
                 for collision_constraint in one_collision:
