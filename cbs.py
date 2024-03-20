@@ -172,31 +172,30 @@ class CBSSolver(object):
                 print(f"Paths utelised {P['paths']}")
                 return P['paths']
 
-            for collision in P['collisions']:
+            one_collision = standard_splitting(P['collisions'][0])
+            one_collision = disjoint_splitting(P['collisions'][0])
 
-                one_collision = standard_splitting(collision)
-                one_collision = disjoint_splitting(collision)
+            # Solve collision
+            for collision_constraint in one_collision:
 
-                # Solve collision
-                for collision_constraint in one_collision:
+                Q = {'constraints': deepcopy(P['constraints']) + [collision_constraint],
+                     'paths': deepcopy(P['paths'])}
 
-                    Q = {'constraints': deepcopy(P['constraints']) + [collision_constraint],
-                         'paths': deepcopy(P['paths'])}
+                i = collision_constraint['agent']
 
-                    i = collision_constraint['agent']
+                path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
+                              i, Q['constraints'])
 
-                    path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
-                                  i, Q['constraints'])
-
-                    if path:
-                        Q['paths'][i] = path
-                        Q['collisions'] = detect_collisions(Q['paths'])
-                        Q['cost'] = get_sum_of_cost(Q['paths'])
-                        self.push_node(Q)
+                if path:
+                    Q['paths'][i] = path
+                    Q['collisions'] = detect_collisions(Q['paths'])
+                    Q['cost'] = get_sum_of_cost(Q['paths'])
+                    self.push_node(Q)
 
         # self.print_results(root)
         # return root['paths']
-
+            print(len(self.open_list))
+            
         # Return nothing if no solution is found
         return []
 
