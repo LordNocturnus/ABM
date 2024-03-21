@@ -32,38 +32,33 @@ def fov(m_id: int, locations: list[tuple[int, int]], view_radius: int) -> list[b
             else:
                 view = False
         
-    visibility.append(view)
+        visibility.append(view)
 
     return visibility
 
 
-def fov_blocking(timestep: int, paths: list[list[tuple[int, int]]], view_radius: int,
-                 obstacles: list[tuple[int,int]], DEBUG: bool=False) -> list[list]:
+def fov_blocking(m_id: int, locations: list[tuple[int, int]], view_radius: int,
+                 obstacles: list[tuple[int,int]], DEBUG: bool=False) -> list[bool]:
     
-    locations = [path[timestep] for path in paths]
+    m_agent = locations[m_id]
     obstacles = [Box(obstacle) for obstacle in obstacles]
     
     visibility = []
-    
-    for m_id, m_agent in enumerate(locations):
+
+    view_map = agent_vision(m_agent, view_radius, obstacles, DEBUG)
         
-        agent_view = []
-        view_map = agent_vision(m_agent, view_radius, obstacles, DEBUG)
-        
-        for s_id, s_agent in enumerate(locations):
+    for s_id, s_agent in enumerate(locations):
             
-            # Go to next if the main and secondary agent are the same
-            if m_id == s_id:
-                view = False
+        # Go to next if the main and secondary agent are the same
+        if m_id == s_id:
+            view = False
+        else:
+            if s_agent in view_map:
+                view = True
             else:
-                if s_agent in view_map:
-                    view = True
-                else:
-                    view = False
-            
-            agent_view.append(view) 
-        
-        visibility.append(agent_view)
+                view = False
+
+        visibility.append(view)
 
     return visibility
 
