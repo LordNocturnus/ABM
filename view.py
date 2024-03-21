@@ -232,13 +232,19 @@ if __name__ == "__main__":
     # Obstacles
     obstacles = [(5,0), (6,0), (7,0), (6,1), (6,2), (3,-1), (3,0), (3,1), (3,2), (3,4), (3,5), (5,5), (6,5)]
 
+    # Timestep
+    t = 0
+
+    # Locations
+    locations = [agent[t] for agent in agents]
+    
     # View distance
     r = 4
 
-    res = fov(0, agents, r)
+    res = fov(0, locations, r)
     print(res)
 
-    res = fov_blocking(2, agents, r, obstacles, DEBUG=True)
+    res = fov_blocking(0, locations, r, obstacles, DEBUG=True)
     print(res)
 
     fig, ax = plt.subplots()
