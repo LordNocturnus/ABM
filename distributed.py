@@ -5,9 +5,10 @@ Code in this file is just provided as guidance, you are free to deviate from it.
 """
 
 import time as timer
-from single_agent_planner_v2 import compute_heuristics, a_star, get_sum_of_cost
+from single_agent_planner import compute_heuristics, a_star, get_sum_of_cost, get_location
 from distributed_agent_class import DistributedAgent
 from cbs import detect_collision, detect_collisions
+import view
 
 class DistributedPlanningSolver(object):
     """A distributed planner"""
@@ -54,20 +55,52 @@ class DistributedPlanningSolver(object):
             self.agents.append(DistributedAgent(self.my_map, self.starts[i], self.goals[i], self.heuristics[i], i,
                                                 self.view_radius))
 
-
         ## Path finding procedure
 
-        # First base planning
-        for i in range(self.num_of_agents):  # Find path for each agent
-            path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
-                          i, [])
-            if path is None:
-                raise BaseException('No solutions')
-            result[i] = path
+        # # First base planning
+        # for i in range(self.num_of_agents):  # Find path for each agent
+        #     path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
+        #                   i, [])
+        #     if path is None:
+        #         raise BaseException('No solutions')
+        #     result[i] = path
 
         # Main planning loop
 
-        
+        # while loop for goals reached
+
+        # for every timestep for every agent find position of agent
+        # for each agent create view
+        # if agent is in view communicate current location and x amount of locations of the path
+        # if collision on x amount of locations of path, communicate length of remainder path
+        # create new path
+        constraints_list = []
+        result = self.base_planning(constraints_list)
+
+
+
+        timestep = 0
+        while not self.goals_reached(result, timestep):
+            locations_agents = [get_location(result[agent.id], timestep) for agent in self.agents]
+
+            for agent in self.agents:
+                in_range = view.fov(agent.id, locations_agents, agent.view_radius)
+
+                for id, state in enumerate(in_range):
+                    if state:
+                        # communicate constaints
+                        in_range_paths = result[agent.id][timestep:(timestep+5)]
+
+                        if len(result[agent.id]) >= len(result[id]):
+                            for id_l, location in enumerate(in_range_paths):
+                                constraints_list.append({'positive': False, 'agent': id, 'loc': [location], 'timestep': timestep + id_l})
+                        # path of agent.id and path of agent(id of state)
+                        # constrainst for agent with shorter len(path)
+
+            result = self.base_planning(constraints_list)
+
+            timestep += 1
+
 
         # Print final output
         print("\n Found a solution! \n")
@@ -76,3 +109,27 @@ class DistributedPlanningSolver(object):
         print(result)
         
         return result  # Hint: this should be the final result of the distributed planning (visualization is done after planning)
+
+    def goals_reached(self, paths, timestep) -> bool:
+        # goals = self.goals
+        # location agents = get_location(path, timestep)
+        # number/index agent = self.num_of_agents() -> loop over
+        # have all goals been reached
+
+        for i in range(self.num_of_agents):
+            if get_location(paths[i], timestep) != self.goals[i]:
+                return False
+
+        return True
+
+    def base_planning(self, contraints):
+        result: list[list[tuple[int, int]]] = [[]] * self.num_of_agents
+
+        for i in range(self.num_of_agents):  # Find path for each agent
+            path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
+                          i, contraints)
+            if path is None:
+                raise BaseException('No solutions')
+            result[i] = path
+
+        return result
