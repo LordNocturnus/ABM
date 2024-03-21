@@ -28,8 +28,6 @@ class DistributedPlanningSolver(object):
         self.num_of_agents = len(goals)
         self.heuristics: list[list[int]] = []
 
-        self.view_radius = 5
-
         # compute heuristics for the low-level search
         for goal in self.goals:
             self.heuristics.append(compute_heuristics(my_map, goal))
@@ -52,8 +50,7 @@ class DistributedPlanningSolver(object):
         # Initialization of agents
         # Create agent objects with DistributedAgent class
         for i in range(self.num_of_agents):
-            self.agents.append(DistributedAgent(self.my_map, self.starts[i], self.goals[i], self.heuristics[i], i,
-                                                self.view_radius))
+            self.agents.append(DistributedAgent(self.my_map, self.starts[i], self.goals[i], self.heuristics[i], i))
 
         ## Path finding procedure
 
@@ -94,25 +91,33 @@ class DistributedPlanningSolver(object):
                 # Create priority order, to evaluate the agents
                 # |> [False, True, False, False, True] (View of agent 0)
 
-                for id, observed_agent in enumerate(agents_in_view):
+                for observed_agent in self.agents:
 
-                    if not observed_agent:
+                    if not agents_in_view[observed_agent.id]:
                         continue
+
+                    # Get the intent of the other agent
+                    vertexes_a2 = observed_agent.get_intent(timestep)
+                    edges_a2    = [[vertexes_a2[i], vertexes_a2[i + 1]] for i in range(len(vertexes_a2) - 1)]
+
+                    agent.update_memory(vertexes_a2, observed_agent.id)
+
 
                     for id_vertex, vertex in enumerate(vertexes):
                         constraints_list.append(
-                            {'positive': False, 'agent': id, 'loc': [vertex], 'timestep': timestep + id_vertex})
+                            {'positive': False, 'agent': observed_agent.id, 'loc': [vertex], 'timestep': timestep + id_vertex})
 
                     for id_edge, edge in enumerate(edges):
                         constraints_list.append(
-                            {'positive': False, 'agent': id, 'loc': edge[::-1], 'timestep': timestep + id_edge + 1})
+                            {'positive': False, 'agent': observed_agent.id, 'loc': edge[::-1], 'timestep': timestep + id_edge + 1})
 
-                    path = a_star(self.my_map, self.starts[id], self.goals[id], self.heuristics[id],
-                                  id, constraints_list)
+                    path = a_star(self.my_map, self.starts[observed_agent.id], self.goals[observed_agent.id],
+                                  self.heuristics[observed_agent.id],
+                                  observed_agent.id, constraints_list)
                     if path is None:
                         raise BaseException('No solutions')
-                    self.agents[id].update_path(path)
-                    result[id] = path
+                    self.agents[observed_agent.id].update_path(path)
+                    result[observed_agent.id] = path
 
                 # result = self.base_planning(constraints_list)
 
