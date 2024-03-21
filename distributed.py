@@ -107,7 +107,14 @@ class DistributedPlanningSolver(object):
                         constraints_list.append(
                             {'positive': False, 'agent': id, 'loc': edge[::-1], 'timestep': timestep + id_edge + 1})
 
-                result = self.base_planning(constraints_list)
+                    path = a_star(self.my_map, self.starts[id], self.goals[id], self.heuristics[id],
+                                  id, constraints_list)
+                    if path is None:
+                        raise BaseException('No solutions')
+                    self.agents[id].update_path(path)
+                    result[id] = path
+
+                # result = self.base_planning(constraints_list)
 
 
                 # for id_agent, state in enumerate(agents_in_view):
