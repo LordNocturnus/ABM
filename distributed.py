@@ -74,30 +74,43 @@ class DistributedPlanningSolver(object):
         # if agent is in view communicate current location and x amount of locations of the path
         # if collision on x amount of locations of path, communicate length of remainder path
         # create new path
+        # path of agent.id and path of agent(id of state)
+        # constrainst for agent with shorter len(path)
+
         constraints_list = []
         result = self.base_planning(constraints_list)
 
-
-
         timestep = 0
+
         while not self.goals_reached(result, timestep):
-            locations_agents = [get_location(result[agent.id], timestep) for agent in self.agents]
 
             for agent in self.agents:
-                in_range = view.fov(agent.id, locations_agents, agent.view_radius)
 
-                for id, state in enumerate(in_range):
+                location_agents = [get_location(result[el.id], timestep) for el in self.agents]
+                in_view = view.fov(agent.id, location_agents, agent.view_radius)
+
+                # Create priority order, to evaluate all of the agents
+
+                for id_agent, state in enumerate(in_view):
+
                     if state:
-                        # communicate constaints
-                        in_range_paths = result[agent.id][timestep:(timestep+5)]
 
-                        if len(result[agent.id]) >= len(result[id]):
-                            for id_l, location in enumerate(in_range_paths):
-                                constraints_list.append({'positive': False, 'agent': id, 'loc': [location], 'timestep': timestep + id_l})
-                        # path of agent.id and path of agent(id of state)
-                        # constrainst for agent with shorter len(path)
+                        # If the agent has a longer route --> make sure its route does not get altered
+                        if len(result[agent.id]) >= len(result[id_agent]):
+                            # communicate path
+                            vertexes = result[agent.id][timestep:(timestep + 5)]
+                            edges = [[vertexes[i], vertexes[i+1]] for i in range(len(vertexes)-1)]
 
-            result = self.base_planning(constraints_list)
+                            for id_vertex, vertex in enumerate(vertexes):
+
+                                constraints_list.append({'positive': False, 'agent': id_agent, 'loc': [vertex], 'timestep': timestep + id_vertex})
+
+                            for id_edge, edge in enumerate(edges):
+
+                                constraints_list.append({'positive': False, 'agent': id_agent, 'loc': edge[::-1], 'timestep': timestep + id_edge + 1})
+
+                    # result = self.base_planning(constraints_list)
+                result = self.base_planning(constraints_list)
 
             timestep += 1
 
@@ -122,12 +135,12 @@ class DistributedPlanningSolver(object):
 
         return True
 
-    def base_planning(self, contraints):
+    def base_planning(self, constraints):
         result: list[list[tuple[int, int]]] = [[]] * self.num_of_agents
 
         for i in range(self.num_of_agents):  # Find path for each agent
             path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
-                          i, contraints)
+                          i, constraints)
             if path is None:
                 raise BaseException('No solutions')
             result[i] = path
