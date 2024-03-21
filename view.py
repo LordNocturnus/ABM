@@ -13,31 +13,26 @@ def generate_view_map() -> dict[list[tuple[int,int]]]:
     
     return view_map
 
-def fov(timestep: int, paths: list[list[tuple[int, int]]], view_radius: int) -> list[list]:
+def fov(m_id: int, locations: list[tuple[int, int]], view_radius: int) -> list[bool]:
     
-    locations = [path[timestep] for path in paths]
     visibility = []
-    
-    for m_id, m_agent in enumerate(locations):
+
+    m_agent = locations[m_id]
         
-        agent_view = []
+    for s_id, s_agent in enumerate(locations):
         
-        for s_id, s_agent in enumerate(locations):
-            
-            # Go to next if the main and secondary agent are the same
-            if m_id == s_id:
-                view = False
+        # Go to next if the main and secondary agent are the same
+        if m_id == s_id:
+            view = False
+        else:
+            # Detect if agent is within range
+            dist = math.sqrt((m_agent[0] - s_agent[0])**2 + (m_agent[1]-s_agent[1])**2)
+            if dist <= view_radius:
+                view = True
             else:
-                # Detect if agent is within range
-                dist = math.sqrt((m_agent[0] - s_agent[0])**2 + (m_agent[1]-s_agent[1])**2)
-                if dist <= view_radius:
-                    view = True
-                else:
-                    view = False
-            
-            agent_view.append(view) 
+                view = False
         
-        visibility.append(agent_view)
+    visibility.append(view)
 
     return visibility
 
