@@ -102,7 +102,6 @@ class DistributedPlanningSolver(object):
 
                     agent.update_memory(vertexes_a2, observed_agent.id)
 
-
                     for id_vertex, vertex in enumerate(vertexes):
                         constraints_list.append(
                             {'positive': False, 'agent': observed_agent.id, 'loc': [vertex], 'timestep': timestep + id_vertex})
