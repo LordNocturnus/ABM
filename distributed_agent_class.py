@@ -27,8 +27,8 @@ class DistributedAgent(object):
         self.heuristics = heuristics
         self.path = None
 
-        self.view_radius = 2
-        self.forward_transfer = 2
+        self.view_radius = 5
+        self.forward_transfer = 5
 
         self.intent = None
         self.memory = {}

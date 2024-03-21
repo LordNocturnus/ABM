@@ -77,7 +77,7 @@ class DistributedPlanningSolver(object):
 
         timestep = 0
 
-        while not self.goals_reached(result, timestep):
+        while not self.goals_reached(result, timestep) or self.check_collisions(result):
 
             for agent in self.agents:
 
@@ -174,6 +174,27 @@ class DistributedPlanningSolver(object):
                 return False
 
         return True
+
+    def check_collisions(self, paths):
+
+        for agent_1 in range(len(paths)):
+            for agent_2 in range(agent_1 + 1, len(paths)):
+
+                path1 = paths[agent_1]
+                path2 = paths[agent_2]
+
+                for i in range(max(len(path1), len(path2))):
+                    # Vertex collision
+                    if get_location(path1, i) == get_location(path2, i):
+
+                        return True
+
+                    # Edge collision
+                    elif [get_location(path1, i), get_location(path1, i + 1)] == [get_location(path2, i + 1),
+                                                                                  get_location(path2, i)]:
+                        return True
+
+        return False
 
     def base_planning(self, constraints):
         result: list[list[tuple[int, int]]] = [[]] * self.num_of_agents
