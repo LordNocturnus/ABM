@@ -26,6 +26,14 @@ class DistributedPlanningSolver(object):
         self.goals = goals
         self.num_of_agents = len(goals)
         self.heuristics: list[list[int]] = []
+
+        self.view_radius = 3
+
+        # compute heuristics for the low-level search
+        for goal in self.goals:
+            self.heuristics.append(compute_heuristics(my_map, goal))
+
+        self.agents: list[object] = []
         # T.B.D.
         
     def find_solution(self) -> list[list[tuple[int, int]]]:
@@ -37,15 +45,30 @@ class DistributedPlanningSolver(object):
         """
         # Initialize constants       
         start_time = timer.time()
-        result: list[list[tuple[int, int]]] = []
+        result: list[list[tuple[int, int]]] = [[]] * self.num_of_agents
         self.CPU_time = timer.time() - start_time
         
-        
+        # Initialization of agents
         # Create agent objects with DistributedAgent class
         for i in range(self.num_of_agents):
-            newAgent = DistributedAgent(self.my_map, self.starts[i], self.goals[i], self.heuristics[i], i)
+            self.agents.append(DistributedAgent(self.my_map, self.starts[i], self.goals[i], self.heuristics[i], i,
+                                                self.view_radius))
+
+
+        ## Path finding procedure
+
+        # First base planning
+        for i in range(self.num_of_agents):  # Find path for each agent
+            path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
+                          i, [])
+            if path is None:
+                raise BaseException('No solutions')
+            result[i] = path
+
+        # Main planning loop
+
         
-        
+
         # Print final output
         print("\n Found a solution! \n")
         print("CPU time (s):    {:.2f}".format(self.CPU_time))

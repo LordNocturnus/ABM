@@ -8,16 +8,19 @@ import typing
 class DistributedAgent(object):
     """DistributedAgent object to be used in the distributed planner."""
 
-    def __init__(self, my_map: typing.Any, start: tuple[int, int], goal: tuple[int, int], heuristics: typing.Any, agent_id: int) -> None:
+    def __init__(self, my_map: typing.Any, start: tuple[int, int], goal: tuple[int, int], heuristics: typing.Any, agent_id: int,
+                 view_radius: int) -> None:
         """
         my_map   - list of lists specifying obstacle positions
         starts      - (x1, y1) start location
         goals       - (x1, y1) goal location
         heuristics  - heuristic to goal location
         """
-        raise NotImplementedError
+        # raise NotImplementedError
         self.my_map = my_map
         self.start = start
         self.goal = goal
         self.id = agent_id
         self.heuristics = heuristics
+
+        self.view_radius = view_radius
