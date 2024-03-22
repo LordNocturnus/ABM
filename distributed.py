@@ -79,6 +79,7 @@ class DistributedPlanningSolver(object):
 
         while not self.goals_reached(result, timestep) or self.check_collisions(result):
 
+            print(f"======= |>{timestep}<| =======")
             for agent in self.agents:
 
                 location_agents = [get_location(result[el.id], timestep) for el in self.agents]
@@ -91,6 +92,7 @@ class DistributedPlanningSolver(object):
                 # Create priority order, to evaluate the agents
                 # |> [False, True, False, False, True] (View of agent 0)
 
+                # Update the agent there knowledge of the suroundings
                 for observed_agent in self.agents:
 
                     if not agents_in_view[observed_agent.id]:
@@ -100,56 +102,46 @@ class DistributedPlanningSolver(object):
                     vertexes_a2 = observed_agent.get_intent(timestep)
                     edges_a2    = [[vertexes_a2[i], vertexes_a2[i + 1]] for i in range(len(vertexes_a2) - 1)]
 
-                    agent.update_memory(vertexes_a2, observed_agent.id)
+                    agent.update_memory(vertexes_a2, observed_agent.id, len(observed_agent.path))
 
-                    for id_vertex, vertex in enumerate(vertexes):
-                        constraints_list.append(
-                            {'positive': False, 'agent': observed_agent.id, 'loc': [vertex], 'timestep': timestep + id_vertex})
+                # Solve the collisions for that agent using the aquired knowledge
 
-                    for id_edge, edge in enumerate(edges):
-                        constraints_list.append(
-                            {'positive': False, 'agent': observed_agent.id, 'loc': edge[::-1], 'timestep': timestep + id_edge + 1})
+                constraints_list.extend(agent.solve_conflict(timestep))
 
-                    path = a_star(self.my_map, self.starts[observed_agent.id], self.goals[observed_agent.id],
-                                  self.heuristics[observed_agent.id],
-                                  observed_agent.id, constraints_list)
-                    if path is None:
-                        raise BaseException('No solutions')
-                    self.agents[observed_agent.id].update_path(path)
-                    result[observed_agent.id] = path
+                # path = a_star(self.my_map, self.starts[agent.id], self.goals[agent.id],
+                #               self.heuristics[agent.id],
+                #               agent.id, constraints_list)
+                #
+                # if path is None:
+                #     raise BaseException('No solutions')
+                # agent.update_path(path)
+                #
+                # result[agent.id] = path
 
-                # result = self.base_planning(constraints_list)
+                result = self.base_planning(constraints_list)
 
-
-                # for id_agent, state in enumerate(agents_in_view):
-                #
-                #     if state:
-                #
-                #         # If the agent has a longer route --> make sure its route does not get altered
-                #         if len(result[agent.id]) >= len(result[id_agent]):
-                #
-                #             # path = a_star(self.my_map, self.starts[agent.id], self.goals[agent.id], self.heuristics[agent.id],
-                #             #               agent.id, constraints_list)
-                #             # if path is None:
-                #             #     raise BaseException('No solutions')
-                #             #
-                #             # self.agents[agent.id].update_path(path)
-                #             # result[agent.id] = path
-                #
-                #             # communicate path
-                #             vertexes = agent.get_intent(timestep)
-                #             edges = [[vertexes[i], vertexes[i+1]] for i in range(len(vertexes)-1)]
-                #
-                #             for id_vertex, vertex in enumerate(vertexes):
-                #
-                #                 constraints_list.append({'positive': False, 'agent': id_agent, 'loc': [vertex], 'timestep': timestep + id_vertex})
-                #
-                #             for id_edge, edge in enumerate(edges):
-                #
-                #                 constraints_list.append({'positive': False, 'agent': id_agent, 'loc': edge[::-1], 'timestep': timestep + id_edge + 1})
+                agent.clear_memory()
 
 
-                # result = self.base_planning(constraints_list)
+
+
+                    # for id_vertex, vertex in enumerate(vertexes):
+                    #     constraints_list.append(
+                    #         {'positive': False, 'agent': observed_agent.id, 'loc': [vertex], 'timestep': timestep + id_vertex})
+                    #
+                    # for id_edge, edge in enumerate(edges):
+                    #     constraints_list.append(
+                    #         {'positive': False, 'agent': observed_agent.id, 'loc': edge[::-1], 'timestep': timestep + id_edge + 1})
+                    #
+                    # path = a_star(self.my_map, self.starts[observed_agent.id], self.goals[observed_agent.id],
+                    #               self.heuristics[observed_agent.id],
+                    #               observed_agent.id, constraints_list)
+                    #
+                    # if path is None:
+                    #     raise BaseException('No solutions')
+                    # self.agents[observed_agent.id].update_path(path)
+                    # result[observed_agent.id] = path
+
                 # result = self.base_planning(constraints_list)
 
             timestep += 1
