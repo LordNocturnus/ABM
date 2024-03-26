@@ -5,13 +5,20 @@ Code in this file is just provided as guidance, you are free to deviate from it.
 """
 import typing
 
-from single_agent_planner_v2 import get_location
+import collisions
+import constraints
+from single_agent_planner_v2 import get_location, a_star
 
 
 class DistributedAgent(object):
     """DistributedAgent object to be used in the distributed planner."""
 
-    def __init__(self, my_map: typing.Any, start: tuple[int, int], goal: tuple[int, int], heuristics: typing.Any, agent_id: int
+    def __init__(self,
+                 my_map: list[list[bool]],
+                 start: tuple[int, int],
+                 goal: tuple[int, int],
+                 heuristics: dict[tuple[int, int], int],
+                 agent_id: int
                  ) -> None:
         """
         my_map   - list of lists specifying obstacle positions
@@ -19,109 +26,82 @@ class DistributedAgent(object):
         goals       - (x1, y1) goal location
         heuristics  - heuristic to goal location
         """
-        # raise NotImplementedError
         self.my_map = my_map
-        self.start = start
+        #self.start = start
+        self.pos = start
         self.goal = goal
         self.id = agent_id
         self.heuristics = heuristics
-        self.path = None
 
-        self.view_radius = 5
-        self.forward_transfer = 5
+        ## Path finding procedure
+        self.planned_path = a_star(my_map, self.pos, self.goal, self.heuristics, self.id, [])
+        if self.planned_path is None:
+            raise ValueError('No solutions')
+
+        #self.view_radius = 5
+        #self.forward_transfer = 5
+        self.path = [self.pos]
 
         self.intent = None
-        self.memory = {}
+        self.memory: dict[int, list[constraints.Constraint]] = {}
 
-    def update_path(self, path):
-        self.path = path
+    @property
+    def finished(self):
+        return self.pos == self.goal
 
-    def get_intent(self, timestep):
+    def get_constraints(self, id: typing.Optional[int] = None) -> list[constraints.Constraint]:
+        """
+        get all constraints currently in memory except for agent with provided id
+        """
+        ret = []
+        for key in self.memory.keys():
+            if not key == id:
+                ret.extend(self.memory[key])
+        return ret
 
-        #### !!!!!!!!! CAUSES BUGS / ISSUES
+    def step(self, my_map):
+        self.path.append(self.pos)
+        self.pos = self.planned_path[min(1, len(self.planned_path) - 1)]  # update pos to position of next timestep
 
-        # self.intent = self.path[timestep:timestep + self.forward_transfer + 1]
-        # if self.intent == []:
-        #     self.intent = [self.goal]*2
+        # Update all constraints to apply one step earlier
+        for key in self.memory.keys():
+            for constraint in self.memory[key]:
+                constraint.step -= 1 # TODO: consider dropping constraints that nolonger apply aka have step
 
-        self.intent = [get_location(self.path, timestep + dt) for dt in range(self.forward_transfer + 1)]
+        self.planned_path = a_star(my_map, self.pos, self.goal, self.heuristics, self.id, self.get_constraints())
+        if self.planned_path is None:
+            raise ValueError('No solutions')
 
-        return self.intent
+    def get_view(self, my_map: list[list[bool]]) -> list[tuple[int, int]]:
+        """
+        returns every coordinate visible to this agent
+        """
+        ret = []
+        for x in range(len(my_map)):
+            for y in range(len(my_map[x])):
+                if not my_map[x][y]:
+                    ret.append((x, y))
+        return ret
 
-    def update_memory(self, path, agent, remaining):
-        self.memory[agent] = {'path': path, 'cost': remaining}
+    def get_path_message(self, lim: typing.Optional[int]=None) -> list[tuple[int, int]]:
+        if lim:
+            return self.planned_path[0:min(lim, len(self.planned_path) - 1)]
+        else:
+            return self.planned_path
 
-    def clear_memory(self):
-        self.memory = {}
+    def get_reaction(self, other_path, other_id) -> typing.Optional[tuple[collisions.Collision, int, int]]:
+        """
+        returns none if no collision found
+        otherwise returns tuple containing:
+            - Collision instance
+            - cost of current path
+            - cost of path avoiding collision (-1 if avoiding is impossible)
+        """
+        collision = collisions.detect_collision(self.id, other_id, self.path, other_path)
+        if collision is None:
+            return None
+        else:
+            pass
 
-    def solve_conflict(self, timestep):
-
-        constraints = []
-
-        # Solve the conflict if exists, only knowing the agents full path and the intent of the others
-        # Idea 1 give priority to the first agent (Thus the agent seing the other ones)
-
-        if not self.memory:
-            # No collision
-            return constraints
-
-        if not self.check_collisions():
-            # No collision
-            return constraints
-
-        # Solve collision
-        for observed_agent_id, observed_agent_data in self.memory.items():
-
-            if observed_agent_data['cost'] > len(self.path):
-
-                vertexes = observed_agent_data['path']
-                edges = [[vertexes[i], vertexes[i + 1]] for i in range(len(vertexes) - 1)]
-
-                for id_vertex, vertex in enumerate(vertexes):
-                    constraints.append(
-                        {'positive': False, 'agent': self.id, 'loc': [vertex],
-                         'timestep': timestep + id_vertex})
-
-                for id_edge, edge in enumerate(edges):
-                    constraints.append(
-                        {'positive': False, 'agent': self.id, 'loc': edge[::-1],
-                         'timestep': timestep + id_edge + 1})
-
-            else:
-
-                vertexes = self.intent
-                edges = [[vertexes[i], vertexes[i + 1]] for i in range(len(vertexes) - 1)]
-
-                for id_vertex, vertex in enumerate(vertexes):
-                    constraints.append(
-                        {'positive': False, 'agent': observed_agent_id, 'loc': [vertex],
-                         'timestep': timestep + id_vertex})
-
-                for id_edge, edge in enumerate(edges):
-                    constraints.append(
-                        {'positive': False, 'agent': observed_agent_id, 'loc': edge[::-1],
-                         'timestep': timestep + id_edge + 1})
-
-        return constraints
-
-    def get_vision(self):
-        raise NotImplementedError
-        return vision
-
-    def check_collisions(self):
-
-        path1 = self.intent
-
-        for path2 in [el['path'] for el in self.memory.values()]:
-            for i in range(max(len(path1), len(path2))):
-                # Vertex collision
-                if get_location(path1, i) == get_location(path2, i):
-
-                    return True
-
-                # Edge collision
-                elif [get_location(path1, i), get_location(path1, i + 1)] == [get_location(path2, i + 1),
-                                                                              get_location(path2, i)]:
-                    return True
-
-        return False
+    def communicate(self, other_agent: "DistributedAgent") -> None:
+        pass

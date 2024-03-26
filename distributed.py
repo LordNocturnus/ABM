@@ -10,6 +10,7 @@ from distributed_agent_class import DistributedAgent
 from cbs import detect_collision, detect_collisions
 import view
 
+
 class DistributedPlanningSolver(object):
     """A distributed planner"""
 
@@ -26,13 +27,13 @@ class DistributedPlanningSolver(object):
         self.starts = starts
         self.goals = goals
         self.num_of_agents = len(goals)
-        self.heuristics: list[list[int]] = []
+        self.heuristics: list[dict[tuple[int, int], int]] = []
 
         # compute heuristics for the low-level search
         for goal in self.goals:
             self.heuristics.append(compute_heuristics(my_map, goal))
 
-        self.agents: list[object] = []
+        self.agents: list[DistributedAgent] = []
         # T.B.D.
         
     def find_solution(self) -> list[list[tuple[int, int]]]:
@@ -50,25 +51,13 @@ class DistributedPlanningSolver(object):
         # Initialization of agents
         # Create agent objects with DistributedAgent class
         for i in range(self.num_of_agents):
-            self.agents.append(DistributedAgent(self.my_map, self.starts[i], self.goals[i], self.heuristics[i], i))
-
-        ## Path finding procedure
-
-        constraints_list = []
-        # First base planning
-        for i in range(self.num_of_agents):  # Find path for each agent
-            path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
-                          i, [])
-            if path is None:
-                raise BaseException('No solutions')
-            self.agents[i].update_path(path)
-            result[i] = path
+            self.agents.append(DistributedAgent(self.my_map, self.starts[i], self.goals[i],
+                                                compute_heuristics(self.my_map, self.goals[i]), i))
 
         # Main planning loop
 
         # while loop for goals reached
-        # for every timestep for every agent find position of agent
-        # for each agent create view
+        # for each agent create field of view (fov)
         # if agent is in view communicate current location and x amount of locations of the path
         # if collision on x amount of locations of path, communicate length of remainder path
         # create new path
@@ -77,75 +66,25 @@ class DistributedPlanningSolver(object):
 
         timestep = 0
 
-        while not self.goals_reached(result, timestep) or self.check_collisions(result):
+        while not all([a.finished for a in self.agents]):
 
             print(f"======= |>{timestep}<| =======")
             for agent in self.agents:
+                fov = agent.get_view(self.my_map)  # field_of_view
+                visible_agents = [a for a in self.agents if a.pos in fov and not a == agent]
+                for other_agent in visible_agents:
+                    agent.communicate(other_agent)
+                print("debug")
 
-                location_agents = [get_location(result[el.id], timestep) for el in self.agents]
-                agents_in_view = view.fov(agent.id, location_agents, agent.view_radius)
-
-                # communicate path
-                vertexes = agent.get_intent(timestep)
-                edges = [[vertexes[i], vertexes[i + 1]] for i in range(len(vertexes) - 1)]
-
-                # Create priority order, to evaluate the agents
-                # |> [False, True, False, False, True] (View of agent 0)
-
-                # Update the agent there knowledge of the suroundings
-                for observed_agent in self.agents:
-
-                    if not agents_in_view[observed_agent.id]:
-                        continue
-
-                    # Get the intent of the other agent
-                    vertexes_a2 = observed_agent.get_intent(timestep)
-                    edges_a2    = [[vertexes_a2[i], vertexes_a2[i + 1]] for i in range(len(vertexes_a2) - 1)]
-
-                    agent.update_memory(vertexes_a2, observed_agent.id, len(observed_agent.path))
-
-                # Solve the collisions for that agent using the aquired knowledge
-
-                constraints_list.extend(agent.solve_conflict(timestep))
-
-                # path = a_star(self.my_map, self.starts[agent.id], self.goals[agent.id],
-                #               self.heuristics[agent.id],
-                #               agent.id, constraints_list)
-                #
-                # if path is None:
-                #     raise BaseException('No solutions')
-                # agent.update_path(path)
-                #
-                # result[agent.id] = path
-
-                result = self.base_planning(constraints_list)
-
-                agent.clear_memory()
-
-
-
-
-                    # for id_vertex, vertex in enumerate(vertexes):
-                    #     constraints_list.append(
-                    #         {'positive': False, 'agent': observed_agent.id, 'loc': [vertex], 'timestep': timestep + id_vertex})
-                    #
-                    # for id_edge, edge in enumerate(edges):
-                    #     constraints_list.append(
-                    #         {'positive': False, 'agent': observed_agent.id, 'loc': edge[::-1], 'timestep': timestep + id_edge + 1})
-                    #
-                    # path = a_star(self.my_map, self.starts[observed_agent.id], self.goals[observed_agent.id],
-                    #               self.heuristics[observed_agent.id],
-                    #               observed_agent.id, constraints_list)
-                    #
-                    # if path is None:
-                    #     raise BaseException('No solutions')
-                    # self.agents[observed_agent.id].update_path(path)
-                    # result[observed_agent.id] = path
-
-                # result = self.base_planning(constraints_list)
+            # move every agent by one step
+            for agent in self.agents:
+                agent.step(self.my_map)
 
             timestep += 1
 
+        # Get final result
+        for i in range(self.num_of_agents):  # Find path for each agent
+            result[i] = self.agents[i].path
 
         # Print final output
         print("\n Found a solution! \n")
@@ -188,7 +127,7 @@ class DistributedPlanningSolver(object):
 
         return False
 
-    def base_planning(self, constraints):
+    """def base_planning(self, constraints):
         result: list[list[tuple[int, int]]] = [[]] * self.num_of_agents
 
         for i in range(self.num_of_agents):  # Find path for each agent
@@ -199,4 +138,4 @@ class DistributedPlanningSolver(object):
             self.agents[i].update_path(path)
             result[i] = path
 
-        return result
+        return result  # """
