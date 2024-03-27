@@ -5,9 +5,8 @@ Code in this file is just provided as guidance, you are free to deviate from it.
 """
 
 import time as timer
-from single_agent_planner import compute_heuristics, a_star, get_sum_of_cost, get_location
+from single_agent_planner_v2 import compute_heuristics, get_sum_of_cost, get_location
 from distributed_agent_class import DistributedAgent
-from cbs import detect_collision, detect_collisions
 import view
 
 
@@ -73,7 +72,8 @@ class DistributedPlanningSolver(object):
                 fov = agent.get_view(self.my_map)  # field_of_view
                 visible_agents = [a for a in self.agents if a.pos in fov and not a == agent]
                 for other_agent in visible_agents:
-                    agent.communicate(other_agent)
+                    pass
+                    #agent.communicate(other_agent)
                 print("debug")
 
             # move every agent by one step
@@ -94,7 +94,7 @@ class DistributedPlanningSolver(object):
         
         return result  # Hint: this should be the final result of the distributed planning (visualization is done after planning)
 
-    def goals_reached(self, paths, timestep) -> bool:
+    """def goals_reached(self, paths: list[list[tuple[int, int]]], timestep: int) -> bool:
         # goals = self.goals
         # location agents = get_location(path, timestep)
         # number/index agent = self.num_of_agents() -> loop over
@@ -106,7 +106,7 @@ class DistributedPlanningSolver(object):
 
         return True
 
-    def check_collisions(self, paths):
+    def check_collisions(self, paths: list[list[tuple[int, int]]]) -> bool:
 
         for agent_1 in range(len(paths)):
             for agent_2 in range(agent_1 + 1, len(paths)):
@@ -127,7 +127,7 @@ class DistributedPlanningSolver(object):
 
         return False
 
-    """def base_planning(self, constraints):
+    def base_planning(self, constraints):
         result: list[list[tuple[int, int]]] = [[]] * self.num_of_agents
 
         for i in range(self.num_of_agents):  # Find path for each agent

@@ -1,7 +1,7 @@
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.lines as mline
-import numpy as np
+import matplotlib.pyplot as plt  # type: ignore
+# import matplotlib.patches as mpatches
+import matplotlib.lines as mline  # type: ignore
+import numpy as np  # type: ignore
 import math
 
 # def generate_view_map() -> dict[list[tuple[int,int]]]:
@@ -9,7 +9,7 @@ import math
 #     view_map = {}
 
 #     # Evaluate view for all posible locations Precomp step, to reduce computational requirements. 
-#     view_map["y" ,"x"] = agent_vision()
+#     view_map["y", "x"] = agent_vision()
     
 #     return view_map
 

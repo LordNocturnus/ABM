@@ -1,6 +1,8 @@
 import typing
 import constraints
 import utils
+import numpy.typing as npt  # type: ignore
+import numpy as np
 
 from single_agent_planner_v2 import compute_heuristics, a_star, get_location, get_sum_of_cost
 
@@ -34,7 +36,7 @@ class Collision:
         return (constraints.Constraint(False, self.agent_0, self.step, self.loc_0),
                 constraints.Constraint(False, self.agent_1, self.step, self.loc_0))
 
-    def disjoint_splitting(self, rng=utils.RNG) -> tuple[constraints.Constraint, constraints.Constraint]:
+    def disjoint_splitting(self, rng: np.random._generator = utils.RNG) -> tuple[constraints.Constraint, constraints.Constraint]:
         ##############################
         # Task 4.1: Return a list of (two) constraints to resolve the given collision
         #           Vertex collision: the first constraint enforces one agent to be at the specified location at the
@@ -51,12 +53,12 @@ class Collision:
         return (constraints.Constraint(True, agent, self.step, self.loc_0),
                 constraints.Constraint(False, agent, self.step, self.loc_0))
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.loc_1:
             return f"Edge Collision of agent {self.agent_0} and agent {self.agent_1} at timestep {self.step} between {self.loc_0} and {self.loc_1}\n"
         return f"Vertex collision of agent {self.agent_0} and agent {self.agent_1} at timestep {self.step} at location {self.loc_0}\n"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
 
@@ -80,13 +82,13 @@ def detect_collision(agent_0: int,
     return None
 
 
-def detect_collisions(paths: list[list[tuple[int, int]]]) -> dict[(int, int), Collision]:
+def detect_collisions(paths: list[list[tuple[int, int]]]) -> dict[tuple[int, int], Collision]:
     ##############################
     # Task 3.1: Return a list of first collisions between all robot pairs.
     #           A collision can be represented as dictionary that contains the id of the two robots, the vertex or edge
     #           causing the collision, and the timestep at which the collision occurred.
     #           You should use your detect_collision function to find a collision between two robots.
-    res: dict[(int, int), Collision] = dict()
+    res: dict[tuple[int, int], Collision] = dict()
     for a0, p0 in enumerate(paths[:-1]):
         for a1, p1 in enumerate(paths[a0 + 1:]):
             collision = detect_collision(a0, a0 + a1 + 1, p0, p1)

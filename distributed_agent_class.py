@@ -34,9 +34,11 @@ class DistributedAgent(object):
         self.heuristics = heuristics
 
         ## Path finding procedure
-        self.planned_path = a_star(my_map, self.pos, self.goal, self.heuristics, self.id, [])
-        if self.planned_path is None:
+        planned_path = a_star(my_map, self.pos, self.goal, self.heuristics, self.id, [])
+        if planned_path is None:
             raise ValueError('No solutions')
+        else:
+            self.planned_path = planned_path
 
         #self.view_radius = 5
         #self.forward_transfer = 5
@@ -46,7 +48,7 @@ class DistributedAgent(object):
         self.memory: dict[int, list[constraints.Constraint]] = {}
 
     @property
-    def finished(self):
+    def finished(self) -> bool:
         return self.pos == self.goal
 
     def get_constraints(self, id: typing.Optional[int] = None) -> list[constraints.Constraint]:
@@ -59,18 +61,21 @@ class DistributedAgent(object):
                 ret.extend(self.memory[key])
         return ret
 
-    def step(self, my_map):
+    def step(self, my_map: list[list[bool]]) -> None:
         self.path.append(self.pos)
         self.pos = self.planned_path[min(1, len(self.planned_path) - 1)]  # update pos to position of next timestep
 
         # Update all constraints to apply one step earlier
-        for key in self.memory.keys():
+        self.memory = {}
+        """for key in self.memory.keys():
             for constraint in self.memory[key]:
-                constraint.step -= 1 # TODO: consider dropping constraints that nolonger apply aka have step
+                constraint.step -= 1 # TODO: consider dropping constraints that nolonger apply aka have step"""
 
-        self.planned_path = a_star(my_map, self.pos, self.goal, self.heuristics, self.id, self.get_constraints())
-        if self.planned_path is None:
+        planned_path = a_star(my_map, self.pos, self.goal, self.heuristics, self.id, [])
+        if planned_path is None:
             raise ValueError('No solutions')
+        else:
+            self.planned_path = planned_path
 
     def get_view(self, my_map: list[list[bool]]) -> list[tuple[int, int]]:
         """
@@ -89,7 +94,7 @@ class DistributedAgent(object):
         else:
             return self.planned_path
 
-    def get_reaction(self, other_path, other_id) -> typing.Optional[tuple[collisions.Collision, int, int]]:
+    def get_reaction(self, other_path: list[tuple[int, int]], other_id: int, my_map: list[list[bool]]) -> typing.Optional[tuple[collisions.Collision, int, int]]:
         """
         returns none if no collision found
         otherwise returns tuple containing:
@@ -101,7 +106,23 @@ class DistributedAgent(object):
         if collision is None:
             return None
         else:
-            pass
+            current = len(self.planned_path)
+            constraint_0, constraint_1 = collision.standard_splitting()
+            if constraint_0.agent == self.id:
+                new_path = a_star(my_map, self.pos, self.goal, self.heuristics, self.id,
+                                  self.get_constraints(other_id) + [constraint_0])
+                if new_path is None:
+                    new = -1
+                else:
+                    new = len(new_path)
+            else:
+                new_path = a_star(my_map, self.pos, self.goal, self.heuristics, self.id,
+                                  self.get_constraints(other_id) + [constraint_1])
+                if new_path is None:
+                    new = -1
+                else:
+                    new = len(new_path)
+            print(current, new)
+            return collision, current, new
 
-    def communicate(self, other_agent: "DistributedAgent") -> None:
-        pass
+
