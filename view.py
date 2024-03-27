@@ -4,14 +4,14 @@ import matplotlib.lines as mline
 import numpy as np
 import math
 
-def generate_view_map() -> dict[list[tuple[int,int]]]:
+# def generate_view_map() -> dict[list[tuple[int,int]]]:
     
-    view_map = {}
+#     view_map = {}
 
-    # Evaluate view for all posible locations Precomp step, to reduce computational requirements. 
-    view_map["y" ,"x"] = agent_vision()
+#     # Evaluate view for all posible locations Precomp step, to reduce computational requirements. 
+#     view_map["y" ,"x"] = agent_vision()
     
-    return view_map
+#     return view_map
 
 def fov(m_id: int, locations: list[tuple[int, int]], view_radius: int) -> list[bool]:
     
@@ -38,10 +38,10 @@ def fov(m_id: int, locations: list[tuple[int, int]], view_radius: int) -> list[b
 
 
 def fov_blocking(m_id: int, locations: list[tuple[int, int]], view_radius: int,
-                 obstacles: list[tuple[int,int]], DEBUG: bool=False) -> list[bool]:
+                 obstacle_locations: list[tuple[int,int]], DEBUG: bool=False) -> list[bool]:
     
     m_agent = locations[m_id]
-    obstacles = [Box(obstacle) for obstacle in obstacles]
+    obstacles = [Box(obstacle) for obstacle in obstacle_locations]
     
     visibility = []
 
@@ -88,7 +88,7 @@ class Ray:
         self.end_x = end[1]
         self.end_y = end[0]
 
-    def check_view(self, obstacles: list[tuple[int]]) -> bool:
+    def check_view(self, obstacles: list[Box]) -> bool:
         
         self.reso = 50
 
@@ -122,7 +122,7 @@ class Ray:
 
         return True
     
-    def check_view_v2(self, obstacles: list[object]) -> bool:
+    def check_view_v2(self, obstacles: list[Box]) -> bool:
 
         y00, x00 = self.start_y, self.start_x
         y01, x01 = self.end_y - self.start_y, self.end_x - self.start_x
@@ -148,7 +148,7 @@ class Ray:
         return True
 
 
-def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[object], 
+def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[Box], 
                  DEBUG: bool=False) -> list[tuple[int, int]]:
     """
     Returns the points the agent can be view based on the its view radius and the agents within the environment
@@ -268,45 +268,4 @@ if __name__ == "__main__":
     fig.gca().invert_yaxis()
     ax.set_aspect('equal', adjustable='box')
     plt.legend()
-    plt.show()
-
-    # Script with obstacle blockage
-    
-    # Main agent
-    agent = (5,1)   # (y,x)
-
-    fig, ax = plt.subplots()
-
-    for i in range(-r,r+1):
-        for j in range(-r,r+1):
-            if i == 0 and j == 0:
-                
-                plt.scatter(agent[1],agent[0],color='c')
-            
-            elif math.sqrt(i**2 + j**2) <= r:
-                # Evaulate ray from origin to end point
-                # Goal is to determine if the end point can be seen/ evaluated
-
-                line = Ray(agent, (j+agent[0], i+agent[1]))
-
-                # Visualise points the agent can see 
-                if line.check_view_v2([Box(obstacle) for obstacle in obstacles]):
-                    # Point can be seen
-                    ax.scatter(i+agent[1], j+agent[0],color='b')
-                else:
-                    # Point cannot be seen
-                    ax.scatter(i+agent[1], j+agent[0],color='r')
-
-    # Visualise objects
-    for obstacle in obstacles:
-
-        rect = plt.Rectangle((obstacle[1]-0.5, obstacle[0]-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
-        ax.add_patch(rect)
-
-    fig.gca().invert_yaxis()
-    ax.set_aspect('equal', adjustable='box')
-    legend_elements = [mline.Line2D([0], [0], marker='o', color='w', label='Agent',markerfacecolor='c', markersize=7),
-                       mline.Line2D([0], [0], marker='o', color='w', label='Observable',markerfacecolor='b', markersize=7),
-                       mline.Line2D([0], [0], marker='o', color='w', label='Not observable',markerfacecolor='r', markersize=7)]
-    ax.legend(handles=legend_elements)
     plt.show()
