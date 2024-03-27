@@ -41,7 +41,7 @@ class Constraint:
             else:
                 yield Constraint(False, agent, self.step, self.loc_1, infinite=self.infinite)
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.positive:
             pos = "Positive"
         else:
@@ -50,7 +50,7 @@ class Constraint:
             return f"{pos} edge Constraint of agent {self.agent} at timestep {self.step} between {self.loc_1} and {self.loc_2}\n"
         return f"{pos} vertex Constraint of agent {self.agent} at timestep {self.step} at location {self.loc_1}\n"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
 

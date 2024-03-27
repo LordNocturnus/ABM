@@ -14,7 +14,7 @@ class CBSNode:
                  cost: int,
                  constraint_list: list[constraints.Constraint],
                  paths: list[list[tuple[int, int]]],
-                 collisions: dict[(int, int), collisions.Collision],
+                 collisions: dict[tuple[int, int], collisions.Collision],
                  idx: int) -> None:
         self.cost = cost
         self.constraints = constraint_list
@@ -65,7 +65,7 @@ class CBSSolver(object):
         self.num_of_generated += 1
 
     def pop_node(self) -> CBSNode:
-        node = heapq.heappop(self.open_list)
+        node: CBSNode = heapq.heappop(self.open_list)
         #print("Expand node {}".format(node.idx))
         self.num_of_expanded += 1
         return node
