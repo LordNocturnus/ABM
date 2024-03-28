@@ -5,6 +5,9 @@ Code in this file is just provided as guidance, you are free to deviate from it.
 """
 
 import time as timer
+
+import collisions
+import copy
 from single_agent_planner_v2 import compute_heuristics, get_sum_of_cost, get_location
 from distributed_agent_class import DistributedAgent
 import view
@@ -35,7 +38,7 @@ class DistributedPlanningSolver(object):
         self.agents: list[DistributedAgent] = []
         # T.B.D.
         
-    def find_solution(self) -> list[list[tuple[int, int]]]:
+    def find_solution(self, cbs=False) -> list[list[tuple[int, int]]]:
         """
         Finds paths for all agents from start to goal locations. 
         
@@ -67,24 +70,56 @@ class DistributedPlanningSolver(object):
 
         while not all([a.finished for a in self.agents]):
 
-            print(f"======= |>{timestep}<| =======")
-            for agent in self.agents:
-                fov = agent.get_view(self.my_map)  # field_of_view
-                visible_agents = [a for a in self.agents if a.pos in fov and not a == agent]
-                for other_agent in visible_agents:
-                    pass
-                    #agent.communicate(other_agent)
-                print("debug")
+            print(f"===T=== |>{timestep}<| ===T===")
+            found_collision = True
+            col = 0
+            while found_collision:
+                print(f"===C=== |>{col}<| ===C===")
+                found_collision = False
+                messages = {}
+                for agent in self.agents:
+                    print(f"===A=== |>{agent.id}<| ===A===")
+                    fov = agent.get_view(self.my_map)  # field_of_view
+                    visible_agents = [a for a in self.agents if a.pos in fov and not a == agent]
+                    if len(visible_agents) == 0:
+                        continue
+                    colliding_agents = [a for a in visible_agents if collisions.detect_collision(0,
+                                                                                                 0,
+                                                                                                 a.get_path(),
+                                                                                                 agent.get_path())]
+                    if len(colliding_agents) == 0:
+                        continue
+                    messages[agent.id] = set([copy.deepcopy(a.message) for a in colliding_agents])
+
+                for idx in messages.keys():
+                    try:
+                        self.agents[idx].run_prio(messages[idx])
+                    except:
+                        pass
+                    print(self.agents[idx].path[:-1] + self.agents[idx].planned_path)
+                    """for other_agent in visible_agents:
+                        reaction = other_agent.get_reaction(agent.get_path_message())
+                        if reaction is not None:
+                            found_collision = True
+                            own_reaction = agent.get_reaction(other_agent.get_path_message())
+                            print(reaction, own_reaction)
+                    #if len(reactions) == 0:
+                    #    continue
+                    print("debug")"""
+                col += 1
+                #break
 
             # move every agent by one step
             for agent in self.agents:
                 agent.step(self.my_map)
+                print(agent.id, agent.pos)
+            #break
 
             timestep += 1
 
         # Get final result
         for i in range(self.num_of_agents):  # Find path for each agent
-            result[i] = self.agents[i].path
+            result[i] = self.agents[i].path + self.agents[i].planned_path
 
         # Print final output
         print("\n Found a solution! \n")
