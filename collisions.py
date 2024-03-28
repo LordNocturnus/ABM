@@ -4,7 +4,7 @@ import utils
 import numpy.typing as npt  # type: ignore
 import numpy as np
 
-from single_agent_planner_v2 import compute_heuristics, a_star, get_location, get_sum_of_cost
+from single_agent_planner_v2 import get_location
 
 
 class Collision:
@@ -30,7 +30,7 @@ class Collision:
         #           Edge collision: the first constraint prevents the first agent to traverse the specified edge at the
         #                          specified timestep, and the second constraint prevents the second agent to traverse the
         #                          specified edge at the specified timestep
-        if self.loc_1:  # Edge collision
+        if self.edge:  # Edge collision
             return (constraints.Constraint(False, self.agent_0, self.step, self.loc_0, self.loc_1),
                     constraints.Constraint(False, self.agent_1, self.step, self.loc_1, self.loc_0))
         return (constraints.Constraint(False, self.agent_0, self.step, self.loc_0),
@@ -47,11 +47,15 @@ class Collision:
         #                          specified edge at the specified timestep
         #           Choose the agent randomly
         agent = rng.choice((self.agent_0, self.agent_1))
-        if self.loc_1:  # Edge collision
+        if self.edge:  # Edge collision
             return (constraints.Constraint(True, agent, self.step, self.loc_0, self.loc_1),
                     constraints.Constraint(False, agent, self.step, self.loc_0, self.loc_1))
         return (constraints.Constraint(True, agent, self.step, self.loc_0),
                 constraints.Constraint(False, agent, self.step, self.loc_0))
+
+    @property
+    def edge(self) -> bool:
+        return self.loc_1 is not None
 
     def __str__(self) -> str:
         if self.loc_1:
