@@ -114,7 +114,7 @@ class CBSSolver(object):
         while len(self.open_list) > 0:
             current = self.pop_node()
             if len(current.collisions) == 0:
-                self.print_results(root)
+                #self.print_results(root)
                 return current.paths
             #print(current.collisions[next(iter(current.collisions))])
             if disjoint:
@@ -137,7 +137,7 @@ class CBSSolver(object):
                     new.collisions = collisions.detect_collisions(new.paths)
                     new.cost = get_sum_of_cost(new.paths)
                     self.push_node(new)
-            print(len(self.open_list))
+            #print(len(self.open_list))
 
         raise BaseException('No solutions')#"""
 
