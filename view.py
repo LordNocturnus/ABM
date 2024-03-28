@@ -4,18 +4,48 @@ import matplotlib.lines as mline  # type: ignore
 import numpy as np  # type: ignore
 import math
 
-
-def generate_view_map() -> dict[str, list[tuple[int,int]]]:
+# def generate_view_map() -> dict[list[tuple[int,int]]]:
     
-    view_map = {}
+#     view_map = {}
 
-    # Evaluate view for all posible locations Precomp step, to reduce computational requirements. 
-    view_map["y", "x"] = agent_vision()
+#     # Evaluate view for all posible locations Precomp step, to reduce computational requirements. 
+#     view_map["y", "x"] = agent_vision()
     
-    return view_map
+#     return view_map
 
 def fov(m_id: int, locations: list[tuple[int, int]], view_radius: int) -> list[bool]:
+    """
+    Fov generates a list containing boolean values indicating which agents, the specified agent 
+    x can view, while ignoring obstacles. True indicates the agent can be viewed, while false 
+    idicates the agent cannot be observed by agent x.
     
+    Example: output [False, False, True, True, False, False], if the agent observing other agents 
+    is given index 1, is gives itself the default value False (cannot see iteself). It can however see
+    agent 2 and 3 (assigned true), and cannot observe agent 0, 1, 4, 5 (assigned False).
+    
+    Parameters
+    ----------
+    m_id : int
+        Index of the main agent, who is observing other agents within the map.
+    
+    locations : list[tuple[int, int]]
+        Locations of all agents supplied as a list of coordinates (y-location:int, x-location:int) 
+        at the evaluated timestep.
+    
+    view_radius : int
+        maximum unrestricted view range of the agent
+
+    Returns
+    -------
+    list[bool]
+        A list of boolean values indicating which agents, agent `m_id` can view within the map. Where True means 
+        an agent is in view, and false means an agent is not in view. The agent `m_id` assigns itself False.
+
+    Raises
+    ------
+    None
+    """
+
     visibility = []
 
     m_agent = locations[m_id]
@@ -39,10 +69,52 @@ def fov(m_id: int, locations: list[tuple[int, int]], view_radius: int) -> list[b
 
 
 def fov_blocking(m_id: int, locations: list[tuple[int, int]], view_radius: int,
-                 obstacles: list[tuple[int,int]], DEBUG: bool=False) -> list[bool]:
+                 obstacle_locations: list[tuple[int,int]], DEBUG: bool=False) -> list[bool]:
+    """
+    Fov_blocking generates a list containing boolean values indicating which agents, the specified agent 
+    x can view, considering obstacles. True indicates the agent can be viewed, while false idicates the agent
+    cannot be observed by agent x.
     
+    Example: output [False, False, True, True, False, False], if the agent observing other agents 
+    is given index 1, is gives itself the default value False (cannot see iteself). It can however see
+    agent 2 and 3 (assigned true), and cannot observe agent 0, 1, 4, 5 (assigned False).
+
+    Methode: Basic version ray evaluation code, which evaluated rays going to all possible points within 
+    the unrestricted view of the agent. By then evaulating if the ray intersetcs with an obstacle it can be 
+    determined if that location can be viewed or not. Geomteric formulation for checking intersection was 
+    based on: https://stackoverflow.com/a/4977569
+    
+    Parameters
+    ----------
+    m_id : int
+        Index of the main agent, who is observing other agents within the map.
+    
+    locations : list[tuple[int, int]]
+        Locations of all agents supplied as a list of coordinates (y-location:int, x-location:int) 
+        at the evaluated timestep.
+    
+    view_radius : int
+        maximum unrestricted view range of the agent
+    
+    obstacle_locations : list[tuple[int, int]]
+        Locations of all obstacles within the map supplied as a list of coordinates (y-location:int, x-location:int).
+
+    DEBUG (optional, default False) : bool
+        True, Enables plotting functionality to view the agents' view  
+
+    Returns
+    -------
+    list[bool]
+        A list of boolean values indicating which agents, agent `m_id` can view within the map. Where True means 
+        an agent is in view, and false means an agent is not in view. The agent `m_id` assigns itself False.
+
+    Raises
+    ------
+    None
+    """
+
     m_agent = locations[m_id]
-    obstacles = [Box(obstacle) for obstacle in obstacles]
+    obstacles = [Box(obstacle) for obstacle in obstacle_locations]
     
     visibility = []
 
@@ -65,14 +137,67 @@ def fov_blocking(m_id: int, locations: list[tuple[int, int]], view_radius: int,
 
 
 class Box:
+    """
+    A box object, required for the ray intersection implmentation. It functions as an object 
+    representation of the various obstacles within the map. To create an obstacle the following 
+    code is used: `Box((10, 5))`. This creates the box object for the obstacle located at y = 10 
+    and x = 5.
 
-    def __init__(self, location) -> None:
+    Attributes
+    ----------
+        self.x : int
+            x location of the obstacle
+        self.y : int
+            y location of the obstacle
+    
+    Methodes
+    --------
+        bounds
+            list[list[tuple[int, int]]]
+            returns the coordinates representing the lines segements representing to bounds of the 
+            square shaped obstacle.  
+    """
+
+    def __init__(self, location: tuple[int,int]) -> None:
+        """
+        Initliase the object
+
+        Parameters
+        ----------
+        locations : tuple[int, int]
+            Location of the obstacle supplied as (y-location, x-location)
+        
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        None
+        """
         self.x = location[1]
         self.y = location[0]
         self.segments = self.bounds
     
     @property
-    def bounds(self):
+    def bounds(self) -> list[list[tuple[float, float]]]:
+        """
+        returns the coordinates representing the lines segements representing to bounds of the 
+        square shaped obstacle.  
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        locations : tuple[int, int]
+            Location of the obstacle supplied as (y-location, x-location)
+
+        Raises
+        ------
+        None
+        """
         padding = 0.49
         out = [[(self.y + padding, self.x + padding), (self.y + padding, self.x - padding)],
                [(self.y + padding, self.x + padding), (self.y - padding, self.x + padding)],
@@ -82,14 +207,54 @@ class Box:
 
 
 class Ray:
+    """
+    A ray object going from the agent location to another specified location within the grid. Required to
+    analyse if the agent can view another point within its environment.
+
+    Attributes
+    ----------
+        self.start_x : int
+            x location of vertex starting location
+        self.start_y : int
+            y location of vertex starting location
+        self.end_x : int
+            x location of vertex ending location
+        self.end_y : int
+            y location of vertex ending location
+    
+    Methodes
+    --------
+        check_view_v2(obstacles)
+            bool
+            returns False if the ray is blocked by any obstacle else True is returend
+    """
 
     def __init__(self, start: tuple, end: tuple) -> None:
+        """
+        Initliase the Ray object
+
+        Parameters
+        ----------
+        start : tuple[int, int]
+            (y, x) location of vertex starting location
+
+        end : tuple[int, int]
+            (y, x) location of vertex starting location
+        
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        None
+        """
         self.start_x = start[1]
         self.start_y = start[0]
         self.end_x = end[1]
         self.end_y = end[0]
 
-    def check_view(self, obstacles: list[tuple[int]]) -> bool:
+    def check_view(self, obstacles: list[Box]) -> bool:
         
         self.reso = 50
 
@@ -123,8 +288,24 @@ class Ray:
 
         return True
     
-    def check_view_v2(self, obstacles: list[object]) -> bool:
+    def check_view_v2(self, obstacles: list[Box]) -> bool:
+        """
+        Check if the ray intersects with any obstacles.
 
+        Parameters
+        ----------
+        obstacles : list[Box]
+            List containing the Box objects within the environment
+        
+        Returns
+        -------
+        bool
+            True if ray does not intersect with any obstacles within the environment. Else False
+
+        Raises
+        ------
+        None
+        """
         y00, x00 = self.start_y, self.start_x
         y01, x01 = self.end_y - self.start_y, self.end_x - self.start_x
         
@@ -149,10 +330,33 @@ class Ray:
         return True
 
 
-def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[object], 
+def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[Box], 
                  DEBUG: bool=False) -> list[tuple[int, int]]:
     """
-    Returns the points the agent can be view based on the its view radius and the agents within the environment
+    Returns the points the agent can be view based on the its view radius, the obstacles and the agents within 
+    the environment. 
+
+    Parameters
+    ----------
+    agent_loc : tuple[int, int]
+        The agent location provided as (y-location, x-location)
+    
+    view_radius : int
+        maximum unrestricted view range of the agent
+    
+    obstacle_locations : list[Box]
+        Locations of all obstacles within the map supplied as a list of Box objects.
+
+    DEBUG (optional, default False) : bool
+        True, Enables plotting functionality to view the agents' view
+    
+    Returns
+    -------
+    list[tuple[int, int]]
+        Returns list of all point the agent can view, point is list are stored as (y-location, x-location)
+
+    Raises
+    ------
     """
 
     points_in_vision = []
@@ -269,45 +473,4 @@ if __name__ == "__main__":
     fig.gca().invert_yaxis()
     ax.set_aspect('equal', adjustable='box')
     plt.legend()
-    plt.show()
-
-    # Script with obstacle blockage
-    
-    # Main agent
-    agent = (5,1)   # (y,x)
-
-    fig, ax = plt.subplots()
-
-    for i in range(-r,r+1):
-        for j in range(-r,r+1):
-            if i == 0 and j == 0:
-                
-                plt.scatter(agent[1],agent[0],color='c')
-            
-            elif math.sqrt(i**2 + j**2) <= r:
-                # Evaulate ray from origin to end point
-                # Goal is to determine if the end point can be seen/ evaluated
-
-                line = Ray(agent, (j+agent[0], i+agent[1]))
-
-                # Visualise points the agent can see 
-                if line.check_view_v2([Box(obstacle) for obstacle in obstacles]):
-                    # Point can be seen
-                    ax.scatter(i+agent[1], j+agent[0],color='b')
-                else:
-                    # Point cannot be seen
-                    ax.scatter(i+agent[1], j+agent[0],color='r')
-
-    # Visualise objects
-    for obstacle in obstacles:
-
-        rect = plt.Rectangle((obstacle[1]-0.5, obstacle[0]-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
-        ax.add_patch(rect)
-
-    fig.gca().invert_yaxis()
-    ax.set_aspect('equal', adjustable='box')
-    legend_elements = [mline.Line2D([0], [0], marker='o', color='w', label='Agent',markerfacecolor='c', markersize=7),
-                       mline.Line2D([0], [0], marker='o', color='w', label='Observable',markerfacecolor='b', markersize=7),
-                       mline.Line2D([0], [0], marker='o', color='w', label='Not observable',markerfacecolor='r', markersize=7)]
-    ax.legend(handles=legend_elements)
     plt.show()
