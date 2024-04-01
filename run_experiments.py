@@ -16,6 +16,8 @@ from distributed import DistributedPlanningSolver # Placeholder for Distributed 
 from visualize import Animation
 from single_agent_planner_v2 import get_sum_of_cost
 
+import map_gen
+
 SOLVER = "Independent"
 
 
@@ -132,7 +134,12 @@ if __name__ == '__main__':
     for file in sorted(glob.glob(args.instance)):
 
         print(f"***Import instance {file}***")
-        my_map, starts, goals = import_mapf_instance(file)
+
+        if "maps/" in file:
+            my_map, starts, goals = map_gen.MapGenerator(file).generate(12)
+        else:
+            my_map, starts, goals = import_mapf_instance(file)
+
         print_mapf_instance(my_map, starts, goals)
 
         if args.solver == "CBS":

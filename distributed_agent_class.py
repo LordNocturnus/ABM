@@ -27,8 +27,8 @@ class DistributedAgent(object):
         self.heuristics = heuristics
         self.path = None
 
-        self.view_radius = 10
-        self.forward_transfer = 10
+        self.view_radius = 3
+        self.forward_transfer = 5
 
         self.intent = None
         self.memory = {}
@@ -47,10 +47,10 @@ class DistributedAgent(object):
         # if self.intent == []:
         #     self.intent = [self.goal]*2
 
-        if self.intent == []:
-            self.intent = [self.goal] * 2
-        else:
-            self.intent = [get_location(self.path, timestep + dt) for dt in range(self.forward_transfer + 1)]
+        # if self.intent == []:
+        #     self.intent = [self.goal] * 2
+        # else:
+        self.intent = [get_location(self.path, timestep + dt) for dt in range(self.forward_transfer + 1)]
 
         return self.intent
 
@@ -76,7 +76,7 @@ class DistributedAgent(object):
         # Solve collision
         for observed_agent_id, observed_agent_data in self.memory.items():
 
-            if observed_agent_data['cost'] > len(self.path):
+            if observed_agent_data['cost'] >= len(self.path):
 
                 vertexes = observed_agent_data['path']
                 edges = [[vertexes[i], vertexes[i + 1]] for i in range(len(vertexes) - 1)]
