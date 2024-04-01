@@ -5,7 +5,7 @@ Code in this file is just provided as guidance, you are free to deviate from it.
 """
 import typing
 
-from single_agent_planner_v2 import get_location
+from single_agent_planner import get_location, a_star
 
 
 class DistributedAgent(object):
@@ -27,11 +27,14 @@ class DistributedAgent(object):
         self.heuristics = heuristics
         self.path = None
 
-        self.view_radius = 5
-        self.forward_transfer = 5
+        self.view_radius = 10
+        self.forward_transfer = 10
 
         self.intent = None
         self.memory = {}
+
+        self.constraint_table_local = []
+        self.constraint_table_transfer = []
 
     def update_path(self, path):
         self.path = path
@@ -44,7 +47,10 @@ class DistributedAgent(object):
         # if self.intent == []:
         #     self.intent = [self.goal]*2
 
-        self.intent = [get_location(self.path, timestep + dt) for dt in range(self.forward_transfer + 1)]
+        if self.intent == []:
+            self.intent = [self.goal] * 2
+        else:
+            self.intent = [get_location(self.path, timestep + dt) for dt in range(self.forward_transfer + 1)]
 
         return self.intent
 
@@ -56,18 +62,16 @@ class DistributedAgent(object):
 
     def solve_conflict(self, timestep):
 
-        constraints = []
-
         # Solve the conflict if exists, only knowing the agents full path and the intent of the others
         # Idea 1 give priority to the first agent (Thus the agent seing the other ones)
 
         if not self.memory:
             # No collision
-            return constraints
+            return []
 
         if not self.check_collisions():
             # No collision
-            return constraints
+            return []
 
         # Solve collision
         for observed_agent_id, observed_agent_data in self.memory.items():
@@ -78,12 +82,12 @@ class DistributedAgent(object):
                 edges = [[vertexes[i], vertexes[i + 1]] for i in range(len(vertexes) - 1)]
 
                 for id_vertex, vertex in enumerate(vertexes):
-                    constraints.append(
+                    self.constraint_table_local.append(
                         {'positive': False, 'agent': self.id, 'loc': [vertex],
                          'timestep': timestep + id_vertex})
 
                 for id_edge, edge in enumerate(edges):
-                    constraints.append(
+                    self.constraint_table_local.append(
                         {'positive': False, 'agent': self.id, 'loc': edge[::-1],
                          'timestep': timestep + id_edge + 1})
 
@@ -93,20 +97,32 @@ class DistributedAgent(object):
                 edges = [[vertexes[i], vertexes[i + 1]] for i in range(len(vertexes) - 1)]
 
                 for id_vertex, vertex in enumerate(vertexes):
-                    constraints.append(
+                    self.constraint_table_transfer.append(
                         {'positive': False, 'agent': observed_agent_id, 'loc': [vertex],
                          'timestep': timestep + id_vertex})
 
                 for id_edge, edge in enumerate(edges):
-                    constraints.append(
+                    self.constraint_table_transfer.append(
                         {'positive': False, 'agent': observed_agent_id, 'loc': edge[::-1],
                          'timestep': timestep + id_edge + 1})
 
-        return constraints
+        self.plan_path(timestep)
+
+        return self.constraint_table_transfer
 
     def get_vision(self):
         raise NotImplementedError
         return vision
+
+    def plan_path(self, timestep):
+        path = a_star(self.my_map, self.start, self.goal, self.heuristics,
+                      self.id, self.constraint_table_local)
+        if path is None:
+            raise BaseException('No solutions')
+        self.update_path(path)
+
+    def add_constraint(self, constraint):
+        self.constraint_table_local.append(constraint)
 
     def check_collisions(self):
 

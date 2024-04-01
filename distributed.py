@@ -106,43 +106,14 @@ class DistributedPlanningSolver(object):
 
                 # Solve the collisions for that agent using the aquired knowledge
 
-                constraints_list.extend(agent.solve_conflict(timestep))
+                to_others = agent.solve_conflict(timestep)
 
-                # path = a_star(self.my_map, self.starts[agent.id], self.goals[agent.id],
-                #               self.heuristics[agent.id],
-                #               agent.id, constraints_list)
-                #
-                # if path is None:
-                #     raise BaseException('No solutions')
-                # agent.update_path(path)
-                #
-                # result[agent.id] = path
-
-                result = self.base_planning(constraints_list)
+                for c in to_others:
+                    self.agents[c['agent']].add_constraint(c)
 
                 agent.clear_memory()
 
-
-
-
-                    # for id_vertex, vertex in enumerate(vertexes):
-                    #     constraints_list.append(
-                    #         {'positive': False, 'agent': observed_agent.id, 'loc': [vertex], 'timestep': timestep + id_vertex})
-                    #
-                    # for id_edge, edge in enumerate(edges):
-                    #     constraints_list.append(
-                    #         {'positive': False, 'agent': observed_agent.id, 'loc': edge[::-1], 'timestep': timestep + id_edge + 1})
-                    #
-                    # path = a_star(self.my_map, self.starts[observed_agent.id], self.goals[observed_agent.id],
-                    #               self.heuristics[observed_agent.id],
-                    #               observed_agent.id, constraints_list)
-                    #
-                    # if path is None:
-                    #     raise BaseException('No solutions')
-                    # self.agents[observed_agent.id].update_path(path)
-                    # result[observed_agent.id] = path
-
-                # result = self.base_planning(constraints_list)
+            result = [self.agents[i].path for i in range(self.num_of_agents)]
 
             timestep += 1
 
