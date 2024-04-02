@@ -6,6 +6,9 @@ class Test_View_nonblocking(unittest.TestCase):
     """
     Test class to investigate the `fov` function from `view.fov()`
 
+    The output of the view function is precisly known before hand, therfore the
+    entire function (that utelises other functions) is tested trough integration tests. 
+
     Outline of tests:
     ------------------
 
