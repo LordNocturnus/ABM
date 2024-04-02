@@ -15,7 +15,13 @@ if __name__ == '__main__':
     test_suite = unittest.TestSuite()
 
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_nonblocking.Test_View_nonblocking))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_blocking))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_blocking_SC2))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_blocking_SC3))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_blocking_SC4))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_blocking_SC5))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_blocking_SC6))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_Ray))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_coordinates))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_Obstacle))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_mapgen.Test_MapGenerator))
     

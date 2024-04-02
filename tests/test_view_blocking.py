@@ -265,5 +265,17 @@ class Test_Obstacle(unittest.TestCase):
             with self.subTest():
                 self.assertIn(expected_output, self.obstacle.segments)
 
+@unittest.skip("Test not implemented")
+class Test_Ray(unittest.TestCase):
+
+    def __init__(self, methodName: str = "runTest") -> None:
+        super().__init__(methodName)
+
+@unittest.skip("Test not implemented")
+class Test_View_coordinates(unittest.TestCase):
+
+    def __init__(self, methodName: str = "runTest") -> None:
+        super().__init__(methodName)
+
 if __name__ == "__main__":
     unittest.main()
