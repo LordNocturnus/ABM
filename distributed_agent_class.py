@@ -71,11 +71,7 @@ class DistributedAgent(object):
         # Update all constraints to apply one step earlier
         self.memory = {self.message}
 
-        planned_path = a_star(my_map, self.pos, self.goal, self.heuristics, self.id, [])
-        if planned_path is None:
-            raise ValueError('No solutions')
-        else:
-            self.planned_path = planned_path
+        self.planned_path = self.planned_path[min(1, len(self.planned_path) - 1):]
 
     def get_view(self, my_map: list[list[bool]]) -> list[tuple[int, int]]:
         """

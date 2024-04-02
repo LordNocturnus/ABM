@@ -89,14 +89,15 @@ class DistributedPlanningSolver(object):
                                                                                                  agent.get_path())]
                     if len(colliding_agents) == 0:
                         continue
+                    found_collision = True
                     messages[agent.id] = set([copy.deepcopy(a.message) for a in colliding_agents])
 
                 for idx in messages.keys():
                     try:
                         self.agents[idx].run_prio(messages[idx])
-                    except:
+                    except ValueError:
                         pass
-                    print(self.agents[idx].path[:-1] + self.agents[idx].planned_path)
+                    #print(self.agents[idx].path[:-1] + self.agents[idx].planned_path)
                     """for other_agent in visible_agents:
                         reaction = other_agent.get_reaction(agent.get_path_message())
                         if reaction is not None:
@@ -112,7 +113,7 @@ class DistributedPlanningSolver(object):
             # move every agent by one step
             for agent in self.agents:
                 agent.step(self.my_map)
-                print(agent.id, agent.pos)
+                #print(agent.id, agent.pos)
             #break
 
             timestep += 1
