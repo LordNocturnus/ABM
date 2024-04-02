@@ -1,16 +1,54 @@
+import matplotlib.pyplot as plt
+
 import unittest
 
 import view
 
 
-class Test_View_blocking(unittest.TestCase):
+class Test_View_blocking_SC2(unittest.TestCase):
+    """
+    Test scenario 2
+    ----------------
+    . . . . 1
+    . @ @ @ .
+    . @ 0 @ .
+    . @ @ @ .
+    . . . . .
+    
+    Outline of tests:
+    ------------------
+
+    test_view : Test to make sure the agent inside the box cannot see the other agent outised the box
+
+    test_itself : Test to make sure agent cannot see itself
+
+    test_DEBUG (currently expected to fail) : Check if the debig window is opened  
+    
+    """
 
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
+        self.obstacles  = [(-1,-1), (-1,0), (-1,1), (0,1), (1,1), (1,0), (1,-1), (0,-1)]
+        self.agents     = [(0,0), (1,1)]
+        self.agent      = 0
+        self.radius     = 5
     
-    def test_onee(self):
-        a = 1
-        self.assertEqual(a, 1)
+    def test_view(self):
+        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles)
+        expected = False
+        self.assertEqual(res[1], expected)
+
+    def test_itself(self):
+        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles)
+        expected = False
+        self.assertEqual(res[0], expected)
+
+    @unittest.expectedFailure
+    def test_DEBUG(self):
+        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles, DEBUG=True)
+        self.assertTrue(plt.fignum_exists(1))
+    
+
 
 class Test_Obstacle(unittest.TestCase):
     """
