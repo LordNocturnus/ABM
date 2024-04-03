@@ -29,7 +29,8 @@ if __name__ == '__main__':
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_blocking_SC7))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_Ray_SC1))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_Ray_SC2))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_coordinates))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_coordinates_SC1))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_coordinates_SC2))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_Obstacle))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_mapgen.Test_MapGenerator))
     
