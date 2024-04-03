@@ -71,7 +71,7 @@ class Test_MapGenerator(unittest.TestCase):
         # Check if the start locations are unqiue to the goal locations (no common elements)
         self.assertFalse(bool(set(self.goals) & set(self.starts)))
 
-@unittest.skip
+
 class Test_MapGenerator_RampUp(unittest.TestCase):
     """
     Test map generator: Map 1 assignment
@@ -98,13 +98,12 @@ class Test_MapGenerator_RampUp(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
 
-        self.env = map_gen.MapGenerator("maps/assignment_1.map")
-
         self.max_count = 20
 
     def test_size(self):
         for nagents in range(0, self.max_count):
             with self.subTest():
+                self.env = map_gen.MapGenerator("maps/assignment_1.map")
                 _, starts, goals = self.env.generate(nagents)
                 # Check if the amount if the amount of unique goals equals the amount of unique starts equals the amount agents
                 self.assertTrue(len(set(goals)) == len(set(starts)) == nagents,

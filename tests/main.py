@@ -33,6 +33,8 @@ if __name__ == '__main__':
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_coordinates_SC2))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_Obstacle))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_mapgen.Test_MapGenerator))
-    
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_mapgen.Test_MapGenerator_RampUp))
+
+
     runner = unittest.TextTestRunner()
     result = runner.run(test_suite)
