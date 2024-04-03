@@ -400,11 +400,108 @@ class Test_Obstacle(unittest.TestCase):
             with self.subTest():
                 self.assertIn(expected_output, self.obstacle.segments)
 
-@unittest.skip("Test not implemented")
-class Test_Ray(unittest.TestCase):
 
+class Test_Ray_SC1(unittest.TestCase):
+    """
+    Test scenario 1
+    ----------------
+        0 (x)
+        v
+    0 > . s . . .
+    (y) . . . . .
+        . . . . e
+
+    obstacles placed at run time
+
+    Outline of tests:
+    ------------------
+    
+    test_properties_* : Test correct assignment of coordinates
+
+    test_itersection_* : test intersection algorithm (Expected outcome is intersection)
+
+    test_noitersection_* : test intersection algorithm (Expected outcome is nointersection)
+
+    """
+    
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
+
+        self.start = (0,1)
+        self.end = (2,4)
+        self.ray = view.Ray(self.start, self.end)
+
+    def test_properties_1(self):
+        self.assertEqual(self.start[1], self.ray.start_x)
+
+    def test_properties_2(self):
+        self.assertEqual(self.end[0], self.ray.end_y)
+
+    def test_itersection_1(self):
+        obstacle = [view.Box((1, 2))]
+        self.assertFalse(self.ray.check_view_v2(obstacle))
+    
+    def test_itersection_2(self):
+        obstacle = [view.Box((1, 3))]
+        self.assertFalse(self.ray.check_view_v2(obstacle))
+    
+    def test_itersection_3(self):
+        obstacles = [view.Box(el) for el in [(1, 2), (1, 3), (1, 4)]]
+        self.assertFalse(self.ray.check_view_v2(obstacles))
+        
+    def test_nointersection_1(self):
+        obstacle = [view.Box((0, 0))]
+        self.assertTrue(self.ray.check_view_v2(obstacle))
+
+    def test_nointersection_2(self):
+        obstacle = [view.Box((0, 4))]
+        self.assertTrue(self.ray.check_view_v2(obstacle))
+
+    def test_nointersection_3(self):
+        obstacles = [view.Box(el) for el in [(2, 0), (2, 1), (2, 2)]]
+        self.assertTrue(self.ray.check_view_v2(obstacles))
+
+
+class Test_Ray_SC2(unittest.TestCase):
+    """
+    Test scenario 2
+    ----------------
+              0 (x)
+              v
+        . e . . 
+        . . . . 
+    0 > . . . s 
+    (y)
+
+    obstacles placed at run time
+
+    This scenario observes more unique cases in which obstacles are placed differently 
+    than in the standard maps. Currently test _2 is expected to fail.
+
+    Outline of tests:
+    ------------------
+
+    test_itersection_* : test intersection algorithm (Expected outcome is intersection)
+    
+    """
+    
+    def __init__(self, methodName: str = "runTest") -> None:
+        super().__init__(methodName)
+
+        self.start = (0,0)
+        self.end = (-2,-2)
+        self.ray = view.Ray(self.start, self.end)
+
+    def test_intersection_1(self):
+        obstacles = [view.Box(el) for el in [(0, -1), (-1, -1), (-1, 0)]]
+        self.assertFalse(self.ray.check_view_v2(obstacles))
+
+    # Failure due to padding, Ray passes trough obstacles with only corners touching
+    @unittest.expectedFailure
+    def test_intersection_2(self):
+        obstacles = [view.Box(el) for el in [(0, -1), (-1, 0)]]
+        self.assertFalse(self.ray.check_view_v2(obstacles))
+
 
 @unittest.skip("Test not implemented")
 class Test_View_coordinates(unittest.TestCase):
