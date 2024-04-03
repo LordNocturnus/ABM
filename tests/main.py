@@ -6,8 +6,13 @@ from tests import test_mapgen
 from tests import summary
 
 ## Run test instruction
+# -- UNITTEST --
 # Set directory to parent directory: /ABM
-# Run test by running python -m tests.main
+# Run test by running: python -m tests.main
+# -- PYTEST --
+# Set directory to parent directory: /ABM
+# Run test by running: pytest
+
 
 if __name__ == '__main__':
     

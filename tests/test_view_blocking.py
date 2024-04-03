@@ -365,7 +365,8 @@ class Test_View_blocking_SC7(unittest.TestCase):
 
 class Test_Obstacle(unittest.TestCase):
     """
-    Test box obstacle object in `view.Box`
+    Test box obstacle object in `view.Box`. Lowest level unittest of the core fundamental elements of the 
+    `fov_blocking()` function.
 
     Outline of tests:
     ------------------
@@ -403,6 +404,9 @@ class Test_Obstacle(unittest.TestCase):
 
 class Test_Ray_SC1(unittest.TestCase):
     """
+    Test of ray objects, lowest level unittest of the core fundamental elements of the 
+    `view.fov_blocking()` function.
+
     Test scenario 1
     ----------------
         0 (x)
@@ -464,6 +468,9 @@ class Test_Ray_SC1(unittest.TestCase):
 
 class Test_Ray_SC2(unittest.TestCase):
     """
+    Test of ray objects, lowest level unittest of the core fundamental elements of the 
+    `view.fov_blocking()` function.
+
     Test scenario 2
     ----------------
               0 (x)
@@ -503,11 +510,123 @@ class Test_Ray_SC2(unittest.TestCase):
         self.assertFalse(self.ray.check_view_v2(obstacles))
 
 
-@unittest.skip("Test not implemented")
-class Test_View_coordinates(unittest.TestCase):
+# @unittest.skip("Test not implemented")
+class Test_View_coordinates_SC1(unittest.TestCase):
+    """
+    Test scenario 1: hallway
+    ---------------------
+    . . . . . .
+    . @ @ @ @ .
+    . . . 0 . .
+    . @ @ @ @ .
+    . . . . . .
+
+    Test the view of an agent within a corridor using the `view.agent_vision()` function. The function is part 
+    of the `view.fov_blocking()` function. Semi integration/ unittests (medium level)
+
+    Outline of tests:
+    ------------------
+
+    test_inview : Test if all points that the agent should view are viewed
+
+    test_wall : Test that the agent cannot see the wall, not that the agent can see the wall, 
+    however it should not be able to see anything in it.
+
+    test_notinview : Make sure the agent can't see a range of hand selected points
+    """
 
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
+        self.agent = (2, 3)
+        self.radius = 3
+        # define obstable locations, and load into correct format
+        self.obs = [(1, 1), (1, 2), (1, 3), (1, 4), (3, 1), (3, 2), (3, 3), (3, 4)]
+        self.obstacles = [view.Box(el) for el in self.obs]
+
+    def test_inview(self):
+        # View is complete
+        expected = [(2, 0), (2, 1), (2, 2), (2, 4), (2, 5), (2, 6)]
+        res = view.agent_vision(self.agent, self.radius, self.obstacles)
+        self.assertCountEqual(res, expected)
+    
+    def test_wall(self):
+        # Non detection of walls
+        res = view.agent_vision(self.agent, self.radius, self.obstacles)
+        for id, obstacle in enumerate(self.obs):
+            with self.subTest():
+                self.assertNotIn(obstacle, res, 
+                                 msg=f"Obstacle(id:{id}) placed at {obstacle} was incorrectly labeled as observable, \
+                                 by the agent located at {self.agent} with view radius {self.radius}")   
+
+    def test_notinview(self):
+        # Checking non occurence of select hand picked values 
+        points = [(0,2),(0,3),(0,4),(4,2),(4,3),(4,4)]
+        res = view.agent_vision(self.agent, self.radius, self.obstacles)
+        for id, point in enumerate(points, start=1):
+            with self.subTest():
+                self.assertNotIn(point, res, 
+                                 msg=f"Point {point} was incorrectly labeled as observable, \
+                                 by the agent located at {self.agent} with view radius {self.radius} \
+                                 ({id}/{len(points)})")
+
+# @unittest.skip("Test not implemented")
+class Test_View_coordinates_SC2(unittest.TestCase):
+    """
+    Test scenario 2: Exist hallway
+    ---------------------
+    . . . . . .
+    . @ @ @ @ .
+    . 0 . . . .
+    . @ @ @ @ .
+    . . . . . .
+
+    Test the view of an agent leaving a corridor using the `view.agent_vision()` function. 
+    The function is part of the `view.fov_blocking()` function. Semi integration/ unittests (medium level)
+
+    Outline of tests:
+    ------------------
+
+    test_inview : Test if all points that the agent should view are viewed
+
+    test_wall : Test that the agent cannot see the wall, not that the agent can see the wall, 
+    however it should not be able to see anything in it.
+
+    test_notinview : Make sure the agent can't see a range of hand selected points
+    """
+
+    def __init__(self, methodName: str = "runTest") -> None:
+        super().__init__(methodName)
+        self.agent = (2, 1)
+        self.radius = 2
+        # define obstable locations, and load into correct format
+        self.obs = [(1, 1), (1, 2), (1, 3), (1, 4), (3, 1), (3, 2), (3, 3), (3, 4)]
+        self.obstacles = [view.Box(el) for el in self.obs]
+
+    def test_inview(self):
+        # View is complete
+        expected = [(2, 2), (2, 3), (1, 0), (2, 0), (3, 0), (2, -1)]
+        res = view.agent_vision(self.agent, self.radius, self.obstacles)
+        self.assertCountEqual(res, expected)
+    
+    def test_wall(self):
+        # Non detection of walls
+        res = view.agent_vision(self.agent, self.radius, self.obstacles)
+        for id, obstacle in enumerate(self.obs):
+            with self.subTest():
+                self.assertNotIn(obstacle, res, 
+                                 msg=f"Obstacle(id:{id}) placed at {obstacle} was incorrectly labeled as observable, \
+                                 by the agent located at {self.agent} with view radius {self.radius}")   
+
+    def test_notinview(self):
+        # Checking non occurence of select hand picked values 
+        points = [(1, -1), (3, -1), (2, 4), (0, 2), (4, 2)]
+        res = view.agent_vision(self.agent, self.radius, self.obstacles)
+        for id, point in enumerate(points, start=1):
+            with self.subTest():
+                self.assertNotIn(point, res, 
+                                 msg=f"Point {point} was incorrectly labeled as observable, \
+                                 by the agent located at {self.agent} with view radius {self.radius} \
+                                 ({id}/{len(points)})")  
 
 if __name__ == "__main__":
     unittest.main()
