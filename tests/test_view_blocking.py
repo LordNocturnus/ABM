@@ -270,7 +270,7 @@ class Test_View_blocking_SC5(unittest.TestCase):
     ------------------
 
     test_increasing_radius : Set of test to make sure view is as expected from agent 0, with constantly
-    view radius. To evaluate if view range is implemented correctly.  
+    increasing view radius. To evaluate if view range is implemented correctly.  
     
     """
 
@@ -427,6 +427,56 @@ class Test_View_blocking_SC7(unittest.TestCase):
         res = Converter.covert_output(view_map, self.agents)
 
         self.assertEqual(all(isinstance(el,  bool) for el in res), True)
+
+
+class Test_View_blocking_SC8(unittest.TestCase):
+    """
+    Test scenario 5
+    ----------------
+        0 (x)
+        v
+    0 > . . . . . . .
+    (y) . . @ . @ . .
+        . . . 0 . . .
+        . . @ . @ . .
+        . . . . . . .
+        
+    Outline of tests:
+    ------------------
+
+    test_increasing_radius : Set of test to make sure view is as expected from agent 0, with constantly
+    increasing view radius. To evaluate if view range is implemented correctly.  
+    
+    """
+
+    def __init__(self, methodName: str = "runTest") -> None:
+        super().__init__(methodName)
+
+        # Define map
+        self.map = np.array([[0,0,0,0,0,0,0],
+                             [0,0,1,0,1,0,0],
+                             [0,0,0,0,0,0,0],
+                             [0,0,1,0,1,0,0],
+                             [0,0,0,0,0,0,0]])
+        
+
+        self.agent     = (2, 3)
+
+    def test_increasing_radius(self):
+        # Test complete view, with chaning view distance (from 0 to 10)
+        # Expected output seen below, actual output computed at real time 
+        expected = {
+            1   : [(1,3), (3,3), (2,2), (2,4)],
+            2   : [(1,3), (3,3), (2,2), (2,4), (0,3), (4,3), (2,1), (2,5)],
+            3   : [(1,3), (3,3), (2,2), (2,4), (0,3), (4,3), (2,1), (2,5), (-1,3), (5,3), (2,0), (2,6)],
+            4   : [(1,3), (3,3), (2,2), (2,4), (0,3), (4,3), (2,1), (2,5), (-1,3), (5,3), (2,0), (2,6),
+                   (2,-1), (1,0), (3,0), (-2,3), (-1,2), (-1,4), (2,7), (1,6), (3,6), (5,2), (5,4), (6,3)]
+        }
+
+        for radius, expected_output in expected.items():
+            res = view.fov_blocking(self.agent, radius, self.map)
+            with self.subTest():
+                self.assertCountEqual(expected_output, res, msg=f"Failed at view distance {radius}")
 
 class Test_Obstacle(unittest.TestCase):
     """
