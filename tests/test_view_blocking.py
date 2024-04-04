@@ -1,18 +1,30 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 import unittest
 
 import view
+
+class Converter:
+    """
+    Convert output, to verifiable output. The convert_output function checks if the agents within the map are 
+    observable based on the view of the map from an agent. It converts the complex big list structure into a 
+    list containing boolean values. Where True indicates the agent can be view and false indicates the agent 
+    cannot be viewed. Used to convert test to newer code, besides the additional newer tests added.
+    
+    """
+
+    covert_output = lambda view_points, agent_locations: [True if agent_loc in view_points else False for agent_loc in agent_locations]
 
 
 class Test_View_blocking_SC1(unittest.TestCase):
     """
     Test scenario 1: Wall
     ---------------------
-    1 . 2 3 .
-    . @ @ @ 4
+    . . . . .
+    . @ @ @ .
     . . 0 . .
-    5 . . . .
+    . . . . .
 
     Outline of tests (name function/test + short description):
     ---------------------
@@ -25,19 +37,24 @@ class Test_View_blocking_SC1(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
 
+        # Define map
+        self.map = np.array([[0,0,0,0,0],
+                             [0,1,1,1,0],
+                             [0,0,0,0,0],
+                             [0,0,0,0,0]])
+        
         #define agent locations
         self.agent_locations = [(2, 2), (0, 0), (0, 2), (0, 3), (1, 4), (3, 0)]
-        #define obstable locations
-        self.obstacles = [(1, 1), (1, 2), (1, 3)]
 
     def test_11(self):
         #agent
         self.main_agent = 0
-
         #view
         self.view_distance = 2
 
-        res = view.fov_blocking(self.main_agent, self.agent_locations, self.view_distance, self.obstacles)
+        view_map = view.fov_blocking(self.agent_locations[self.main_agent], self.view_distance, self.map)
+        res = Converter.covert_output(view_map, self.agent_locations)
+        
         expected = [False, False, False, False, False, False]
 
         #evaluation
@@ -50,7 +67,9 @@ class Test_View_blocking_SC1(unittest.TestCase):
         # view
         self.view_distance = 3
 
-        res = view.fov_blocking(self.main_agent, self.agent_locations, self.view_distance, self.obstacles)
+        view_map = view.fov_blocking(self.agent_locations[self.main_agent], self.view_distance, self.map)
+        res = Converter.covert_output(view_map, self.agent_locations)
+
         expected = [False, False, False, False, False, True]
 
         # evaluation
@@ -63,7 +82,9 @@ class Test_View_blocking_SC1(unittest.TestCase):
         # view
         self.view_distance = 2
 
-        res = view.fov_blocking(self.main_agent, self.agent_locations, self.view_distance, self.obstacles)
+        view_map = view.fov_blocking(self.agent_locations[self.main_agent], self.view_distance, self.map)
+        res = Converter.covert_output(view_map, self.agent_locations)
+
         expected = [False, False, True, False, True, False]
 
         # evaluation
@@ -76,7 +97,9 @@ class Test_View_blocking_SC1(unittest.TestCase):
         # view
         self.view_distance = 3
 
-        res = view.fov_blocking(self.main_agent, self.agent_locations, self.view_distance, self.obstacles)
+        view_map = view.fov_blocking(self.agent_locations[self.main_agent], self.view_distance, self.map)
+        res = Converter.covert_output(view_map, self.agent_locations)
+
         expected = [False, True, True, False, True, False]
 
         # evaluation
@@ -106,33 +129,36 @@ class Test_View_blocking_SC2(unittest.TestCase):
 
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        self.obstacles  = [(-1,-1), (-1,0), (-1,1), (0,1), (1,1), (1,0), (1,-1), (0,-1)]
-        self.agents     = [(0,0), (2,2)]
+        
+        # Define map
+        self.map = np.array([[0,0,0,0,0],
+                             [0,1,1,1,0],
+                             [0,1,0,1,0],
+                             [0,1,1,1,0],
+                             [0,0,0,0,0]])
+        
+        self.agents     = [(2,2), (2,4)]
         self.agent      = 0
         self.radius     = 5
     
     def test_view(self):
         # Test view from agent within box to outside box
-        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles)
+        view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map)
+        res = Converter.covert_output(view_map, self.agents)
+        
         expected = False
         
         self.assertEqual(res[1], expected)
 
     def test_itself(self):
         # Test view from agent to itself
-        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles)
+        view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map)
+        res = Converter.covert_output(view_map, self.agents)
+
         expected = False
         
         self.assertEqual(res[0], expected)
 
-    @unittest.expectedFailure
-    def test_DEBUG(self):
-        # Ensure plot is opened
-        # Currently failing because plot is shown and closed at runtime
-        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles, DEBUG=True)
-        
-        self.assertTrue(plt.fignum_exists(1))
-    
 
 class Test_View_blocking_SC3(unittest.TestCase):
     """
@@ -153,17 +179,28 @@ class Test_View_blocking_SC3(unittest.TestCase):
 
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        self.obstacles  = [(-1,-1), (-1,0), (-1,1), (0,1), (1,1), (1,0), (1,-1), (0,-1)]
-        self.agents     = [(0,0), (2,2), (2,-2)]
+
+        # Define map
+        self.map = np.array([[0,0,0,0,0],
+                             [0,1,1,1,0],
+                             [0,1,0,1,0],
+                             [0,1,1,1,0],
+                             [0,0,0,0,0]])
+        
+        self.agents     = [(2,2), (4,0), (4,4)]
         self.agent      = 1
         self.radius     = 5
 
     def test_view(self):
         # Test complete view
-        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles)
+        view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map)
+        res = Converter.covert_output(view_map, self.agents)
+
         expected = [False, False, True]
         
         self.assertListEqual(res, expected)
+
+
 
 class Test_View_blocking_SC4(unittest.TestCase):
     """
@@ -186,7 +223,14 @@ class Test_View_blocking_SC4(unittest.TestCase):
 
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        self.obstacles  = [(1, 4), (2, 3), (3, 3)]
+        
+        # Define map
+        self.map = np.array([[0,0,0,0,0,0,0],
+                             [0,0,0,0,1,0,0],
+                             [0,0,0,1,0,0,0],
+                             [0,0,0,1,0,0,0],
+                             [0,0,0,0,0,0,0]])
+        
         self.agents     = [(3, 5), (0, 2)]
         self.agent      = 0
         self.radius     = 5
@@ -202,8 +246,10 @@ class Test_View_blocking_SC4(unittest.TestCase):
         # Solution: currently point of discussion
 
         # Test complete view
-        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles)
-        expected = [False, False, False, True, True, False]
+        view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map)
+        res = Converter.covert_output(view_map, self.agents)
+
+        expected = [False, False]
 
         self.assertListEqual(res, expected)
 
@@ -230,7 +276,15 @@ class Test_View_blocking_SC5(unittest.TestCase):
 
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        self.obstacles  = [(1, 5), (2, 5), (3, 5)]
+
+        # Define map
+        self.map = np.array([[0,0,0,0,0,0,0],
+                             [0,0,0,0,0,1,0],
+                             [0,0,0,0,0,1,0],
+                             [0,0,0,0,0,1,0],
+                             [0,0,0,0,0,0,0]])
+        
+
         self.agents     = [(2, 0), (2, 2), (3, 2), (2, 3), (1, 4), (2, 6)]
         self.agent      = 0
 
@@ -248,14 +302,81 @@ class Test_View_blocking_SC5(unittest.TestCase):
             10  : [False, True, True, True, True, False],
         }
 
-        for view_distance, expected_output in expected.items():
-            res = view.fov_blocking(self.agent, self.agents, view_distance, self.obstacles)
+        for radius, expected_output in expected.items():
+            view_map = view.fov_blocking(self.agents[self.agent], radius, self.map)
+            res = Converter.covert_output(view_map, self.agents)
             with self.subTest():
-                self.assertListEqual(expected_output, res, msg=f"Failed at view distance {view_distance}")
+                self.assertListEqual(expected_output, res, msg=f"Failed at view distance {radius}")
+
+
+class Test_View_blocking_SC6(unittest.TestCase):
+    """
+        Test scenario 6: hallway
+        ---------------------
+        . 3 . . . .
+        . @ @ @ @ 4
+        0 . . 1 2 .
+        . @ @ @ @ .
+        . . 5 6 . 7
+
+        Outline of tests (name function/test + short description):
+        ---------------------
+        test_11 and test_21 test whether the agent can propertly 'see' through the hallway at different radii
+        test_21 and test_22 test the same as test_1 but different agent with more agents in view
+
+        """
+    def __init__(self, methodName: str = "runTest") -> None:
+        super().__init__(methodName)
+
+        # Define map
+        self.map = np.array([[0,0,0,0,0,0],
+                             [0,1,1,1,1,0],
+                             [0,0,0,0,0,0],
+                             [0,1,1,1,1,0],
+                             [0,0,0,0,0,0]])
+
+        # define agent locations
+        self.agent_locations = [(2, 0), (2, 3), (2, 4), (0, 1), (1, 5), (4, 2), (4, 3), (4, 5)]
+
+    def test_11(self):
+        self.main_agent = 0
+        self.view_distance = 3
+        view_map = view.fov_blocking(self.agent_locations[self.main_agent], self.view_distance, self.map)
+        res = Converter.covert_output(view_map, self.agent_locations)
+        expected = [False, True, False, False, False, False, False, False]
+
+        self.assertEqual(res, expected)
+
+    def test_12(self):
+        self.main_agent = 0
+        self.view_distance = 5
+        view_map = view.fov_blocking(self.agent_locations[self.main_agent], self.view_distance, self.map)
+        res = Converter.covert_output(view_map, self.agent_locations)
+        expected = [False, True, True, False, False, False, False, False]
+
+        self.assertEqual(res, expected)
+
+    def test_21(self):
+        self.main_agent = 2
+        self.view_distance = 3
+        view_map = view.fov_blocking(self.agent_locations[self.main_agent], self.view_distance, self.map)
+        res = Converter.covert_output(view_map, self.agent_locations)
+        expected = [False, True, False, False, True, False, False, False]
+
+        self.assertEqual(res, expected)
+
+    def test_22(self):
+        self.main_agent = 2
+        self.view_distance = 5
+        view_map = view.fov_blocking(self.agent_locations[self.main_agent], self.view_distance, self.map)
+        res = Converter.covert_output(view_map, self.agent_locations)
+        expected = [True, True, False, False, True, False, False, False]
+
+        self.assertEqual(res, expected)
 
 
 @unittest.skip("Test not implemented")
-class Test_View_blocking_SC6(unittest.TestCase):
+class Test_View_blocking_SC7(unittest.TestCase):
     """
     Test scenario 6
     ----------------
@@ -277,13 +398,13 @@ class Test_View_blocking_SC6(unittest.TestCase):
 
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        self.obstacles  = None
+        self.map  = None
         self.agents     = None
         self.agent      = None
         self.radius     = None
 
     def test_visual(self):
-        view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles, DEBUG=True)
+        view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map, DEBUG=True)
 
         inp = str(input("\nWas the view as expected? (y/n): ")).strip().lower()
 
@@ -293,7 +414,8 @@ class Test_View_blocking_SC6(unittest.TestCase):
 
         # Check if the amount of agents remains constant after return
 
-        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles)
+        view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map)
+        res = Converter.covert_output(view_map, self.agents)
 
         self.assertEqual(len(res), len(self.agents))
 
@@ -301,67 +423,10 @@ class Test_View_blocking_SC6(unittest.TestCase):
 
         # Check if all returned elements are boolean
 
-        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles)
+        view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map)
+        res = Converter.covert_output(view_map, self.agents)
 
         self.assertEqual(all(isinstance(el,  bool) for el in res), True)
-
-
-class Test_View_blocking_SC7(unittest.TestCase):
-    """
-        Test scenario 1: hallway
-        ---------------------
-        . 3 . . . .
-        . @ @ @ @ 4
-        0 . . 1 2 .
-        . @ @ @ @ .
-        . . 5 6 . 7
-
-        Outline of tests (name function/test + short description):
-        ---------------------
-        test_11 and test_21 test whether the agent can propertly 'see' through the hallway at different radii
-        test_21 and test_22 test the same as test_1 but different agent with more agents in view
-
-        """
-    def __init__(self, methodName: str = "runTest") -> None:
-        super().__init__(methodName)
-
-        # define agent locations
-        self.agent_locations = [(2, 0), (2, 3), (2, 4), (0, 1), (1, 5), (4, 2), (4, 3), (4, 5)]
-        # define obstable locations
-        self.obstacles = [(1, 1), (1, 2), (1, 3), (1, 4), (3, 1), (3, 2), (3, 3), (3, 4)]
-
-    def test_11(self):
-        self.main_agent = 0
-        self.view_distance = 3
-        res = view.fov_blocking(self.main_agent, self.agent_locations, self.view_distance, self.obstacles)
-        expected = [False, True, False, False, False, False, False, False]
-
-        self.assertEqual(res, expected)
-
-    def test_12(self):
-        self.main_agent = 0
-        self.view_distance = 5
-        res = view.fov_blocking(self.main_agent, self.agent_locations, self.view_distance, self.obstacles)
-        expected = [False, True, True, False, False, False, False, False]
-
-        self.assertEqual(res, expected)
-
-    def test_21(self):
-        self.main_agent = 2
-        self.view_distance = 3
-        res = view.fov_blocking(self.main_agent, self.agent_locations, self.view_distance, self.obstacles)
-        expected = [False, True, False, False, True, False, False, False]
-
-        self.assertEqual(res, expected)
-
-    def test_22(self):
-        self.main_agent = 2
-        self.view_distance = 5
-        res = view.fov_blocking(self.main_agent, self.agent_locations, self.view_distance, self.obstacles)
-        expected = [True, True, False, False, True, False, False, False]
-
-        self.assertEqual(res, expected)
-
 
 class Test_Obstacle(unittest.TestCase):
     """

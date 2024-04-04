@@ -38,7 +38,7 @@ class DistributedPlanningSolver(object):
         self.agents: list[DistributedAgent] = []
         # T.B.D.
         
-    def find_solution(self, cbs=False) -> list[list[tuple[int, int]]]:
+    def find_solution(self, cbs: bool = False) -> list[list[tuple[int, int]]]:
         """
         Finds paths for all agents from start to goal locations. 
         
@@ -79,7 +79,7 @@ class DistributedPlanningSolver(object):
                 messages = {}
                 for agent in self.agents:
                     print(f"===A=== |>{agent.id}<| ===A===")
-                    fov = agent.get_view(self.my_map)  # field_of_view
+                    fov = agent.get_view()  # field_of_view
                     visible_agents = [a for a in self.agents if a.pos in fov and not a == agent]
                     if len(visible_agents) == 0:
                         continue
@@ -97,22 +97,12 @@ class DistributedPlanningSolver(object):
                         self.agents[idx].run_prio(messages[idx])
                     except ValueError:
                         pass
-                    #print(self.agents[idx].path[:-1] + self.agents[idx].planned_path)
-                    """for other_agent in visible_agents:
-                        reaction = other_agent.get_reaction(agent.get_path_message())
-                        if reaction is not None:
-                            found_collision = True
-                            own_reaction = agent.get_reaction(other_agent.get_path_message())
-                            print(reaction, own_reaction)
-                    #if len(reactions) == 0:
-                    #    continue
-                    print("debug")"""
                 col += 1
                 #break
 
             # move every agent by one step
             for agent in self.agents:
-                agent.step(self.my_map)
+                agent.step()
                 #print(agent.id, agent.pos)
             #break
 
@@ -129,49 +119,3 @@ class DistributedPlanningSolver(object):
         print(result)
         
         return result  # Hint: this should be the final result of the distributed planning (visualization is done after planning)
-
-    """def goals_reached(self, paths: list[list[tuple[int, int]]], timestep: int) -> bool:
-        # goals = self.goals
-        # location agents = get_location(path, timestep)
-        # number/index agent = self.num_of_agents() -> loop over
-        # have all goals been reached
-
-        for i in range(self.num_of_agents):
-            if get_location(paths[i], timestep) != self.goals[i]:
-                return False
-
-        return True
-
-    def check_collisions(self, paths: list[list[tuple[int, int]]]) -> bool:
-
-        for agent_1 in range(len(paths)):
-            for agent_2 in range(agent_1 + 1, len(paths)):
-
-                path1 = paths[agent_1]
-                path2 = paths[agent_2]
-
-                for i in range(max(len(path1), len(path2))):
-                    # Vertex collision
-                    if get_location(path1, i) == get_location(path2, i):
-
-                        return True
-
-                    # Edge collision
-                    elif [get_location(path1, i), get_location(path1, i + 1)] == [get_location(path2, i + 1),
-                                                                                  get_location(path2, i)]:
-                        return True
-
-        return False
-
-    def base_planning(self, constraints):
-        result: list[list[tuple[int, int]]] = [[]] * self.num_of_agents
-
-        for i in range(self.num_of_agents):  # Find path for each agent
-            path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
-                          i, constraints)
-            if path is None:
-                raise BaseException('No solutions')
-            self.agents[i].update_path(path)
-            result[i] = path
-
-        return result  # """

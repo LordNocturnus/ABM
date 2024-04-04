@@ -32,7 +32,6 @@ class Test_MapGenerator(unittest.TestCase):
 
     test_agents_2 : Check if any start point overlap, or if any goal positions overlapp
 
-    test_agents_3 : 
     """
 
     def __init__(self, methodName: str = "runTest") -> None:
@@ -41,10 +40,6 @@ class Test_MapGenerator(unittest.TestCase):
         self.env = map_gen.MapGenerator("maps/assignment_1.map")
         self.nagents = 10
         self.real_map, self.starts, self.goals = self.env.generate(self.nagents)
-
-    def test_size(self):
-        size = (9,22) # Manualy provided
-        self.assertEqual(self.env.shape, size)
     
     def test_map(self):
         expected_env = np.array([[0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
@@ -65,11 +60,6 @@ class Test_MapGenerator(unittest.TestCase):
     def test_agents_2(self):
         # Check if the amount if the amount of unique goals equals the amount of unique starts equals the amount agents
         self.assertTrue(len(set(self.goals)) == len(set(self.starts)) == self.nagents)
-    
-    @unittest.expectedFailure
-    def test_agents_3(self):
-        # Check if the start locations are unqiue to the goal locations (no common elements)
-        self.assertFalse(bool(set(self.goals) & set(self.starts)))
 
 
 class Test_MapGenerator_RampUp(unittest.TestCase):

@@ -67,16 +67,24 @@ def fov(m_id: int, locations: list[tuple[int, int]], view_radius: int) -> list[b
     return visibility
 
 
-def fov_blocking(m_id: int, locations: list[tuple[int, int]], view_radius: int,
-                 obstacle_locations: list[tuple[int,int]], DEBUG: bool=False) -> list[bool]:
+def fov_blocking(agent: tuple[int, int], view_radius: int,
+                 my_map: np.ndarray[int], DEBUG: bool=False) -> list[tuple[int, int]]:
     """
-    Fov_blocking generates a list containing boolean values indicating which agents, the specified agent 
-    x can view, considering obstacles. True indicates the agent can be viewed, while false idicates the agent
-    cannot be observed by agent x.
+    Fov_blocking generates a list containing the coordinate values indicating which positions, 
+    the specified agent can view, considering obstacles. The coordinates are supplied as 
+    [(y, x), (y, x), (y, x), (y, x), ...]
     
-    Example: output [False, False, True, True, False, False], if the agent observing other agents 
-    is given index 1, is gives itself the default value False (cannot see iteself). It can however see
-    agent 2 and 3 (assigned true), and cannot observe agent 0, 1, 4, 5 (assigned False).
+    Example: output for agent located at (1,1) view view-radius 2
+    -------------------------------------------------------------
+
+    my_map:
+        . . . .
+        . 0 @ .
+        . @ @ .
+        . . . .
+
+    output: [(1, -1), (0, 0), (1, 0), (2, 0), (-1, 1), (0, 1), (0, 2)]
+    
 
     Methode: Basic version ray evaluation code, which evaluated rays going to all possible points within 
     the unrestricted view of the agent. By then evaulating if the ray intersetcs with an obstacle it can be 
@@ -85,54 +93,34 @@ def fov_blocking(m_id: int, locations: list[tuple[int, int]], view_radius: int,
     
     Parameters
     ----------
-    m_id : int
-        Index of the main agent, who is observing other agents within the map.
-    
-    locations : list[tuple[int, int]]
-        Locations of all agents supplied as a list of coordinates (y-location:int, x-location:int) 
-        at the evaluated timestep.
+    agent : tuple[int, int]
+        Location of the agent within the map, specified as (y, x)
     
     view_radius : int
         maximum unrestricted view range of the agent
     
-    obstacle_locations : list[tuple[int, int]]
-        Locations of all obstacles within the map supplied as a list of coordinates (y-location:int, x-location:int).
+    my_map : np.ndarray
+        Map provided as numpy array where 1 indicates a wall and zero indicates free space
 
     DEBUG (optional, default False) : bool
         True, Enables plotting functionality to view the agents' view  
 
     Returns
     -------
-    list[bool]
-        A list of boolean values indicating which agents, agent `m_id` can view within the map. Where True means 
-        an agent is in view, and false means an agent is not in view. The agent `m_id` assigns itself False.
+    list[tuple[int, int]]
+        A list containing the points the secified `agent` can view within the specified `my_map`.
+        Provided as [(y,x), (y,x), ...]
 
     Raises
     ------
     None
     """
 
-    m_agent = locations[m_id]
-    obstacles = [Box(obstacle) for obstacle in obstacle_locations]
-    
-    visibility = []
+    obstacles = [Box(el) for el in np.argwhere(my_map == 1)]
 
-    view_map = agent_vision(m_agent, view_radius, obstacles, DEBUG)
-        
-    for s_id, s_agent in enumerate(locations):
-            
-        # Go to next if the main and secondary agent are the same
-        if m_id == s_id:
-            view = False
-        else:
-            if s_agent in view_map:
-                view = True
-            else:
-                view = False
+    view_map = agent_vision(agent, view_radius, obstacles, DEBUG)
 
-        visibility.append(view)
-
-    return visibility
+    return view_map
 
 
 class Box:
@@ -421,57 +409,79 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
     return points_in_vision
 
 if __name__ == "__main__":
-    # Helper functions 
-    get_y = lambda coords: [loc[0] for loc in coords]
-    get_x = lambda coords: [loc[1] for loc in coords]
+    # # Helper functions 
+    # get_y = lambda coords: [loc[0] for loc in coords]
+    # get_x = lambda coords: [loc[1] for loc in coords]
 
-    # Agents [(y,x), (y,x), (y,x)]
-    agent1 = [(0,0), (0,1), (0,2), (1,2), (2,2)]
-    agent2 = [(1,1), (1,2), (1,3), (2,3), (2,2)]
-    agent3 = [(5,1), (5,2), (5,3), (6,3), (6,4)]
-    agent4 = [(7,1), (7,2), (7,3), (7,4), (7,5)]
+    # # Agents [(y,x), (y,x), (y,x)]
+    # agent1 = [(0,0), (0,1), (0,2), (1,2), (2,2)]
+    # agent2 = [(1,1), (1,2), (1,3), (2,3), (2,2)]
+    # agent3 = [(5,1), (5,2), (5,3), (6,3), (6,4)]
+    # agent4 = [(7,1), (7,2), (7,3), (7,4), (7,5)]
 
-    # All agents for evaluation 
-    agents = [agent1, agent2, agent3, agent4]
-    colors = ['r','c','b','g']
+    # # All agents for evaluation 
+    # agents = [agent1, agent2, agent3, agent4]
+    # colors = ['r','c','b','g']
 
-    # Obstacles
-    obstacles = [(5,0), (6,0), (7,0), (6,1), (6,2), (3,-1), (3,0), (3,1), (3,2), (3,4), (3,5), (5,5), (6,5)]
+    # # Obstacles
+    # obstacles = [(5,0), (6,0), (7,0), (6,1), (6,2), (3,-1), (3,0), (3,1), (3,2), (3,4), (3,5), (5,5), (6,5)]
 
-    # Timestep
-    t = 0
+    # # Timestep
+    # t = 0
 
-    # Locations
-    locations = [agent[t] for agent in agents]
+    # # Locations
+    # locations = [agent[t] for agent in agents]
     
-    # View distance
-    r = 4
+    # # View distance
+    # r = 4
 
-    res = fov(0, locations, r)
-    print(res)
+    # res = fov(0, locations, r)
+    # print(res)
 
-    res = fov_blocking(0, locations, r, obstacles, DEBUG=True)
-    print(res)
+    # res = fov_blocking(0, locations, r, obstacles, DEBUG=True)
+    # print(res)
 
-    fig, ax = plt.subplots()
+    # fig, ax = plt.subplots()
 
-    ### VISUALISATION ###
-    # Visualise paths
-    for id, agent in enumerate(agents):
+    # ### VISUALISATION ###
+    # # Visualise paths
+    # for id, agent in enumerate(agents):
 
-        ax.plot(get_x(agent), get_y(agent), label=f"Agent #{id}")
+    #     ax.plot(get_x(agent), get_y(agent), label=f"Agent #{id}")
         
-        for loc in agent:
-            circle = plt.Circle((loc[1], loc[0]), r, color=colors[id], alpha=0.2, fill=False)
-            ax.add_patch(circle)
+    #     for loc in agent:
+    #         circle = plt.Circle((loc[1], loc[0]), r, color=colors[id], alpha=0.2, fill=False)
+    #         ax.add_patch(circle)
 
-    # Visualise objects
-    for obstacle in obstacles:
+    # # Visualise objects
+    # for obstacle in obstacles:
 
-        rect = plt.Rectangle((obstacle[1]-0.5, obstacle[0]-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
-        ax.add_patch(rect)
+    #     rect = plt.Rectangle((obstacle[1]-0.5, obstacle[0]-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
+    #     ax.add_patch(rect)
 
-    fig.gca().invert_yaxis()
-    ax.set_aspect('equal', adjustable='box')
-    plt.legend()
-    plt.show()
+    # fig.gca().invert_yaxis()
+    # ax.set_aspect('equal', adjustable='box')
+    # plt.legend()
+    # plt.show()
+
+    env = np.array([[0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
+                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                    [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
+                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                    [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
+                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                    [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
+                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                    [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0]])
+    
+    res = fov_blocking((0,0), 2, env, DEBUG=True)
+    print(res)
+
+    env = np.array([[0,0,0,0],
+                    [0,0,1,0],
+                    [0,1,1,0],
+                    [0,0,0,0]])
+    
+    res = fov_blocking((1,1), 2, env, DEBUG=True)
+    print(res)
+
