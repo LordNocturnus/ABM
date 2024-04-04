@@ -389,8 +389,8 @@ class Test_Obstacle(unittest.TestCase):
 
     def test_objectproperties_1(self):
         # Test if the right properties of the box are stored within the onbject
-        self.assertDictContainsSubset({"x":4, "y":5}, self.obstacle.__dict__,
-                                      msg="Obstecle object created in incorrect manner")
+        self.assertEqual(self.obstacle.__dict__, self.obstacle.__dict__ | {"x":4, "y":5},
+                         msg="Obstecle object created in incorrect manner")
 
     def test_objectproperties_2(self):
         # Test if the right properties of the box are stored within the onbject
