@@ -127,7 +127,11 @@ if __name__ == '__main__':
     # Hint: Command line options can be added in Spyder by pressing CTRL + F6 > Command line options. 
     # In PyCharm, they can be added as parameters in the configuration.
     if args.instance is None:
-        args.instance = os.path.join(os.getcwd(), "instances", input("Please indicate which instance to run:"))
+        p = input("Please indicate which instance to run:")
+        if "maps/" in p:
+            args.instance = os.path.join(os.getcwd(), p)
+        else:
+            args.instance = os.path.join(os.getcwd(), "instances", p)
 
     result_file = open("results.csv", "w", buffering=1)
 
@@ -136,7 +140,7 @@ if __name__ == '__main__':
         print(f"***Import instance {file}***")
 
         if "maps/" in file:
-            my_map, starts, goals = map_gen.MapGenerator(file).generate(12)
+            my_map, starts, goals = map_gen.MapGenerator(file).generate(20)
         else:
             my_map, starts, goals = import_mapf_instance(file)
 

@@ -54,7 +54,7 @@ class DistributedAgent(object):
     def finished(self) -> bool:
         return self.pos == self.goal
 
-    def step(self, my_map: list[list[bool]]) -> None:
+    def step(self) -> None:
         self.path.append(self.pos)
         self.pos = self.planned_path[min(1, len(self.planned_path) - 1)]  # update pos to position of next timestep
 
@@ -63,14 +63,14 @@ class DistributedAgent(object):
 
         self.planned_path = self.planned_path[min(1, len(self.planned_path) - 1):]
 
-    def get_view(self, my_map: list[list[bool]]) -> list[tuple[int, int]]:
+    def get_view(self) -> list[tuple[int, int]]:
         """
         returns every coordinate visible to this agent
         """
         ret = []
-        for x in range(len(my_map)):
-            for y in range(len(my_map[x])):
-                if not my_map[x][y]:
+        for x in range(len(self.my_map)):
+            for y in range(len(self.my_map[x])):
+                if not self.my_map[x][y]:
                     ret.append((x, y))
         return ret
 
