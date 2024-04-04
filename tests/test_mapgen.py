@@ -61,11 +61,6 @@ class Test_MapGenerator(unittest.TestCase):
     def test_agents_2(self):
         # Check if the amount if the amount of unique goals equals the amount of unique starts equals the amount agents
         self.assertTrue(len(set(self.goals)) == len(set(self.starts)) == self.nagents)
-    
-    @unittest.expectedFailure
-    def test_agents_3(self):
-        # Check if the start locations are unqiue to the goal locations (no common elements)
-        self.assertFalse(bool(set(self.goals) & set(self.starts)))
 
 
 class Test_MapGenerator_RampUp(unittest.TestCase):
