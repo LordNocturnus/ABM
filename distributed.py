@@ -38,7 +38,7 @@ class DistributedPlanningSolver(object):
         self.agents: list[DistributedAgent] = []
         # T.B.D.
         
-    def find_solution(self, cbs=False) -> list[list[tuple[int, int]]]:
+    def find_solution(self, cbs: bool = False) -> list[list[tuple[int, int]]]:
         """
         Finds paths for all agents from start to goal locations. 
         

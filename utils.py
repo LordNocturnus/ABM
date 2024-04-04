@@ -16,12 +16,12 @@ RNG = np.random.default_rng(0)
 
 
 #@nb.jit(nopython=True)  # type: ignore
-def pos_to_prime(x: int | npt.NDArray[int], y: int | npt.NDArray[int]) -> int | npt.NDArray[int]:
+def pos_to_prime(x: npt.NDArray[int], y: npt.NDArray[int]) -> npt.NDArray[int]:
     return x * PRIMEX + y * PRIMEY
 
 
 #@nb.jit(nopython=True)  # type: ignore
-def prime_to_pos(prime: int | npt.NDArray[int]) -> tuple[int, int] | tuple[npt.NDArray[int], npt.NDArray[int]]:
+def prime_to_pos(prime: npt.NDArray[int]) -> tuple[npt.NDArray[int], npt.NDArray[int]]:
     y = (prime % PRIMEX) // (PRIMEY - PRIMEX)
     x = (prime - y * PRIMEY) // PRIMEX
     return x, y
