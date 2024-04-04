@@ -381,6 +381,8 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
         
         fig, ax = plt.subplots()
 
+        r = view_radius
+
         for i in range(-r,r+1):
             for j in range(-r,r+1):
                 if i == 0 and j == 0:
