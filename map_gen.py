@@ -24,9 +24,9 @@ class MapGenerator(object):
         self.str_output = ""
 
     def generate(self, agents: int = 7) -> tuple[npt.NDArray[int], list[tuple[int, int]], list[tuple[int, int]]]:
-        starts_x, starts_y = utils.prime_to_pos(self.rng.choice(self.candidates, agents))
+        starts_x, starts_y = utils.prime_to_pos(self.rng.choice(self.candidates, agents, replace=False))
 
-        goals_x, goals_y = utils.prime_to_pos(self.rng.choice(self.candidates, agents))
+        goals_x, goals_y = utils.prime_to_pos(self.rng.choice(self.candidates, agents, replace=False))
 
         #agents = np.transpose(np.asarray([starts_x, starts_y, goals_x, goals_y]))
 

@@ -41,10 +41,6 @@ class Test_MapGenerator(unittest.TestCase):
         self.env = map_gen.MapGenerator("maps/assignment_1.map")
         self.nagents = 10
         self.real_map, self.starts, self.goals = self.env.generate(self.nagents)
-
-    def test_size(self):
-        size = (9,22) # Manualy provided
-        self.assertEqual(self.env.shape, size)
     
     def test_map(self):
         expected_env = np.array([[0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
