@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt  # type: ignore
-# import matplotlib.patches as mpatches
 import matplotlib.lines as mline  # type: ignore
 import numpy as np  # type: ignore
 import math
@@ -229,7 +228,7 @@ class Ray:
             returns False if the ray is blocked by any obstacle else True is returend
     """
 
-    def __init__(self, start: tuple, end: tuple) -> None:
+    def __init__(self, start: tuple[int, int], end: tuple[int, int]) -> None:
         """
         Initliase the Ray object
 
