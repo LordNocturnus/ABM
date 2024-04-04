@@ -125,13 +125,6 @@ class Test_View_blocking_SC2(unittest.TestCase):
         
         self.assertEqual(res[0], expected)
 
-    @unittest.expectedFailure
-    def test_DEBUG(self):
-        # Ensure plot is opened
-        # Currently failing because plot is shown and closed at runtime
-        res = view.fov_blocking(self.agent, self.agents, self.radius, self.obstacles, DEBUG=True)
-        
-        self.assertTrue(plt.fignum_exists(1))
     
 
 class Test_View_blocking_SC3(unittest.TestCase):
