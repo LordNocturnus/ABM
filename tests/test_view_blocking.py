@@ -431,7 +431,7 @@ class Test_View_blocking_SC7(unittest.TestCase):
 
 class Test_View_blocking_SC8(unittest.TestCase):
     """
-    Test scenario 5
+    Test scenario 8
     ----------------
         0 (x)
         v
