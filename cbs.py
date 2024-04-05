@@ -70,7 +70,8 @@ class CBSSolver(object):
         self.num_of_expanded += 1
         return node
 
-    def find_solution(self, disjoint: bool=True) -> list[list[tuple[int, int]]]:
+    def find_solution(self, disjoint: bool = True,
+                      constraint_list: list[constraints.Constraint] = None) -> list[list[tuple[int, int]]]:
         """ Finds paths for all agents from their start locations to their goal locations
 
         disjoint    - use disjoint splitting or not
@@ -83,7 +84,11 @@ class CBSSolver(object):
         # paths         - list of paths, one for each agent
         #               [[(x11, y11), (x12, y12), ...], [(x21, y21), (x22, y22), ...], ...]
         # collisions     - list of collisions in paths
-        root = CBSNode(0, [], [], dict(), 0)
+        print(constraint_list)
+        if constraint_list:
+            root = CBSNode(0, constraint_list, [], dict(), 0)
+        else:
+            root = CBSNode(0, [], [], dict(), 0)
         for i in range(self.num_of_agents):  # Find initial path for each agent
             path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
                           i, root.constraints)
