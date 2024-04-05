@@ -98,3 +98,19 @@ class DistributedAgent(object):
         for i, path in enumerate(res):
             if restrictions[i][3] == self.id:
                 self.planned_path = path
+
+def run_cbs(agent: DistributedAgent,
+            messages: set[tuple[tuple[int, int], tuple[int, int], int, int]],
+            constraint_list: list[constraints.Constraint]
+            ) -> DistributedAgent:
+    agent.memory = agent.memory.union(messages)
+    restrictions = sorted(agent.memory, key=lambda x: x[2], reverse=True)
+    try:
+        solver = CBSSolver(agent.my_map, [a[0] for a in restrictions], [a[1] for a in restrictions])
+        res = solver.find_solution(constraint_list=constraint_list)
+    except ValueError:
+        return agent
+    for i, path in enumerate(res):
+        if restrictions[i][3] == agent.id:
+            agent.planned_path = path
+    return agent
