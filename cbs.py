@@ -14,12 +14,12 @@ class CBSNode:
                  cost: int,
                  constraint_list: list[constraints.Constraint],
                  paths: list[list[tuple[int, int]]],
-                 collisions: dict[tuple[int, int], collisions.Collision],
+                 collision_dict: dict[tuple[int, int], collisions.Collision],
                  idx: int) -> None:
         self.cost = cost
         self.constraints = constraint_list
         self.paths = paths
-        self.collisions = collisions
+        self.collisions = collision_dict
         self.idx = idx
 
     def __lt__(self, other: "CBSNode") -> bool:
