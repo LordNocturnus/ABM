@@ -65,6 +65,13 @@ class Collision:
     def __repr__(self) -> str:
         return self.__str__()
 
+    def __eq__(self, other: "Collision") -> bool:
+        return (self.agent_0 == other.agent_0 and
+                self.agent_1 == other.agent_1 and
+                self.loc_0 == other.loc_0 and
+                self.loc_1 == other.loc_1 and
+                self.step == other.step)
+
 
 def detect_collision(agent_0: int,
                      agent_1: int,
