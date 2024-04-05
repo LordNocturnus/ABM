@@ -1,20 +1,21 @@
 import unittest
 
-from tests import test_view_nonblocking
-from tests import test_view_blocking
-from tests import test_mapgen
-from tests import summary
+from tests.test_unittest import test_view_nonblocking
+from tests.test_unittest import test_view_blocking
+from tests.test_unittest import test_mapgen
 
 ## Run test instruction
 # -- UNITTEST --
 # Set directory to parent directory: /ABM
-# Run test by running: python -m tests.main
+# Run test by running: python -m tests.test_unittest.main
 # -- PYTEST --
 # Set directory to parent directory: /ABM
-# Run test by running: pytest
+# Run test by running: pytest tests/test_unittest
 
 
 if __name__ == '__main__':
+
+    print(f"==== Starting unittest of added functionality ====")
     
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
