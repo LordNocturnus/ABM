@@ -170,7 +170,6 @@ if __name__ == '__main__':
         if not len(temp.keys()) == 0:
             print(temp)
             raise ValueError
-        print(len(temp.keys()))
         cost = get_sum_of_cost(paths)
         result_file.write("{},{}\n".format(file, cost))
         print("######################################################################################################")

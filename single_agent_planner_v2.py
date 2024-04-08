@@ -48,12 +48,10 @@ def compute_heuristics(my_map: list[list[bool]], goal: tuple[int, int]) -> dict[
 
 #@nb.jit(nopython=True)  # type: ignore
 def get_location(path: list[tuple[int, int]], time: int) -> tuple[int, int]:
-    if time < 0:
-        return path[0]
-    elif time < len(path):
+    try:
         return path[time]
-    else:
-        return path[-1]  # wait at the goal location
+    except IndexError:
+        return path[-1]
 
 
 #@nb.jit(nopython=True)  # type: ignore
