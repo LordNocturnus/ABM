@@ -84,7 +84,6 @@ class CBSSolver(object):
         # paths         - list of paths, one for each agent
         #               [[(x11, y11), (x12, y12), ...], [(x21, y21), (x22, y22), ...], ...]
         # collisions     - list of collisions in paths
-        print(constraint_list)
         if constraint_list:
             root = CBSNode(0, constraint_list, [], dict(), 0)
         else:
@@ -131,7 +130,7 @@ class CBSSolver(object):
                 #print(current.constraints + [constraint])
                 new = CBSNode(0,
                               current.constraints + [constraint],
-                              deepcopy(current.paths), dict(), self.num_of_generated)
+                              [*current.paths], dict(), self.num_of_generated)
                 path = a_star(self.my_map,
                               self.starts[constraint.agent],
                               self.goals[constraint.agent],
