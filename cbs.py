@@ -130,7 +130,7 @@ class CBSSolver(object):
             for constraint in new_constraints:
                 #print(current.constraints + [constraint])
                 new = CBSNode(0,
-                              deepcopy(current.constraints) + [constraint],
+                              current.constraints + [constraint],
                               deepcopy(current.paths), dict(), self.num_of_generated)
                 path = a_star(self.my_map,
                               self.starts[constraint.agent],

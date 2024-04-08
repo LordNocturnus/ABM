@@ -14,6 +14,7 @@ from independent import IndependentSolver
 from prioritized import PrioritizedPlanningSolver
 from distributed import DistributedPlanningSolver # Placeholder for Distributed Planning
 from visualize import Animation
+from collisions import detect_collisions
 from single_agent_planner_v2 import get_sum_of_cost
 
 import map_gen
@@ -165,6 +166,11 @@ if __name__ == '__main__':
         else: 
             raise RuntimeError("Unknown solver!")
 
+        temp = detect_collisions(paths)
+        if not len(temp.keys()) == 0:
+            print(temp)
+            raise ValueError
+        print(len(temp.keys()))
         cost = get_sum_of_cost(paths)
         result_file.write("{},{}\n".format(file, cost))
         print("######################################################################################################")
