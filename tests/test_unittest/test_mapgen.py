@@ -32,7 +32,6 @@ class Test_MapGenerator(unittest.TestCase):
 
     test_agents_2 : Check if any start point overlap, or if any goal positions overlapp
 
-    test_agents_3 : 
     """
 
     def __init__(self, methodName: str = "runTest") -> None:
