@@ -1,6 +1,8 @@
 import numpy as np
 
 import unittest
+import os
+import pathlib
 
 import map_gen
 
@@ -36,8 +38,9 @@ class Test_MapGenerator(unittest.TestCase):
 
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-
-        self.env = map_gen.MapGenerator("maps/assignment_1.map")
+        os.chdir(pathlib.Path(__file__).parent.parent.parent)
+        print(os.getcwd())
+        self.env = map_gen.MapGenerator(os.path.join("maps", "assignment_1.map"))
         self.nagents = 10
         self.real_map, self.starts, self.goals = self.env.generate(self.nagents)
     
@@ -87,7 +90,6 @@ class Test_MapGenerator_RampUp(unittest.TestCase):
 
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-
         self.max_count = 20
 
     def test_size(self):

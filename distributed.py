@@ -164,7 +164,7 @@ class DistributedPlanningSolver(object):
         #print(len(messages), len(self.global_constraints))
 
         for idx in range(len(messages)):
-            self.agents[agents_to_run[idx].id] = distributed_agent_class.run_cbs(agents_to_run[idx], messages[idx], self.global_constraints)
+            self.agents[agents_to_run[idx].id] = distributed_agent.run_cbs(agents_to_run[idx], messages[idx], self.global_constraints)
 
         """with multiprocessing.Pool(processes=len(agents_to_run)) as pool:
             res = pool.starmap(distributed_agent_class.run_cbs,
