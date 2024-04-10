@@ -3,6 +3,7 @@ import unittest
 from tests.test_unittest import test_view_nonblocking
 from tests.test_unittest import test_view_blocking
 from tests.test_unittest import test_mapgen
+from tests.test_unittest import test_collision
 
 ## Run test instruction
 # -- UNITTEST --
@@ -35,6 +36,7 @@ if __name__ == '__main__':
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_Obstacle))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_mapgen.Test_MapGenerator))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_mapgen.Test_MapGenerator_RampUp))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_collision.Test_Collision))
 
 
     runner = unittest.TextTestRunner()
