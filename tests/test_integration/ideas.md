@@ -5,3 +5,4 @@
     - Cost
     - Path
 - Add tests of lower level function used within the test (collision, ...)
+- Test collision detection function

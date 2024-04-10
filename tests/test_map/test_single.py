@@ -4711,3 +4711,5 @@ class Test_Integration_Map_50(unittest.TestCase):
         self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
 
 #### ---- End of tests ---- ####
+if __name__ == "__main__":
+    unittest.main()

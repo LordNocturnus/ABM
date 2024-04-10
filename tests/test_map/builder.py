@@ -6,12 +6,16 @@
 
 imports = 'tests/test_map/setup.config'
 test_class = 'tests/test_map/class.config'
+end = 'tests/test_map/end.config'
 
 with open(imports, 'r') as reader:
     imports_content = reader.read()
 
 with open(test_class, 'r') as reader:
     test_class_content = reader.read()
+
+with open(end, 'r') as reader:
+    end_content = reader.read()
 
 with open('tests/test_map/test_single.py', 'w') as file:
 
@@ -21,3 +25,4 @@ with open('tests/test_map/test_single.py', 'w') as file:
         file.write(test_class_content % (i, i, i, i))
     
     file.write("\n\n#### ---- End of tests ---- ####")
+    file.write(end_content)
