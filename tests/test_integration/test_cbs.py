@@ -51,8 +51,8 @@ class Test_Integration_CBS_Standard(unittest.TestCase):
                 print(f"==> Solving: {my_map} using {self.mode}-{self.submode} <==")
 
                 # Solve 
-                my_map, starts, goals = run_experiments.import_mapf_instance(my_map)
-                paths = CBSSolver(my_map, starts, goals).find_solution(False)
+                my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+                paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
                 
                 # Check paths
                 collision = bool(collisions.detect_collisions(paths))
@@ -101,8 +101,8 @@ class Test_Integration_CBS_Disjoint(unittest.TestCase):
                 print(f"==> Solving: {my_map} using {self.mode}-{self.submode} <==")
 
                 # Solve 
-                my_map, starts, goals = run_experiments.import_mapf_instance(my_map)
-                paths = CBSSolver(my_map, starts, goals).find_solution(True)
+                my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+                paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
                 
                 # Check paths
                 collision = bool(collisions.detect_collisions(paths))

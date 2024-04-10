@@ -39,8 +39,8 @@ class Test_Integration_Map(unittest.TestCase):
         print(f"==> Solving: {my_map} using prioritized <==")
 
         # Solve 
-        my_map, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map, starts, goals).find_solution()
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -57,8 +57,8 @@ class Test_Integration_Map(unittest.TestCase):
         print(f"==> Solving: {my_map} using CBS-standard <==")
 
         # Solve 
-        my_map, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map, starts, goals).find_solution(False)
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -75,8 +75,8 @@ class Test_Integration_Map(unittest.TestCase):
         print(f"==> Solving: {my_map} using CBS-disjoint <==")
 
         # Solve 
-        my_map, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map, starts, goals).find_solution(True)
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -93,8 +93,8 @@ class Test_Integration_Map(unittest.TestCase):
         print(f"==> Solving: {my_map} using distributed <==")
 
         # Solve 
-        my_map, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map, starts, goals).find_solution()
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")

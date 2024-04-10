@@ -50,8 +50,8 @@ class Test_Integration_Distributed(unittest.TestCase):
                 print(f"==> Solving: {my_map} using {self.mode} <==")
 
                 # Solve 
-                my_map, starts, goals = run_experiments.import_mapf_instance(my_map)
-                paths = DistributedPlanningSolver(my_map, starts, goals).find_solution()
+                my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+                paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
                 
                 # Check paths
                 collision = bool(collisions.detect_collisions(paths))
