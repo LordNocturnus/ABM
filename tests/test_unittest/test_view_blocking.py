@@ -21,10 +21,10 @@ class Test_View_blocking_SC1(unittest.TestCase):
     """
     Test scenario 1: Wall
     ---------------------
-    . . . . .
-    . @ @ @ .
+    1 . 2 3 .
+    . @ @ @ 4
     . . 0 . .
-    . . . . .
+    5 . . . .
 
     Outline of tests (name function/test + short description):
     ---------------------
