@@ -148,6 +148,21 @@ class Test_View_nonblocking(unittest.TestCase):
         
         # Evaluation
         self.assertEqual(res, expected)
+    
+    def test_8(self):
+        
+        # Main agent
+        self.main_agent = self.agent_locations[0]
+        
+        # Define a set view radius
+        self.view_distance = 0
+        
+        # Function output and expected output
+        res = Converter.covert_output(view.fov(self.main_agent, self.view_distance, self.map), self.agent_locations)
+        expected = [False, False, False, False, False, False, False]
+        
+        # Evaluation
+        self.assertEqual(res, expected)
 
     def test_conservation_agents(self):
 
