@@ -1,0 +1,4 @@
+[submodule "libraries/LINTWORM"]
+	path = libraries/LINTWORM
+	url = https://github.com/LordNocturnus/LINTWORM.git
+	branch = master
