@@ -8,13 +8,15 @@ Note: To make the animation work in Spyder you should set graphics backend to 'A
 import argparse
 import glob
 import os
+import numpy as np
+import numpy.typing as npt
 from pathlib import Path
 from cbs import CBSSolver
 from independent import IndependentSolver
 from prioritized import PrioritizedPlanningSolver
 from distributed import DistributedPlanningSolver # Placeholder for Distributed Planning
 from visualize import Animation
-from collisions import detect_collisions
+from collisions_v2 import detect_collisions
 from single_agent_planner_v2 import get_sum_of_cost
 
 import map_gen
@@ -22,9 +24,9 @@ import map_gen
 SOLVER = "Independent"
 
 
-def print_mapf_instance(my_map: list[list[bool]],
-                        starts: list[tuple[int, int]],
-                        goals: list[tuple[int, int]]) -> None:
+def print_mapf_instance(my_map: npt.NDArray[bool],
+                        starts: list[npt.NDArray[int]],
+                        goals: list[npt.NDArray[int]]) -> None:
     """
     Prints start location and goal location of all agents, using @ for an obstacle, . for a open cell, and 
     a number for the start location of each agent.
@@ -41,8 +43,8 @@ def print_mapf_instance(my_map: list[list[bool]],
     print_locations(my_map, goals)
 
 
-def print_locations(my_map: list[list[bool]],
-                    locations: list[tuple[int, int]]) -> None:
+def print_locations(my_map: npt.NDArray[bool],
+                    locations: list[npt.NDArray[int]]) -> None:
     """
     See docstring print_mapf_instance function above.
     """
@@ -62,7 +64,7 @@ def print_locations(my_map: list[list[bool]],
     print(to_print)
 
 
-def import_mapf_instance(filename: str) -> tuple[list[list[bool]], list[tuple[int, int]], list[tuple[int, int]]]:
+def import_mapf_instance(filename: str) -> tuple[npt.NDArray[bool], list[npt.NDArray[int]], list[npt.NDArray[int]]]:
     """
     Imports mapf instance from instances folder. Expects input as a .txt file in the following format:
         Line1: #rows #columns (number of rows and columns)
@@ -108,9 +110,9 @@ def import_mapf_instance(filename: str) -> tuple[list[list[bool]], list[tuple[in
         for a in range(num_agents):
             line = f.readline()
             sx, sy, gx, gy = [int(x) for x in line.split(' ')]
-            starts.append((sx, sy))
-            goals.append((gx, gy))
-    return my_map, starts, goals
+            starts.append(np.array([sx, sy], dtype=int))
+            goals.append(np.array([gx, gy], dtype=int))
+    return np.array(my_map, dtype=bool), starts, goals
 
 
 if __name__ == '__main__':

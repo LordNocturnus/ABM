@@ -9,7 +9,7 @@ PRIMEX = 461
 
 PRIMEY = 463
 
-DIRECTIONS = ((0, -1), (1, 0), (0, 1), (-1, 0), (0, 0))
+DIRECTIONS = np.array([[0, -1], [1, 0], [0, 1], [-1, 0], [0, 0]], dtype=int)
 PRIMEDIRECTIONS = (-PRIMEY, PRIMEX, PRIMEY, -PRIMEX, 0)
 
 RNG = np.random.default_rng(0)

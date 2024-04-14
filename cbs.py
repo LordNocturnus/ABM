@@ -3,9 +3,9 @@ import time as timer
 import heapq
 import typing
 import constraints
-import collisions
+import collisions_v2
 
-from single_agent_planner_v2 import compute_heuristics, a_star, get_sum_of_cost
+from single_agent_planner_v3 import compute_heuristics, a_star, get_sum_of_cost
 
 
 class CBSNode:
@@ -14,7 +14,7 @@ class CBSNode:
                  cost: int,
                  constraint_list: list[constraints.Constraint],
                  paths: list[list[tuple[int, int]]],
-                 collision_dict: dict[tuple[int, int], collisions.Collision],
+                 collision_dict: dict[tuple[int, int], collisions_v2.Collision],
                  idx: int) -> None:
         self.cost = cost
         self.constraints = constraint_list
@@ -96,7 +96,7 @@ class CBSSolver(object):
             root.paths.append(path)
 
         root.cost = get_sum_of_cost(root.paths)
-        root.collisions = collisions.detect_collisions(root.paths)
+        root.collisions = collisions_v2.detect_collisions(root.paths)
         self.push_node(root)
 
         # Task 3.1: Testing
@@ -138,7 +138,7 @@ class CBSSolver(object):
                               constraint.agent, new.constraints)
                 if path:
                     new.paths[constraint.agent] = path
-                    new.collisions = collisions.detect_collisions(new.paths)
+                    new.collisions = collisions_v2.detect_collisions(new.paths)
                     new.cost = get_sum_of_cost(new.paths)
                     self.push_node(new)
             #print(len(self.open_list))
