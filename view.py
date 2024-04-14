@@ -3,42 +3,33 @@ import matplotlib.lines as mline  # type: ignore
 import numpy as np  # type: ignore
 import math
 
-# def generate_view_map() -> dict[list[tuple[int,int]]]:
-    
-#     view_map = {}
-
-#     # Evaluate view for all posible locations Precomp step, to reduce computational requirements. 
-#     view_map["y", "x"] = agent_vision()
-    
-#     return view_map
 
 def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> list[tuple[int, int]]:
     """
-    Fov generates a list containing boolean values indicating which agents, the specified agent 
-    x can view, while ignoring obstacles. True indicates the agent can be viewed, while false 
-    idicates the agent cannot be observed by agent x.
+    Fov generates a list containing coordinate values indicating which agents, the specified agent 
+    x can view, while ignoring obstacles. Here each coordinate represent the following:
+    (y-coordinate, x-coordinate) of the points agent x can view
     
-    Example: output [False, False, True, True, False, False], if the agent observing other agents 
-    is given index 1, is gives itself the default value False (cannot see iteself). It can however see
-    agent 2 and 3 (assigned true), and cannot observe agent 0, 1, 4, 5 (assigned False).
+    Example case: 
+        - view.fov((0,0), 1, ~) -> [(1,0), (0,1), (-1,0), (0,-1)]. 
+        The agent located at (0,0) with view_radius 1 can seen 4 points 
     
     Parameters
     ----------
-    m_id : int
-        Index of the main agent, who is observing other agents within the map.
-    
-    locations : list[tuple[int, int]]
-        Locations of all agents supplied as a list of coordinates (y-location:int, x-location:int) 
-        at the evaluated timestep.
+    agent : tuple[int, int]
+        Location of the agent within the map, specified as (y, x)
     
     view_radius : int
         maximum unrestricted view range of the agent
+    
+    my_map : np.ndarray
+        Map provided as numpy array where 1 indicates a wall and zero indicates free space
 
     Returns
     -------
-    list[bool]
-        A list of boolean values indicating which agents, agent `m_id` can view within the map. Where True means 
-        an agent is in view, and false means an agent is not in view. The agent `m_id` assigns itself False.
+    list[tuple[int, int]]
+        A list of coordinate values indicating which agents, agent `agent` can view within the map. 
+        The agent cannot sea itself, is a feature implemented by default within the program. 
 
     Raises
     ------
@@ -47,8 +38,9 @@ def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> li
 
     points_in_vision = []
 
-    obstacles = [el for el in np.argwhere(my_map == 1)]
-
+    # Store the location of the obstacles as tuples in a list
+    obstacles = [tuple(el) for el in np.argwhere(my_map == 1)]
+    
     for i in range(-view_radius, view_radius+1):
         for j in range(-view_radius, view_radius+1):
             
@@ -62,6 +54,7 @@ def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> li
                 point = (agent[0] + j, agent[1] + i)
 
                 if point not in obstacles:
+                    
                     points_in_vision.append(point)
 
     return points_in_vision

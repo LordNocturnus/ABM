@@ -1,3 +1,5 @@
+import numpy as np
+
 import unittest
 
 import view
@@ -14,7 +16,7 @@ class Converter:
     covert_output = lambda view_points, agent_locations: [True if agent_loc in view_points else False for agent_loc in agent_locations]
 
 
-class Test_View_nonblocking(unittest.TestCase):
+class Test_View_nonblocking_SC1(unittest.TestCase):
     """
     Test class to investigate the `fov` function from `view.fov()`
 
@@ -28,7 +30,9 @@ class Test_View_nonblocking(unittest.TestCase):
 
     test_6: Test correct implemtation of view radius
 
-    test_7: Test if it can view an agent ontop of itself, but cannot view itself 
+    test_7: Test if it can view an agent ontop of itself, but cannot view itself
+    
+    test_8: Test working principal for view distance set to zero
 
     test_conservation_agents: Test if the amount of agents remains constant before 
     and after applying the view function
@@ -175,6 +179,52 @@ class Test_View_nonblocking(unittest.TestCase):
         # Check if all returned elements are boolean
         res = Converter.covert_output(view.fov(self.agent_locations[0], 1, self.map), self.agent_locations)
         self.assertEqual(all(isinstance(el,  bool) for el in res), True)
+
+
+class Test_View_nonblocking_SC2(unittest.TestCase):
+    """
+    Test class to investigate the `fov` function from `view.fov()`
+
+    The output of the view function is precisly known before hand, therfore the
+    entire function (that utelises other functions) is tested trough a full scale test. 
+
+    Outline of tests:
+    ------------------
+
+    test_1 upto test_3: Test if output points are as expected
+    
+    """
+
+    def __init__(self, methodName: str = "runTest") -> None:
+        super().__init__(methodName)
+
+        # Define map
+        self.map = np.array([[0,0,0,0,0],
+                             [0,1,1,1,0],
+                             [0,1,0,1,0],
+                             [0,1,1,1,0],
+                             [0,0,0,0,0]])
+        
+    def test_1(self):
+
+        res = view.fov((2,2), 1, self.map)
+        expected = []
+        
+        self.assertEqual(res, expected)
+
+    def test_2(self):
+        
+        res = view.fov((2,2), 0, self.map)
+        expected = []
+        
+        self.assertEqual(res, expected)
+    
+    def test_3(self):
+        
+        res = view.fov((2,2), 2, self.map)
+        expected = [(0,2), (2,0), (4,2), (2,4)]
+        
+        self.assertCountEqual(res, expected) # Order doesn't matter
 
 if __name__ == "__main__":
     unittest.main()
