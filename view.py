@@ -12,7 +12,7 @@ import math
     
 #     return view_map
 
-def fov(m_id: int, locations: list[tuple[int, int]], view_radius: int) -> list[bool]:
+def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> list[tuple[int, int]]:
     """
     Fov generates a list containing boolean values indicating which agents, the specified agent 
     x can view, while ignoring obstacles. True indicates the agent can be viewed, while false 
@@ -45,26 +45,26 @@ def fov(m_id: int, locations: list[tuple[int, int]], view_radius: int) -> list[b
     None
     """
 
-    visibility = []
+    points_in_vision = []
 
-    m_agent = locations[m_id]
-        
-    for s_id, s_agent in enumerate(locations):
-        
-        # Go to next if the main and secondary agent are the same
-        if m_id == s_id:
-            view = False
-        else:
-            # Detect if agent is within range
-            dist = math.sqrt((m_agent[0] - s_agent[0])**2 + (m_agent[1]-s_agent[1])**2)
-            if dist <= view_radius:
-                view = True
-            else:
-                view = False
-        
-        visibility.append(view)
+    obstacles = [el for el in np.argwhere(my_map == 1)]
 
-    return visibility
+    for i in range(-view_radius, view_radius+1):
+        for j in range(-view_radius, view_radius+1):
+            
+            # Agent own location is defined as cannot be seen
+            if i == 0 and j == 0:
+                continue
+            
+            # Check if the point is within view radius of the agent
+            elif math.sqrt(i**2 + j**2) <= view_radius:
+                
+                point = (agent[0] + j, agent[1] + i)
+
+                if point not in obstacles:
+                    points_in_vision.append(point)
+
+    return points_in_vision
 
 
 def fov_blocking(agent: tuple[int, int], view_radius: int,
