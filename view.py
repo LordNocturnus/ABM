@@ -256,30 +256,24 @@ class Ray:
 def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[Box],
                  DEBUG: bool = False) -> list[tuple[int, int]]:
     """
-    Returns the points the agent can be view based on the its view radius, the obstacles and the agents within 
-    the environment. 
+        Returns the points the agent can be view based on the its view radius, the obstacles and the agents within 
+        the environment. 
 
-    Parameters
-    ----------
-    agent_loc : tuple[int, int]
-        The agent location provided as (y-location, x-location)
     
-    view_radius : int
-        maximum unrestricted view range of the agent
+    :param agent_loc:           {tuple} The agent location provided as (y-location, x-location), both of type int
     
-    obstacle_locations : list[Box]
-        Locations of all obstacles within the map supplied as a list of Box objects.
+    :param view_radius:         {int}   Maximum unrestricted view range of the agent
+    
+    :param obstacle_locations:  {list}  Locations of all obstacles within the map supplied as a list of Box objects.
 
-    DEBUG (optional, default False) : bool
-        True, Enables plotting functionality to view the agents' view
+    :param DEBUG:               {bool}  Optional, default False. Enables plotting functionality to view the agents' 
+                                        view. Provides a graphic fiv representation for every timestep, point and 
+                                        agent being evaluated.
     
-    Returns
-    -------
-    list[tuple[int, int]]
-        Returns list of all point the agent can view, point is list are stored as (y-location, x-location)
+    :return:                    {list}  Returns list of all point the agent can view, point is list are stored as
+                                        tuple with both elements being integer (y-location, x-location).
 
-    Raises
-    ------
+    :raise:                     {None}  No raises constructed
     """
 
     points_in_vision = []
