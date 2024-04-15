@@ -237,35 +237,6 @@ class Ray:
         self.end_y = end[0]
         self.slope = math.atan2(self.end_y - self.start_y, self.end_x - self.start_x)
 
-    def check_view(self, obstacles: list[Box]) -> bool:
-        
-        for obstacle in obstacles:
-            if self.end_x == obstacle.x and self.end_y == obstacle.y:
-                return False
-        
-        for x in np.linspace(self.start_x, self.end_x, self.reso, endpoint=True):
-            
-            # Evaluate all points on the ray, and detect if any point intersect with an obstacle.
-            # If this is the case false is retured and the therfore the end point cannot be accessed.
-            if self.slope != math.pi / 2 and self.slope != - math.pi / 2:
-                y = math.tan(self.slope) * (x - self.start_x) + self.start_y 
-
-                for obstacle in obstacles:
-                    if obstacle.x - 0.5 < x < obstacle.x + 0.5 and obstacle.y - 0.5 < y < obstacle.y + 0.5:
-                        return False
-            
-            # For angles 90 and -90 the y values need to called manualy, afterwards the various y values can be 
-            # used to check if an obstacle is located on any of these points, to determine if the ray is blocked
-            else:
-
-                for y in np.linspace(self.start_y, self.end_y, self.reso, endpoint=True):
-            
-                    for obstacle in obstacles:
-                        
-                        if obstacle.x - 0.5 < x < obstacle.x + 0.5 and obstacle.y - 0.5 < y < obstacle.y + 0.5:
-                            return False
-
-        return True
     
     def check_view_v2(self, obstacles: list[Box]) -> bool:
         """
@@ -356,105 +327,54 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
                     # Point can be seen
                     points_in_vision.append((j+agent_loc[0],i+agent_loc[1]))
 
-    if DEBUG:
+    ## ---------------------------------------------------------------------------------------------------
+    ##  Uncomment lines below, and set DEBUG to true to enable the generation of plots of the agent view.
+    ## ---------------------------------------------------------------------------------------------------
+    # if DEBUG:
         
-        fig, ax = plt.subplots()
+    #     fig, ax = plt.subplots()
 
-        r = view_radius
+    #     r = view_radius
 
-        for i in range(-r,r+1):
-            for j in range(-r,r+1):
-                if i == 0 and j == 0:
+    #     for i in range(-r,r+1):
+    #         for j in range(-r,r+1):
+    #             if i == 0 and j == 0:
                     
-                    plt.scatter(agent_loc[1],agent_loc[0],color='c')
+    #                 plt.scatter(agent_loc[1],agent_loc[0],color='c')
                 
-                elif math.sqrt(i**2 + j**2) <= r:
-                    # Evaulate ray from origin to end point
-                    # Goal is to determine if the end point can be seen/ evaluated
+    #             elif math.sqrt(i**2 + j**2) <= r:
+    #                 # Evaulate ray from origin to end point
+    #                 # Goal is to determine if the end point can be seen/ evaluated
 
-                    line = Ray(agent_loc, (j+agent_loc[0], i+agent_loc[1]))
+    #                 line = Ray(agent_loc, (j+agent_loc[0], i+agent_loc[1]))
 
-                    # Visualise points the agent can see 
-                    if line.check_view_v2(obstacles):
-                        # Point can be seen
-                        ax.scatter(i+agent_loc[1], j+agent_loc[0],color='b')
-                    else:
-                        # Point cannot be seen
-                        ax.scatter(i+agent_loc[1], j+agent_loc[0],color='r')
+    #                 # Visualise points the agent can see 
+    #                 if line.check_view_v2(obstacles):
+    #                     # Point can be seen
+    #                     ax.scatter(i+agent_loc[1], j+agent_loc[0],color='b')
+    #                 else:
+    #                     # Point cannot be seen
+    #                     ax.scatter(i+agent_loc[1], j+agent_loc[0],color='r')
 
-        # Visualise objects
-        for obstacle in obstacles:
+    #     # Visualise objects
+    #     for obstacle in obstacles:
 
-            rect = plt.Rectangle((obstacle.x-0.5, obstacle.y-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
-            ax.add_patch(rect)
-        # plt.scatter(agent[1],agent[0],color='c')
+    #         rect = plt.Rectangle((obstacle.x-0.5, obstacle.y-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
+    #         ax.add_patch(rect)
+    #     # plt.scatter(agent[1],agent[0],color='c')
 
-        fig.gca().invert_yaxis()
-        ax.set_aspect('equal', adjustable='box')
-        legend_elements = [mline.Line2D([0], [0], marker='o', color='w', label='Agent',markerfacecolor='c', markersize=7),
-                        mline.Line2D([0], [0], marker='o', color='w', label='Observable',markerfacecolor='b', markersize=7),
-                        mline.Line2D([0], [0], marker='o', color='w', label='Not observable',markerfacecolor='r', markersize=7)]
-        ax.legend(handles=legend_elements)
-        plt.show()
+    #     fig.gca().invert_yaxis()
+    #     ax.set_aspect('equal', adjustable='box')
+    #     legend_elements = [mline.Line2D([0], [0], marker='o', color='w', label='Agent',markerfacecolor='c', markersize=7),
+    #                     mline.Line2D([0], [0], marker='o', color='w', label='Observable',markerfacecolor='b', markersize=7),
+    #                     mline.Line2D([0], [0], marker='o', color='w', label='Not observable',markerfacecolor='r', markersize=7)]
+    #     ax.legend(handles=legend_elements)
+    #     plt.show()
 
     
     return points_in_vision
 
 if __name__ == "__main__":
-    # # Helper functions 
-    # get_y = lambda coords: [loc[0] for loc in coords]
-    # get_x = lambda coords: [loc[1] for loc in coords]
-
-    # # Agents [(y,x), (y,x), (y,x)]
-    # agent1 = [(0,0), (0,1), (0,2), (1,2), (2,2)]
-    # agent2 = [(1,1), (1,2), (1,3), (2,3), (2,2)]
-    # agent3 = [(5,1), (5,2), (5,3), (6,3), (6,4)]
-    # agent4 = [(7,1), (7,2), (7,3), (7,4), (7,5)]
-
-    # # All agents for evaluation 
-    # agents = [agent1, agent2, agent3, agent4]
-    # colors = ['r','c','b','g']
-
-    # # Obstacles
-    # obstacles = [(5,0), (6,0), (7,0), (6,1), (6,2), (3,-1), (3,0), (3,1), (3,2), (3,4), (3,5), (5,5), (6,5)]
-
-    # # Timestep
-    # t = 0
-
-    # # Locations
-    # locations = [agent[t] for agent in agents]
-    
-    # # View distance
-    # r = 4
-
-    # res = fov(0, locations, r)
-    # print(res)
-
-    # res = fov_blocking(0, locations, r, obstacles, DEBUG=True)
-    # print(res)
-
-    # fig, ax = plt.subplots()
-
-    # ### VISUALISATION ###
-    # # Visualise paths
-    # for id, agent in enumerate(agents):
-
-    #     ax.plot(get_x(agent), get_y(agent), label=f"Agent #{id}")
-        
-    #     for loc in agent:
-    #         circle = plt.Circle((loc[1], loc[0]), r, color=colors[id], alpha=0.2, fill=False)
-    #         ax.add_patch(circle)
-
-    # # Visualise objects
-    # for obstacle in obstacles:
-
-    #     rect = plt.Rectangle((obstacle[1]-0.5, obstacle[0]-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
-    #     ax.add_patch(rect)
-
-    # fig.gca().invert_yaxis()
-    # ax.set_aspect('equal', adjustable='box')
-    # plt.legend()
-    # plt.show()
 
     env = np.array([[0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
                     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -476,4 +396,3 @@ if __name__ == "__main__":
     
     res = fov_blocking((1,1), 2, env, DEBUG=True)
     print(res)
-
