@@ -6,15 +6,16 @@ from run_experiments import import_mapf_instance
 from map_gen import MapGenerator
 from matplotlib import colors
 
+
 def map_vis(map_name: str) -> None:
     """
     Create illustrations of the various test case maps
     """
 
     my_map, agents_start, agents_end = import_mapf_instance(f"instances/{map_name}.txt")
-    
+
     # my_map, agents_start, agents_end = MapGenerator(f"maps/{map_name}.map").generate(15)
-    
+
     my_map = np.array(my_map)
 
     cmap = colors.ListedColormap(['#D4D4D4', '#333333'])
@@ -50,15 +51,15 @@ def map_vis(map_name: str) -> None:
     agent = 0
 
     for agent_start, agent_end in zip(agents_start, agents_end):
-        
         agent += 1
 
-        start   = plt.Circle(agent_start[::-1], 0.3, facecolor=color_pallete[agent-1], edgecolor="k")
-        end     = mpatches.Rectangle([el-0.4 for el in agent_end[::-1]], 0.8, 0.8, linewidth=1, edgecolor=color_pallete[agent-1], facecolor='none')
-        
+        start = plt.Circle(agent_start[::-1], 0.3, facecolor=color_pallete[agent - 1], edgecolor="k")
+        end = mpatches.Rectangle([el - 0.4 for el in agent_end[::-1]], 0.8, 0.8, linewidth=1,
+                                 edgecolor=color_pallete[agent - 1], facecolor='none')
+
         ax.add_patch(start)
         ax.add_patch(end)
-        ax.annotate(agent, agent_start[::-1], color='w', weight='bold', 
+        ax.annotate(agent, agent_start[::-1], color='w', weight='bold',
                     fontsize=7, ha='center', va='center')
 
     # draw gridlines
@@ -69,8 +70,8 @@ def map_vis(map_name: str) -> None:
     # plt.savefig(f'figures/{map_name}.pdf', bbox_inches='tight')
     # plt.savefig(f'figures/{map_name}.pdf', bbox_inches='tight')
 
-
     plt.close()
+
 
 for i in range(1, 51):
     print(f"=== Generating map visualisation of map {i} ===")

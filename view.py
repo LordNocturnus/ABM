@@ -40,28 +40,27 @@ def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> li
 
     # Store the location of the obstacles as tuples in a list
     obstacles = [tuple(el) for el in np.argwhere(my_map == 1)]
-    
-    for i in range(-view_radius, view_radius+1):
-        for j in range(-view_radius, view_radius+1):
-            
+
+    for i in range(-view_radius, view_radius + 1):
+        for j in range(-view_radius, view_radius + 1):
+
             # Agent own location is defined as cannot be seen
             if i == 0 and j == 0:
                 continue
-            
+
             # Check if the point is within view radius of the agent
-            elif math.sqrt(i**2 + j**2) <= view_radius:
-                
+            elif math.sqrt(i ** 2 + j ** 2) <= view_radius:
+
                 point = (agent[0] + j, agent[1] + i)
 
                 if point not in obstacles:
-                    
                     points_in_vision.append(point)
 
     return points_in_vision
 
 
 def fov_blocking(agent: tuple[int, int], view_radius: int,
-                 my_map: np.ndarray[int], DEBUG: bool=False) -> list[tuple[int, int]]:
+                 my_map: np.ndarray[int], DEBUG: bool = False) -> list[tuple[int, int]]:
     """
     Fov_blocking generates a list containing the coordinate values indicating which positions, 
     the specified agent can view, considering obstacles. The coordinates are supplied as 
@@ -138,7 +137,7 @@ class Box:
             square shaped obstacle.  
     """
 
-    def __init__(self, location: tuple[int,int]) -> None:
+    def __init__(self, location: tuple[int, int]) -> None:
         """
         Initliase the object
 
@@ -158,7 +157,7 @@ class Box:
         self.x = location[1]
         self.y = location[0]
         self.segments = self.bounds
-    
+
     @property
     def bounds(self) -> list[list[tuple[float, float]]]:
         """
@@ -237,7 +236,6 @@ class Ray:
         self.end_y = end[0]
         self.slope = math.atan2(self.end_y - self.start_y, self.end_x - self.start_x)
 
-    
     def check_view_v2(self, obstacles: list[Box]) -> bool:
         """
         Check if the ray intersects with any obstacles.
@@ -258,30 +256,30 @@ class Ray:
         """
         y00, x00 = self.start_y, self.start_x
         y01, x01 = self.end_y - self.start_y, self.end_x - self.start_x
-        
+
         for obstacle in obstacles:
 
             for segment in obstacle.segments:
 
                 y10, x10 = segment[0][0], segment[0][1]
                 y11, x11 = segment[1][0] - segment[0][0], segment[1][1] - segment[0][1]
-                
+
                 # d = x11 y01 - x01 y11 : if 0 two lines are parralel  
                 d = x11 * y01 - x01 * y11
                 if d == 0:
                     continue
 
-                s = (1/d) * ((x00 - x10) * y01 - (y00 - y10) * x01)
-                t = - (1/d) * (-(x00 - x10) * y11 + (y00 - y10) * x11)
+                s = (1 / d) * ((x00 - x10) * y01 - (y00 - y10) * x01)
+                t = - (1 / d) * (-(x00 - x10) * y11 + (y00 - y10) * x11)
 
                 if 0 <= s <= 1 and 0 <= t <= 1:
                     return False
-        
+
         return True
 
 
-def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[Box], 
-                 DEBUG: bool=False) -> list[tuple[int, int]]:
+def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[Box],
+                 DEBUG: bool = False) -> list[tuple[int, int]]:
     """
     Returns the points the agent can be view based on the its view radius, the obstacles and the agents within 
     the environment. 
@@ -310,28 +308,28 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
     """
 
     points_in_vision = []
-    
-    for i in range(-view_radius, view_radius+1):
-        for j in range(-view_radius, view_radius+1):
+
+    for i in range(-view_radius, view_radius + 1):
+        for j in range(-view_radius, view_radius + 1):
             if i == 0 and j == 0:
-                
+
                 continue
-            
-            elif math.sqrt(i**2 + j**2) <= view_radius:
+
+            elif math.sqrt(i ** 2 + j ** 2) <= view_radius:
                 # Evaulate ray from origin to end point
                 # Goal is to determine if the end point can be seen/ evaluated
-                line = Ray(agent_loc, (j+agent_loc[0], i+agent_loc[1]))
+                line = Ray(agent_loc, (j + agent_loc[0], i + agent_loc[1]))
 
                 # Visualise points the agent can see 
                 if line.check_view_v2(obstacles):
                     # Point can be seen
-                    points_in_vision.append((j+agent_loc[0],i+agent_loc[1]))
+                    points_in_vision.append((j + agent_loc[0], i + agent_loc[1]))
 
     ## ---------------------------------------------------------------------------------------------------
     ##  Uncomment lines below, and set DEBUG to true to enable the generation of plots of the agent view.
     ## ---------------------------------------------------------------------------------------------------
     # if DEBUG:
-        
+
     #     fig, ax = plt.subplots()
 
     #     r = view_radius
@@ -339,9 +337,9 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
     #     for i in range(-r,r+1):
     #         for j in range(-r,r+1):
     #             if i == 0 and j == 0:
-                    
+
     #                 plt.scatter(agent_loc[1],agent_loc[0],color='c')
-                
+
     #             elif math.sqrt(i**2 + j**2) <= r:
     #                 # Evaulate ray from origin to end point
     #                 # Goal is to determine if the end point can be seen/ evaluated
@@ -371,28 +369,27 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
     #     ax.legend(handles=legend_elements)
     #     plt.show()
 
-    
     return points_in_vision
 
-if __name__ == "__main__":
 
-    env = np.array([[0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
-                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                    [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
-                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                    [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
-                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                    [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
-                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                    [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0]])
-    
-    res = fov_blocking((0,0), 2, env, DEBUG=True)
+if __name__ == "__main__":
+    env = np.array([[0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0]])
+
+    res = fov_blocking((0, 0), 2, env, DEBUG=True)
     print(res)
 
-    env = np.array([[0,0,0,0],
-                    [0,0,1,0],
-                    [0,1,1,0],
-                    [0,0,0,0]])
-    
-    res = fov_blocking((1,1), 2, env, DEBUG=True)
+    env = np.array([[0, 0, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 1, 1, 0],
+                    [0, 0, 0, 0]])
+
+    res = fov_blocking((1, 1), 2, env, DEBUG=True)
     print(res)
