@@ -84,7 +84,3 @@ class ConstraintTable:
             return self.constraints[-1].step + 1
         except IndexError:
             return 0
-
-
-
-

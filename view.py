@@ -229,16 +229,15 @@ class Ray:
         ------
         None
         """
+        self.reso = 50
+
         self.start_x = start[1]
         self.start_y = start[0]
         self.end_x = end[1]
         self.end_y = end[0]
+        self.slope = math.atan2(self.end_y - self.start_y, self.end_x - self.start_x)
 
     def check_view(self, obstacles: list[Box]) -> bool:
-        
-        self.reso = 50
-
-        self.slope = math.atan2(self.end_y - self.start_y, self.end_x - self.start_x)
         
         for obstacle in obstacles:
             if self.end_x == obstacle.x and self.end_y == obstacle.y:

@@ -3,7 +3,7 @@ Two prime numbers are used to encode both the x and y coordinate into a single i
 """
 import numpy.typing as npt  # type: ignore
 import numpy as np
-#import numba as nb # type: ignore
+
 
 PRIMEX = 461
 
@@ -15,12 +15,10 @@ PRIMEDIRECTIONS = (-PRIMEY, PRIMEX, PRIMEY, -PRIMEX, 0)
 RNG = np.random.default_rng(0)
 
 
-#@nb.jit(nopython=True)  # type: ignore
 def pos_to_prime(x: npt.NDArray[int], y: npt.NDArray[int]) -> npt.NDArray[int]:
     return x * PRIMEX + y * PRIMEY
 
 
-#@nb.jit(nopython=True)  # type: ignore
 def prime_to_pos(prime: npt.NDArray[int]) -> tuple[npt.NDArray[int], npt.NDArray[int]]:
     y = (prime % PRIMEX) // (PRIMEY - PRIMEX)
     x = (prime - y * PRIMEY) // PRIMEX

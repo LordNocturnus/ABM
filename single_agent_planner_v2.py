@@ -1,23 +1,19 @@
 import typing
 from collections import abc
-#import numba as nb
 import heapq
 
 import constraints
 import utils
 
 
-#@nb.jit(nopython=True)  # type: ignore
 def move(loc: tuple[int, int], dir_idx: int) -> tuple[int, int]:
     return loc[0] + utils.DIRECTIONS[dir_idx][0], loc[1] + utils.DIRECTIONS[dir_idx][1]
 
 
-#@nb.jit(nopython=True)  # type: ignore
 def get_sum_of_cost(paths: abc.Iterable[abc.Sized]) -> int:
     return sum([len(p) - 1 for p in paths])
 
 
-#@nb.jit(nopython=True)  # type: ignore
 def compute_heuristics(my_map: list[list[bool]], goal: tuple[int, int]) -> dict[tuple[int, int], int]:
     # Use Dijkstra to build a shortest-path tree rooted at the goal location
     open_list: list[tuple[int, tuple[int, int]]] = []
@@ -46,7 +42,6 @@ def compute_heuristics(my_map: list[list[bool]], goal: tuple[int, int]) -> dict[
     return closed_list
 
 
-#@nb.jit(nopython=True)  # type: ignore
 def get_location(path: list[tuple[int, int]], time: int) -> tuple[int, int]:
     try:
         return path[time]
@@ -54,7 +49,6 @@ def get_location(path: list[tuple[int, int]], time: int) -> tuple[int, int]:
         return path[-1]
 
 
-#@nb.jit(nopython=True)  # type: ignore
 def a_star(my_map: list[list[bool]],
            start_loc: tuple[int, int],
            goal_loc: tuple[int, int],
