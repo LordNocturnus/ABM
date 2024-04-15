@@ -21,7 +21,8 @@ if __name__ == '__main__':
     test_loader = unittest.TestLoader()
     test_suite = unittest.TestSuite()
 
-    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_nonblocking.Test_View_nonblocking))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_nonblocking.Test_View_nonblocking_SC1))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_nonblocking.Test_View_nonblocking_SC2))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_blocking_SC1))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_blocking_SC2))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_view_blocking.Test_View_blocking_SC3))
@@ -37,7 +38,6 @@ if __name__ == '__main__':
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_mapgen.Test_MapGenerator))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_mapgen.Test_MapGenerator_RampUp))
     test_suite.addTests(test_loader.loadTestsFromTestCase(test_collision.Test_Collision))
-
 
     runner = unittest.TextTestRunner()
     result = runner.run(test_suite)

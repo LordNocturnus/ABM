@@ -21,10 +21,10 @@ class Test_View_blocking_SC1(unittest.TestCase):
     """
     Test scenario 1: Wall
     ---------------------
-    . . . . .
-    . @ @ @ .
+    1 . 2 3 .
+    . @ @ @ 4
     . . 0 . .
-    . . . . .
+    5 . . . .
 
     Outline of tests (name function/test + short description):
     ---------------------
@@ -375,61 +375,61 @@ class Test_View_blocking_SC6(unittest.TestCase):
         self.assertEqual(res, expected)
 
 
-@unittest.skip("Test not implemented")
-class Test_View_blocking_SC7(unittest.TestCase):
-    """
-    Test scenario 6
-    ----------------
-        0 (x)
-        v
-    0 > . .
-    (y) . .
+# @unittest.skip("Test not implemented")
+# class Test_View_blocking_SC7(unittest.TestCase):
+#     """
+#     Test scenario 6
+#     ----------------
+#         0 (x)
+#         v
+#     0 > . .
+#     (y) . .
         
-    Outline of tests:
-    ------------------
+#     Outline of tests:
+#     ------------------
 
-    test_visual : Test in which the user will visualy verify if the view map is created as expected. 
+#     test_visual : Test in which the user will visualy verify if the view map is created as expected. 
 
-    test_conservation_agent : Check if no agents appear or disapear
+#     test_conservation_agent : Check if no agents appear or disapear
 
-    test_types : Ensure type consistency
+#     test_types : Ensure type consistency
     
-    """
+#     """
 
-    def __init__(self, methodName: str = "runTest") -> None:
-        super().__init__(methodName)
-        self.map  = None
-        self.agents     = None
-        self.agent      = None
-        self.radius     = None
+#     def __init__(self, methodName: str = "runTest") -> None:
+#         super().__init__(methodName)
+#         self.map  = None
+#         self.agents     = None
+#         self.agent      = None
+#         self.radius     = None
 
-    def test_visual(self):
-        view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map, DEBUG=True)
+#     def test_visual(self):
+#         view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map, DEBUG=True)
 
-        inp = str(input("\nWas the view as expected? (y/n): ")).strip().lower()
+#         inp = str(input("\nWas the view as expected? (y/n): ")).strip().lower()
 
-        self.assertIn(inp, ["yes", "y", "1" , "true", "ye"])
+#         self.assertIn(inp, ["yes", "y", "1" , "true", "ye"])
 
-    def test_conservation_agents(self):
+#     def test_conservation_agents(self):
 
-        # Check if the amount of agents remains constant after return
+#         # Check if the amount of agents remains constant after return
 
-        view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map)
-        res = Converter.covert_output(view_map, self.agents)
+#         view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map)
+#         res = Converter.covert_output(view_map, self.agents)
 
-        self.assertEqual(len(res), len(self.agents))
+#         self.assertEqual(len(res), len(self.agents))
 
-    def test_types(self):
+#     def test_types(self):
 
-        # Check if all returned elements are boolean
+#         # Check if all returned elements are boolean
 
-        view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map)
-        res = Converter.covert_output(view_map, self.agents)
+#         view_map = view.fov_blocking(self.agents[self.agent], self.radius, self.map)
+#         res = Converter.covert_output(view_map, self.agents)
 
-        self.assertEqual(all(isinstance(el,  bool) for el in res), True)
+#         self.assertEqual(all(isinstance(el,  bool) for el in res), True)
 
 
-class Test_View_blocking_SC8(unittest.TestCase):
+class Test_View_blocking_SC7(unittest.TestCase):
     """
     Test scenario 8
     ----------------

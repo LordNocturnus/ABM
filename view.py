@@ -3,68 +3,61 @@ import matplotlib.lines as mline  # type: ignore
 import numpy as np  # type: ignore
 import math
 
-# def generate_view_map() -> dict[list[tuple[int,int]]]:
-    
-#     view_map = {}
 
-#     # Evaluate view for all posible locations Precomp step, to reduce computational requirements. 
-#     view_map["y", "x"] = agent_vision()
-    
-#     return view_map
-
-def fov(m_id: int, locations: list[tuple[int, int]], view_radius: int) -> list[bool]:
+def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> list[tuple[int, int]]:
     """
-    Fov generates a list containing boolean values indicating which agents, the specified agent 
-    x can view, while ignoring obstacles. True indicates the agent can be viewed, while false 
-    idicates the agent cannot be observed by agent x.
+    Fov generates a list containing coordinate values indicating which agents, the specified agent 
+    x can view, while ignoring obstacles. Here each coordinate represent the following:
+    (y-coordinate, x-coordinate) of the points agent x can view
     
-    Example: output [False, False, True, True, False, False], if the agent observing other agents 
-    is given index 1, is gives itself the default value False (cannot see iteself). It can however see
-    agent 2 and 3 (assigned true), and cannot observe agent 0, 1, 4, 5 (assigned False).
+    Example case: 
+        - view.fov((0,0), 1, ~) -> [(1,0), (0,1), (-1,0), (0,-1)]. 
+        The agent located at (0,0) with view_radius 1 can seen 4 points 
     
     Parameters
     ----------
-    m_id : int
-        Index of the main agent, who is observing other agents within the map.
-    
-    locations : list[tuple[int, int]]
-        Locations of all agents supplied as a list of coordinates (y-location:int, x-location:int) 
-        at the evaluated timestep.
+    agent : tuple[int, int]
+        Location of the agent within the map, specified as (y, x)
     
     view_radius : int
         maximum unrestricted view range of the agent
+    
+    my_map : np.ndarray
+        Map provided as numpy array where 1 indicates a wall and zero indicates free space
 
     Returns
     -------
-    list[bool]
-        A list of boolean values indicating which agents, agent `m_id` can view within the map. Where True means 
-        an agent is in view, and false means an agent is not in view. The agent `m_id` assigns itself False.
+    list[tuple[int, int]]
+        A list of coordinate values indicating which agents, agent `agent` can view within the map. 
+        The agent cannot sea itself, is a feature implemented by default within the program. 
 
     Raises
     ------
     None
     """
 
-    visibility = []
+    points_in_vision = []
 
-    m_agent = locations[m_id]
-        
-    for s_id, s_agent in enumerate(locations):
-        
-        # Go to next if the main and secondary agent are the same
-        if m_id == s_id:
-            view = False
-        else:
-            # Detect if agent is within range
-            dist = math.sqrt((m_agent[0] - s_agent[0])**2 + (m_agent[1]-s_agent[1])**2)
-            if dist <= view_radius:
-                view = True
-            else:
-                view = False
-        
-        visibility.append(view)
+    # Store the location of the obstacles as tuples in a list
+    obstacles = [tuple(el) for el in np.argwhere(my_map == 1)]
+    
+    for i in range(-view_radius, view_radius+1):
+        for j in range(-view_radius, view_radius+1):
+            
+            # Agent own location is defined as cannot be seen
+            if i == 0 and j == 0:
+                continue
+            
+            # Check if the point is within view radius of the agent
+            elif math.sqrt(i**2 + j**2) <= view_radius:
+                
+                point = (agent[0] + j, agent[1] + i)
 
-    return visibility
+                if point not in obstacles:
+                    
+                    points_in_vision.append(point)
+
+    return points_in_vision
 
 
 def fov_blocking(agent: tuple[int, int], view_radius: int,

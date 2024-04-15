@@ -1,8 +1,22 @@
+import numpy as np
+
 import unittest
 
 import view
 
-class Test_View_nonblocking(unittest.TestCase):
+class Converter:
+    """
+    Convert output, to verifiable output. The convert_output function checks if the agents within the map are 
+    observable based on the view of the map from an agent. It converts the complex big list structure into a 
+    list containing boolean values. Where True indicates the agent can be view and false indicates the agent 
+    cannot be viewed. Used to convert test to newer code, besides the additional newer tests added.
+    
+    """
+
+    covert_output = lambda view_points, agent_locations: [True if agent_loc in view_points else False for agent_loc in agent_locations]
+
+
+class Test_View_nonblocking_SC1(unittest.TestCase):
     """
     Test class to investigate the `fov` function from `view.fov()`
 
@@ -16,7 +30,9 @@ class Test_View_nonblocking(unittest.TestCase):
 
     test_6: Test correct implemtation of view radius
 
-    test_7: Test if it can view an agent ontop of itself, but cannot view itself 
+    test_7: Test if it can view an agent ontop of itself, but cannot view itself
+    
+    test_8: Test working principal for view distance set to zero
 
     test_conservation_agents: Test if the amount of agents remains constant before 
     and after applying the view function
@@ -29,18 +45,19 @@ class Test_View_nonblocking(unittest.TestCase):
         super().__init__(methodName)
 
         self.agent_locations = [(0,0), (1,1), (10,21), (7,2), (3,3), (-1,-4), (-10, -10)]
+        self.map = None # Map not tested within tis test case
 
     
     def test_1(self):
 
         # Main agent
-        self.main_agent = 0
+        self.main_agent = self.agent_locations[0]
         
         # Define a set view radius
         self.view_distance = 3
         
         # Function output and expected output
-        res = view.fov(self.main_agent, self.agent_locations, self.view_distance)
+        res = Converter.covert_output(view.fov(self.main_agent, self.view_distance, self.map), self.agent_locations)
         expected = [False, True, False, False, False, False, False]
         
         # Evaluation
@@ -49,13 +66,13 @@ class Test_View_nonblocking(unittest.TestCase):
     def test_2(self):
         
         # Main agent
-        self.main_agent = 0
+        self.main_agent = self.agent_locations[0]
 
         # Define a set view radius
         self.view_distance = 0
         
         # Function output and expected output
-        res = view.fov(self.main_agent, self.agent_locations, self.view_distance)
+        res = Converter.covert_output(view.fov(self.main_agent, self.view_distance, self.map), self.agent_locations)
         expected = [False, False, False, False, False, False, False]
         
         # Evaluation
@@ -64,13 +81,13 @@ class Test_View_nonblocking(unittest.TestCase):
     def test_3(self):
         
         # Main agent
-        self.main_agent = 0
+        self.main_agent = self.agent_locations[0]
         
         # Define a set view radius
         self.view_distance = 10
         
         # Function output and expected output
-        res = view.fov(self.main_agent, self.agent_locations, self.view_distance)
+        res = Converter.covert_output(view.fov(self.main_agent, self.view_distance, self.map), self.agent_locations)
         expected = [False, True, False, True, True, True, False]
         
         # Evaluation
@@ -79,13 +96,13 @@ class Test_View_nonblocking(unittest.TestCase):
     def test_4(self):
         
         # Main agent
-        self.main_agent = 6
+        self.main_agent = self.agent_locations[6]
         
         # Define a set view radius
         self.view_distance = 11
         
         # Function output and expected output
-        res = view.fov(self.main_agent, self.agent_locations, self.view_distance)
+        res = Converter.covert_output(view.fov(self.main_agent, self.view_distance, self.map), self.agent_locations)
         expected = [False, False, False, False, False, True, False]
         
         # Evaluation
@@ -94,13 +111,13 @@ class Test_View_nonblocking(unittest.TestCase):
     def test_5(self):
         
         # Main agent
-        self.main_agent = 3
+        self.main_agent = self.agent_locations[3]
         
         # Define a set view radius
         self.view_distance = 100
         
         # Function output and expected output
-        res = view.fov(self.main_agent, self.agent_locations, self.view_distance)
+        res = Converter.covert_output(view.fov(self.main_agent, self.view_distance, self.map), self.agent_locations)
         expected = [True, True, True, False, True, True, True]
         
         # Evaluation
@@ -109,29 +126,44 @@ class Test_View_nonblocking(unittest.TestCase):
     def test_6(self):
         
         # Main agent
-        self.main_agent = 0
+        self.main_agent = self.agent_locations[0]
 
         # Define a set view radius
         self.view_distance = 1
         
         # Function output and expected output
-        res = view.fov(self.main_agent, [(0,0), (1,1)], self.view_distance)
-        expected = [False, False]
+        res = Converter.covert_output(view.fov(self.main_agent, self.view_distance, self.map), self.agent_locations)
+        expected = [False, False, False, False, False, False, False]
         
         # Evaluation
         self.assertEqual(res, expected)
     
-    def test_6(self):
+    def test_7(self):
         
         # Main agent
-        self.main_agent = 1
+        self.main_agent = self.agent_locations[1]
         
         # Define a set view radius
-        self.view_distance = 1
+        self.view_distance = 2
         
         # Function output and expected output
-        res = view.fov(self.main_agent, [(0,0), (0,0)], self.view_distance)
-        expected = [True, False]
+        res = Converter.covert_output(view.fov(self.main_agent, self.view_distance, self.map), self.agent_locations)
+        expected = [True, False, False, False, False, False, False]
+        
+        # Evaluation
+        self.assertEqual(res, expected)
+    
+    def test_8(self):
+        
+        # Main agent
+        self.main_agent = self.agent_locations[0]
+        
+        # Define a set view radius
+        self.view_distance = 0
+        
+        # Function output and expected output
+        res = Converter.covert_output(view.fov(self.main_agent, self.view_distance, self.map), self.agent_locations)
+        expected = [False, False, False, False, False, False, False]
         
         # Evaluation
         self.assertEqual(res, expected)
@@ -139,11 +171,60 @@ class Test_View_nonblocking(unittest.TestCase):
     def test_conservation_agents(self):
 
         # Check if the amount of agents remains constant after return
-
-        self.assertEqual(len(view.fov(0, self.agent_locations, 3)), len(self.agent_locations))
+        res = Converter.covert_output(view.fov(self.agent_locations[0], 1, self.map), self.agent_locations)
+        self.assertEqual(len(res), len(self.agent_locations))
 
     def test_types(self):
 
         # Check if all returned elements are boolean
+        res = Converter.covert_output(view.fov(self.agent_locations[0], 1, self.map), self.agent_locations)
+        self.assertEqual(all(isinstance(el,  bool) for el in res), True)
 
-        self.assertEqual(all(isinstance(el,  bool) for el in view.fov(0, self.agent_locations, 3)), True)
+
+class Test_View_nonblocking_SC2(unittest.TestCase):
+    """
+    Test class to investigate the `fov` function from `view.fov()`
+
+    The output of the view function is precisly known before hand, therfore the
+    entire function (that utelises other functions) is tested trough a full scale test. 
+
+    Outline of tests:
+    ------------------
+
+    test_1 upto test_3: Test if output points are as expected
+    
+    """
+
+    def __init__(self, methodName: str = "runTest") -> None:
+        super().__init__(methodName)
+
+        # Define map
+        self.map = np.array([[0,0,0,0,0],
+                             [0,1,1,1,0],
+                             [0,1,0,1,0],
+                             [0,1,1,1,0],
+                             [0,0,0,0,0]])
+        
+    def test_1(self):
+
+        res = view.fov((2,2), 1, self.map)
+        expected = []
+        
+        self.assertEqual(res, expected)
+
+    def test_2(self):
+        
+        res = view.fov((2,2), 0, self.map)
+        expected = []
+        
+        self.assertEqual(res, expected)
+    
+    def test_3(self):
+        
+        res = view.fov((2,2), 2, self.map)
+        expected = [(0,2), (2,0), (4,2), (2,4)]
+        
+        self.assertCountEqual(res, expected) # Order doesn't matter
+
+if __name__ == "__main__":
+    unittest.main()
