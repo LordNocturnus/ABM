@@ -6,34 +6,29 @@ import math
 
 def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> list[tuple[int, int]]:
     """
-    Fov generates a list containing coordinate values indicating which agents, the specified agent 
-    x can view, while ignoring obstacles. Here each coordinate represent the following:
-    (y-coordinate, x-coordinate) of the points agent x can view
+        Fov generates a list containing coordinate values indicating which agents, the specified agent x can view,
+        while ignoring obstacles. Here each coordinate represent the following -> (y-coordinate, x-coordinate) 
+        of the points agent x can view.
     
-    Example case: 
-        - view.fov((0,0), 1, ~) -> [(1,0), (0,1), (-1,0), (0,-1)]. 
-        The agent located at (0,0) with view_radius 1 can seen 4 points 
+        Example case: 
+            - view.fov((0,0), 1, ~) -> [(1,0), (0,1), (-1,0), (0,-1)]. 
+            The agent located at (0,0) with view_radius 1 can seen 4 points 
     
-    Parameters
-    ----------
-    agent : tuple[int, int]
-        Location of the agent within the map, specified as (y, x)
+    :param agent:           {tuple}         Location of the agent within the map, specified as (y, x), with y and x 
+                                            being of type int
     
-    view_radius : int
-        maximum unrestricted view range of the agent
+    :parmam view_radius:    {int}           Maximum unrestricted view range of the agent (circular fov)
     
-    my_map : np.ndarray
-        Map provided as numpy array where 1 indicates a wall and zero indicates free space
+    :parm my_map:           {np.ndarray}    Map provided as numpy array where 1 indicates a wall and zero 
+                                            indicates free space. The coordinates of the element represent the 
+                                            coordinates of the envirnoment element within the map. 
 
-    Returns
-    -------
-    list[tuple[int, int]]
-        A list of coordinate values indicating which agents, agent `agent` can view within the map. 
-        The agent cannot sea itself, is a feature implemented by default within the program. 
+    :return:                {list}          A list of coordinate values, stored as a tuple, with each coordinate being 
+                                            an integer. Indicating which agents, agent `agent` can view within the map.
+                                            The agent cannot see itself, is a design feature implemented by default 
+                                            within the program. 
 
-    Raises
-    ------
-    None
+    :raise:                 {None}          No raises constructed
     """
 
     points_in_vision = []
