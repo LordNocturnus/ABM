@@ -128,6 +128,8 @@ class Box:
 
     :param out:         {list}      Intermediate variable for the bounds property to supply the main class with 
                                     the bounding segments.
+    
+    :param location:    {tuple}     Location of the obstacle passed to the __init__ function.
     """
 
     def __init__(self, location: tuple[int, int]) -> None:
@@ -161,72 +163,71 @@ class Box:
 
 class Ray:
     """
-    A ray object going from the agent location to another specified location within the grid. Required to
-    analyse if the agent can view another point within its environment.
+        A ray object going from the agent location to another specified location within the grid. Required to
+        analyse if the agent can view another point within its environment. Required for the `fov_blocking` function
 
-    Attributes
-    ----------
-        self.start_x : int
-            x location of vertex starting location
-        self.start_y : int
-            y location of vertex starting location
-        self.end_x : int
-            x location of vertex ending location
-        self.end_y : int
-            y location of vertex ending location
+    :param start_x:     {int}       x location of vertex starting location
     
-    Methodes
-    --------
-        check_view_v2(obstacles)
-            bool
-            returns False if the ray is blocked by any obstacle else True is returend
+    :param start_y:     {int}       y location of vertex starting location
+
+    :param end_x:       {int}       x location of vertex ending location
+    
+    :param end_y:       {int}       y location of vertex ending location
+
+    :param x00:         {int}       Intermediate value for intersection detection. Equal to start_x 
+
+    :param y00:         {int}       Intermediate value for intersection detection. Equal to start_y 
+
+    :param x01:         {int}       Intermediate value for intersection detection.
+
+    :param y01:         {int}       Intermediate value for intersection detection.
+
+    :param x10:         {float}     Intermediate value for intersection detection. 
+
+    :param y10:         {float}     Intermediate value for intersection detection.
+
+    :param x11:         {float}     Intermediate value for intersection detection.
+
+    :param y11:         {float}     Intermediate value for intersection detection.
+
+    :param s:           {float}     Values to evaluate if an intersection exists between a ray and a Box.
+
+    :param t:           {float}     Values to evaluate if an intersection exists between a ray and a Box
+
+    :param d:           {float}     Values to evaluate if an intersection exists between a ray and a Box
+
+    :param obstacles:   {list}      List containing all obstacles located within the map. Stored as list of
+                                    Box objects.
+
+    :param obstacle:    {object}    Single Box object from obstacles list.  
+
+    :param segment:     {list}      Element of the segments (bounds representation) attribute of the box object.
     """
 
     def __init__(self, start: tuple[int, int], end: tuple[int, int]) -> None:
         """
-        Initliase the Ray object
+            Initliase the Ray object
 
-        Parameters
-        ----------
-        start : tuple[int, int]
-            (y, x) location of vertex starting location
+        :param start:   {tuple}     (y, x) location of vertex starting location, supplied as type int within tuple
 
-        end : tuple[int, int]
-            (y, x) location of vertex starting location
+        :param end:     {tuple}     (y, x) location of vertex starting location, supplied as type int within tuple
         
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        None
+        :param:         {None}      -
         """
-        self.reso = 50
 
         self.start_x = start[1]
         self.start_y = start[0]
         self.end_x = end[1]
         self.end_y = end[0]
-        self.slope = math.atan2(self.end_y - self.start_y, self.end_x - self.start_x)
 
     def check_view_v2(self, obstacles: list[Box]) -> bool:
         """
-        Check if the ray intersects with any obstacles.
+            Check if the ray intersects with any obstacles.
 
-        Parameters
-        ----------
-        obstacles : list[Box]
-            List containing the Box objects within the environment
         
-        Returns
-        -------
-        bool
-            True if ray does not intersect with any obstacles within the environment. Else False
-
-        Raises
-        ------
-        None
+        :param obstacles:   {list}  List containing the Box objects within the environment
+        
+        :return:            {bool}  True if ray does not intersect with any obstacles within the environment, else False.
         """
         y00, x00 = self.start_y, self.start_x
         y01, x01 = self.end_y - self.start_y, self.end_x - self.start_x
