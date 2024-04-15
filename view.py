@@ -36,6 +36,7 @@ def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> li
     # Store the location of the obstacles as tuples in a list
     obstacles = [tuple(el) for el in np.argwhere(my_map == 1)]
 
+    # Evaluate all points based on the view radius. 
     for i in range(-view_radius, view_radius + 1):
         for j in range(-view_radius, view_radius + 1):
 
@@ -77,7 +78,7 @@ def fov_blocking(agent: tuple[int, int], view_radius: int,
     
     :param agent:           {tuple}         Location of the agent within the map, specified as (y, x), with y and x 
                                             being of type int
-    
+
     :param view_radius:     {int}           Maximum unrestricted view range of the agent (circular fov)
     
     :param my_map:          {np.ndarray}    Map provided as numpy array where 1 indicates a wall and zero 
@@ -99,8 +100,10 @@ def fov_blocking(agent: tuple[int, int], view_radius: int,
     :raise:                 {None}          No raises constructed
     """
 
+    # Store the location of the obstacles as Box objects in a list, required for next steps within the program
     obstacles = [Box(el) for el in np.argwhere(my_map == 1)]
 
+    # Evaluate the points the specified agent can view
     view_map = agent_vision(agent, view_radius, obstacles, DEBUG)
 
     return view_map
@@ -108,42 +111,33 @@ def fov_blocking(agent: tuple[int, int], view_radius: int,
 
 class Box:
     """
-    A box object, required for the ray intersection implmentation. It functions as an object 
-    representation of the various obstacles within the map. To create an obstacle the following 
-    code is used: `Box((10, 5))`. This creates the box object for the obstacle located at y = 10 
-    and x = 5.
+        A box object, required for the ray intersection implmentation. It functions as an object representation of 
+        the various obstacles within the map. To create an obstacle the following code is used `Box((10, 5))`. 
+        This creates the box object for the obstacle located at y = 10 and x = 5.
 
-    Attributes
-    ----------
-        self.x : int
-            x location of the obstacle
-        self.y : int
-            y location of the obstacle
-    
-    Methodes
-    --------
-        bounds
-            list[list[tuple[int, int]]]
-            returns the coordinates representing the lines segements representing to bounds of the 
-            square shaped obstacle.  
+    :param x:           {int}       x location of the obstacle
+
+    :param y:           {int}       y location of the obstacle
+
+    :param segments:    {list}      list containing 4 lists of two coordinates given as tuple. Each list of two 
+                                    points discribes the bounding line of the square shaped object. The square 
+                                    shaped objects' perimiter is fully defined by 4 pairs of coordinates.
+
+    :param padding:     {float}     Negative padding added to the line segments to tune the vision of an agent. 
+                                    And therfore allow for vision around a corner.
+
+    :param out:         {list}      Intermediate variable for the bounds property to supply the main class with 
+                                    the bounding segments.
     """
 
     def __init__(self, location: tuple[int, int]) -> None:
         """
-        Initliase the object
+            Initliase the object
 
-        Parameters
-        ----------
-        locations : tuple[int, int]
-            Location of the obstacle supplied as (y-location, x-location)
         
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        None
+        :param locations:   {tuple}     Location of the obstacle supplied as (y-location, x-location) both of type int.
+        
+        :return:            {None}      -
         """
         self.x = location[1]
         self.y = location[0]
@@ -152,21 +146,10 @@ class Box:
     @property
     def bounds(self) -> list[list[tuple[float, float]]]:
         """
-        returns the coordinates representing the lines segements representing to bounds of the 
-        square shaped obstacle.  
+            returns the coordinates representing the lines segements representing to bounds of the 
+            square shaped obstacle.  
 
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        locations : tuple[int, int]
-            Location of the obstacle supplied as (y-location, x-location)
-
-        Raises
-        ------
-        None
+        :return:    {tuple}    Location of the obstacle supplied as (y-location, x-location) both of type int.
         """
         padding = 0.49
         out = [[(self.y + padding, self.x + padding), (self.y + padding, self.x - padding)],
