@@ -7,14 +7,14 @@ from map_gen import MapGenerator
 from matplotlib import colors
 
 
-def map_vis(map_name: str) -> None:
+def map_vis(map_name: str, num_agents: int = 0) -> None:
     """
     Create illustrations of the various test case maps
     """
-
-    my_map, agents_start, agents_end = import_mapf_instance(f"instances/{map_name}.txt")
-
-    # my_map, agents_start, agents_end = MapGenerator(f"maps/{map_name}.map").generate(15)
+    if "assignment" in map_name:
+        my_map, agents_start, agents_end = MapGenerator(f"maps/{map_name}.map").generate(num_agents)
+    else:
+        my_map, agents_start, agents_end = import_mapf_instance(f"instances/{map_name}.txt")
 
     my_map = np.array(my_map)
 
@@ -62,19 +62,15 @@ def map_vis(map_name: str) -> None:
         ax.annotate(agent, agent_start[::-1], color='w', weight='bold',
                     fontsize=7, ha='center', va='center')
 
-    # draw gridlines
-    # ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
-
     plt.axis('off')
 
-    # plt.savefig(f'figures/{map_name}.pdf', bbox_inches='tight')
-    # plt.savefig(f'figures/{map_name}.pdf', bbox_inches='tight')
+    plt.savefig(f'figures/{map_name}.pdf', bbox_inches='tight')
 
     plt.close()
 
 
-for i in range(1, 51):
-    print(f"=== Generating map visualisation of map {i} ===")
-    map_vis(f'test_{i}')
+# for i in range(1, 51):
+#     print(f"=== Generating map visualisation of map {i} ===")
+#     map_vis(f'test_{i}')
 
-# map_vis("assignment_2")
+# map_vis("assignment_3")
