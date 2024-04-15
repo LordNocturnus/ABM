@@ -17,9 +17,9 @@ def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> li
     :param agent:           {tuple}         Location of the agent within the map, specified as (y, x), with y and x 
                                             being of type int
     
-    :parmam view_radius:    {int}           Maximum unrestricted view range of the agent (circular fov)
+    :param view_radius:     {int}           Maximum unrestricted view range of the agent (circular fov)
     
-    :parm my_map:           {np.ndarray}    Map provided as numpy array where 1 indicates a wall and zero 
+    :param my_map:          {np.ndarray}    Map provided as numpy array where 1 indicates a wall and zero 
                                             indicates free space. The coordinates of the element represent the 
                                             coordinates of the envirnoment element within the map. 
 
@@ -57,50 +57,46 @@ def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> li
 def fov_blocking(agent: tuple[int, int], view_radius: int,
                  my_map: np.ndarray[int], DEBUG: bool = False) -> list[tuple[int, int]]:
     """
-    Fov_blocking generates a list containing the coordinate values indicating which positions, 
-    the specified agent can view, considering obstacles. The coordinates are supplied as 
-    [(y, x), (y, x), (y, x), (y, x), ...]
+        Fov_blocking generates a list containing the coordinate values indicating which positions, the specified agent
+        can view, considering obstacles. The coordinates are supplied as [(y, x), (y, x), (y, x), (y, x), ...]
     
-    Example: output for agent located at (1,1) view view-radius 2
-    -------------------------------------------------------------
+        Example output for agent located at (1,1) view view-radius 2
 
-    my_map:
-        . . . .
-        . 0 @ .
-        . @ @ .
-        . . . .
+        my_map:
+            . . . .
+            . 0 @ .
+            . @ @ .
+            . . . .
 
-    output: [(1, -1), (0, 0), (1, 0), (2, 0), (-1, 1), (0, 1), (0, 2)]
+        output -> [(1, -1), (0, 0), (1, 0), (2, 0), (-1, 1), (0, 1), (0, 2)]
     
-
-    Methode: Basic version ray evaluation code, which evaluated rays going to all possible points within 
-    the unrestricted view of the agent. By then evaulating if the ray intersetcs with an obstacle it can be 
-    determined if that location can be viewed or not. Geomteric formulation for checking intersection was 
-    based on: https://stackoverflow.com/a/4977569
+        Methode used. Basic version ray evaluation code, which evaluated rays going to all possible points within 
+        the unrestricted view of the agent. By then evaulating if the ray intersetcs with an obstacle it can be 
+        determined if that location can be viewed or not. Geomteric formulation for checking intersection was 
+        based on https://stackoverflow.com/a/4977569
     
-    Parameters
-    ----------
-    agent : tuple[int, int]
-        Location of the agent within the map, specified as (y, x)
+    :param agent:           {tuple}         Location of the agent within the map, specified as (y, x), with y and x 
+                                            being of type int
     
-    view_radius : int
-        maximum unrestricted view range of the agent
+    :param view_radius:     {int}           Maximum unrestricted view range of the agent (circular fov)
     
-    my_map : np.ndarray
-        Map provided as numpy array where 1 indicates a wall and zero indicates free space
+    :param my_map:          {np.ndarray}    Map provided as numpy array where 1 indicates a wall and zero 
+                                            indicates free space. The coordinates of the element represent the 
+                                            coordinates of the envirnoment element within the map. 
 
-    DEBUG (optional, default False) : bool
-        True, Enables plotting functionality to view the agents' view  
+    :param DEBUG:           {bool}          Optional boolean argument to enable (True) and disable (False), debug mode.
+                                            By default the debug model is disabled, and for safety the debug features
+                                            have been commented out. An enabled debug mode will provide the user with a 
+                                            snapshot of the agents view from a specific point at a timestep. This will 
+                                            happen for each timestep, position and agent the function is evaluated. 
+                                            Therfore this feature should be activated with precaution.
+    
+    :return:                {list}          A list of coordinate values, stored as a tuple, with each coordinate being 
+                                            an integer. Indicating which agents, agent `agent` can view within the map.
+                                            The agent cannot see itself, is a design feature implemented by default 
+                                            within the program. 
 
-    Returns
-    -------
-    list[tuple[int, int]]
-        A list containing the points the secified `agent` can view within the specified `my_map`.
-        Provided as [(y,x), (y,x), ...]
-
-    Raises
-    ------
-    None
+    :raise:                 {None}          No raises constructed
     """
 
     obstacles = [Box(el) for el in np.argwhere(my_map == 1)]
