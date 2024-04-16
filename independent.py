@@ -8,7 +8,7 @@ import constraints
 
 class IndependentSolver(base_solver.BaseSolver):
     """
-        A planner that plans for each robot independently. The class inherits from base+solver.BaseSolver for its basic
+        A planner that plans for each robot independently. The class inherits from base_solver.BaseSolver for its basic
         functionality.
 
     :param CPU_time:        {float}     Value to keep track of the cpu time required for the solver to complete the 
@@ -79,7 +79,6 @@ class IndependentSolver(base_solver.BaseSolver):
         
         :raise:                     {BaseException} Raises a base exption, when no solution can be found for 
                                                     the specified scenario.
-        
         """
 
         start_time = timer.time()
