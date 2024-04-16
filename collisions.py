@@ -9,10 +9,28 @@ from single_agent_planner_v2 import get_location
 
 class Collision:
     """
-        Class 
-
-
+        Class to represent Collisions. Utelised heavily within the collision based search (cbs) algorithm. It can
+        two resolve collisions to methodes can be made use of. Standard splitting and disjoint splitting. In standard
+        splitting the agents are prevented from being at a certain location at a certain timestep. While in disjoint 
+        splitting the constraint forces one of the two agents to be and not be (Two constraints) at the specified
+        location at a certain time. In both cases a decision tree is being created, trough which is being iterated to
+        find a solution.
     
+    :param agent_0: {int}   The unique identifier of agent 0
+
+    :param agent_1: {int}   The unique identifier of agent 1
+
+    :param step:    {int}   Time step of collision
+
+    :param loc_0:   {tuple} Location at the time of collision
+
+    :param loc_1:   {tuple} Optional location at the time of collision to fully define edge collisions 
+                            toghetter with loc_0
+
+    :param edge:    {bool}  Property, True if the collision is an edge, else false
+
+    :param agent:   {int}   Determines which of the two provided agents, will be constrained. Utelised only for the
+                            Disjoint constraint splitting methode.
     """
 
     def __init__(self,
@@ -21,6 +39,21 @@ class Collision:
                  step: int,
                  loc_0: tuple[int, int],
                  loc_1: typing.Optional[tuple[int, int]] = None) -> None:
+        """
+            Initialise collision class required for the cbs solver
+        
+        :param agent_0: {int}   The unique identifier of agent 0
+
+        :param agent_1: {int}   The unique identifier of agent 1
+
+        :param step:    {int}   Time step of collision
+
+        :param loc_0:   {tuple} Location at the time of collision
+
+        :param loc_1:   {tuple} Optional location at the time of collision to fully define edge collisions 
+                                toghetter with loc_0
+        """
+        
         self.agent_0 = agent_0
         self.agent_1 = agent_1
         self.step = step
@@ -28,6 +61,14 @@ class Collision:
         self.loc_1 = loc_1
 
     def standard_splitting(self) -> tuple[constraints.Constraint, constraints.Constraint]:
+        """
+            Standard splitting for the creation of constraints for the cbs algorithm
+        
+        :return:    {constraints.Constraint, constraints.Constraint}    To be enforced constraints based on if the 
+                                                                        collision is an vertex collision or edge 
+                                                                        collision.
+        """
+        
         ##############################
         # Task 3.2: Return a list of (two) constraints to resolve the given collision
         #           Vertex collision: the first constraint prevents the first agent to be at the specified location at the
@@ -36,6 +77,7 @@ class Collision:
         #           Edge collision: the first constraint prevents the first agent to traverse the specified edge at the
         #                          specified timestep, and the second constraint prevents the second agent to traverse the
         #                          specified edge at the specified timestep
+        
         if self.edge:  # Edge collision
             return (constraints.Constraint(False, self.agent_0, self.step, self.loc_0, self.loc_1),
                     constraints.Constraint(False, self.agent_1, self.step, self.loc_1, self.loc_0))
@@ -43,6 +85,17 @@ class Collision:
                 constraints.Constraint(False, self.agent_1, self.step, self.loc_0))
 
     def disjoint_splitting(self, rng: np.random._generator = utils.RNG) -> tuple[constraints.Constraint, constraints.Constraint]:
+        """
+            Disjoint splitting for the creation of constraints for the cbs algorithm. Makes use of an rng to determine
+            on which agent the constraits should be enforced. 
+        
+        :param rng: {utils.RNG}                                         RNG generator to be utelised.
+        
+        :return:    {constraints.Constraint, constraints.Constraint}    To be enforced constraints based on if the 
+                                                                        collision is an vertex collision or edge 
+                                                                        collision.
+        """
+        
         ##############################
         # Task 4.1: Return a list of (two) constraints to resolve the given collision
         #           Vertex collision: the first constraint enforces one agent to be at the specified location at the
@@ -52,7 +105,10 @@ class Collision:
         #                          specified timestep, and the second constraint prevents the same agent to traverse the
         #                          specified edge at the specified timestep
         #           Choose the agent randomly
+        
+        # Determine which agents get the constraint
         agent = rng.choice((self.agent_0, self.agent_1))
+        
         if self.edge:  # Edge collision
             return (constraints.Constraint(True, agent, self.step, self.loc_0, self.loc_1),
                     constraints.Constraint(False, agent, self.step, self.loc_0, self.loc_1))
@@ -61,17 +117,44 @@ class Collision:
 
     @property
     def edge(self) -> bool:
+        """
+            Property to determine if the collision is an edge collision or not
+        
+        :return:    {bool}  returns True if self.loc_1 exists else False is returned, indicating the collision is 
+                            a vertex collision.
+        """
         return self.loc_1 is not None
 
     def __str__(self) -> str:
+        """
+            Overwrites the str methode for the Collision class. When calling str(Collisions) an adapted output will be
+            provided.
+        
+        :return:    {str}   String output discribing the type of collision.
+        """
         if self.loc_1:
             return f"Edge Collision of agent {self.agent_0} and agent {self.agent_1} at timestep {self.step} between {self.loc_0} and {self.loc_1}\n"
         return f"Vertex collision of agent {self.agent_0} and agent {self.agent_1} at timestep {self.step} at location {self.loc_0}\n"
 
     def __repr__(self) -> str:
+        """
+            Overwrites the repr methode for the Collision class. 
+        
+        :return:    {str}   String output discribing the type of collision, using .__str__()
+        """
         return self.__str__()
 
     def __eq__(self, other: "Collision") -> bool:
+        """
+            Overwrites the equal methode for the Collision class. Allowing for easier comparison between two Collision
+            objects. When utelising an if statement no further detail needs to be provided since this methode overwrites
+            the typical behaviour. And will output True when put into an if statement to check if the Collision is a 
+            collision or if two collisions needs to be compared.
+        
+        :param other:   {Collision} A second collsion object, to compare with
+        
+        :return:    {bool}          Returns True for collsions
+        """
         return (self.agent_0 == other.agent_0 and
                 self.agent_1 == other.agent_1 and
                 self.loc_0 == other.loc_0 and
