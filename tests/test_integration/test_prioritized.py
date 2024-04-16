@@ -1,6 +1,8 @@
 import unittest
 import re
 import glob
+import os
+import pathlib
 
 import run_experiments
 import collisions
@@ -27,6 +29,7 @@ class Test_Integration_Prioritized(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
+        os.chdir(pathlib.Path(__file__).parent.parent.parent)
         
         # Get all files in the instances folder which are named test
         cls.scenarios = glob.glob("instances/test_*.txt")

@@ -1,6 +1,8 @@
 import unittest
 import re
 import glob
+import os
+import pathlib
 
 import run_experiments
 import collisions
@@ -23,11 +25,10 @@ class Test_Integration_Independent(unittest.TestCase):
 
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-    
-    
+
     @classmethod
     def setUpClass(cls):
-        
+        os.chdir(pathlib.Path(__file__).parent.parent.parent)
         # Get all files in the instances folder which are named test
         cls.scenarios = glob.glob("instances/test_*.txt")
 
@@ -51,7 +52,7 @@ class Test_Integration_Independent(unittest.TestCase):
 
                 # Solve 
                 my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-                paths = IndependentSolver(my_map_arr, starts, goals).find_solution()
+                paths = IndependentSolver(my_map_arr, starts, goals, printing=False).find_solution([])
                 
                 # Check paths
                 collision = bool(collisions.detect_collisions(paths))
