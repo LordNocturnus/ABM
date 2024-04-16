@@ -17,9 +17,11 @@ class BaseSolver:
 
     :param starts:          {list}      List of starting positions for the agents. Given as list of tuple of ineteger,
                                         where each each tuple is of the following form (y, x)
+                                        [(x1, y1), (x2, y2), ...]
 
     :param goals:           {list}      List of goal/ end positions for the agents. Given as list of tuple of ineteger,
                                         where each each tuple is of the following form (y, x)
+                                        [(x1, y1), (x2, y2), ...]
 
     :param score_func:      {function}  Score function 
 

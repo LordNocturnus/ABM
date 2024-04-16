@@ -163,3 +163,10 @@ results.csv
 
 # Vscode setting folder
 .vscode
+
+# Figures
+/figures
+
+# Liniter
+LintwormReport.csv
+hash.csv
