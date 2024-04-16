@@ -7,7 +7,7 @@ import os
 class MapGenerator(object):
     """
         Map generator to both load the map and create various random test scenarious with agents located throughout
-        various locations within the map. Utelising prime number ...
+        various locations within the map. Utelising prime number factorisation.
         Point of discussion meeting 15-4-24 // If time have various random generator for unique cases
 
     :param map:         {np.NDArray}    Environment map, where 1 indicates a wall, and 0 indicates walkable space.
@@ -15,9 +15,9 @@ class MapGenerator(object):
     :param rng:         {generator}     Random number generator generator object, required to set the seed of the rng
                                         process.
 
-    :param candidates:  {np.NDArray}    
+    :param candidates:  {np.NDArray}    Intermediate step for random agent location generator using prime factorisation.
 
-    :param str_output:  {str}           Do we even need this anymore ??
+    :param str_output:  {str}           -
     """
 
     def __init__(self, path: str, seed: int = 0) -> None:
@@ -27,8 +27,6 @@ class MapGenerator(object):
         :param path:    {str}   Path to the map file.
 
         :param seed:    {int}   Set the seed of the rng process.
-
-        :return:        {None}  -
         """
         with open(path, "r") as f:
             string_map = f.readlines()
