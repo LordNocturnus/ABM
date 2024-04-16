@@ -119,10 +119,8 @@ if __name__ == '__main__':
                         help='The name of the instance file(s)')
     parser.add_argument('--batch', action='store_true', default=False,
                         help='Use batch output instead of animation')
-    parser.add_argument('--disjoint', action='store_true', default=False,
-                        help='Use the disjoint splitting')
     parser.add_argument('--solver', type=str, default=SOLVER,
-                        help='The solver to use (one of: {CBS,Independent,Prioritized}), defaults to ' + str(SOLVER))
+                        help='The solver to use (one of: {CBS, CBSDisjoint,Independent,Prioritized}), defaults to ' + str(SOLVER))
 
     args = parser.parse_args()
     # Hint: Command line options can be added in Spyder by pressing CTRL + F6 > Command line options. 
@@ -149,8 +147,12 @@ if __name__ == '__main__':
 
         if args.solver == "CBS":
             print("***Run CBS***")
+            cbs = CBSSolver(my_map, starts, goals, disjoint=False)
+            paths = cbs.find_solution([])
+        elif args.solver == "CBSDisjoint":
+            print("***Run CBS***")
             cbs = CBSSolver(my_map, starts, goals)
-            paths = cbs.find_solution(args.disjoint)
+            paths = cbs.find_solution([])
         elif args.solver == "Independent":
             print("***Run Independent***")
             indep = IndependentSolver(my_map, starts, goals)
@@ -161,7 +163,7 @@ if __name__ == '__main__':
             paths = prio.find_solution([])
         elif args.solver == "Distributed":  # Wrapper of distributed planning solver class
             print("***Run Distributed Planning***")
-            distri = DistributedPlanningSolver(my_map, starts, goals) #!!!TODO: add your own distributed planning implementation here.
+            distri = DistributedPlanningSolver(my_map, starts, goals)
             paths = distri.find_solution()
         else: 
             raise RuntimeError("Unknown solver!")
