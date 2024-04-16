@@ -10,7 +10,7 @@ def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> li
         while ignoring obstacles. Here each coordinate represent the following -> (y-coordinate, x-coordinate) 
         of the points agent x can view.
     
-        Example case: 
+        Example case; 
             - view.fov((0,0), 1, ~) -> [(1,0), (0,1), (-1,0), (0,-1)]. 
             The agent located at (0,0) with view_radius 1 can seen 4 points 
     
@@ -27,8 +27,6 @@ def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> li
                                             an integer. Indicating which agents, agent `agent` can view within the map.
                                             The agent cannot see itself, is a design feature implemented by default 
                                             within the program. 
-
-    :raise:                 {None}          No raises constructed
     """
 
     points_in_vision = []
@@ -63,7 +61,7 @@ def fov_blocking(agent: tuple[int, int], view_radius: int,
     
         Example output for agent located at (1,1) view view-radius 2
 
-        my_map:
+        my_map;
             . . . .
             . 0 @ .
             . @ @ .
@@ -74,7 +72,7 @@ def fov_blocking(agent: tuple[int, int], view_radius: int,
         Methode used. Basic version ray evaluation code, which evaluated rays going to all possible points within 
         the unrestricted view of the agent. By then evaulating if the ray intersetcs with an obstacle it can be 
         determined if that location can be viewed or not. Geomteric formulation for checking intersection was 
-        based on https://stackoverflow.com/a/4977569
+        based on https;//stackoverflow.com/a/4977569
     
     :param agent:           {tuple}         Location of the agent within the map, specified as (y, x), with y and x 
                                             being of type int
@@ -96,8 +94,6 @@ def fov_blocking(agent: tuple[int, int], view_radius: int,
                                             an integer. Indicating which agents, agent `agent` can view within the map.
                                             The agent cannot see itself, is a design feature implemented by default 
                                             within the program. 
-
-    :raise:                 {None}          No raises constructed
     """
 
     # Store the location of the obstacles as Box objects in a list, required for next steps within the program
@@ -119,10 +115,14 @@ class Box:
 
     :param y:           {int}       y location of the obstacle
 
-    :param segments:    {list}      list containing 4 lists of two coordinates given as tuple. Each list of two 
+    :param segments:    {list}      List containing 4 lists of two coordinates given as tuple. Each list of two 
                                     points discribes the bounding line of the square shaped object. The square 
                                     shaped objects' perimiter is fully defined by 4 pairs of coordinates.
 
+    :param bounds:      {list}      List containing 4 lists of two coordinates given as tuple. Each list of two 
+                                    points discribes the bounding line of the square shaped object. The square 
+                                    shaped objects' perimiter is fully defined by 4 pairs of coordinates.
+    
     :param padding:     {float}     Negative padding added to the line segments to tune the vision of an agent. 
                                     And therfore allow for vision around a corner.
 
@@ -136,10 +136,7 @@ class Box:
         """
             Initliase the object
 
-        
         :param locations:   {tuple}     Location of the obstacle supplied as (y-location, x-location) both of type int.
-        
-        :return:            {None}      -
         """
         self.x = location[1]
         self.y = location[0]
@@ -211,8 +208,6 @@ class Ray:
         :param start:   {tuple}     (y, x) location of vertex starting location, supplied as type int within tuple
 
         :param end:     {tuple}     (y, x) location of vertex starting location, supplied as type int within tuple
-        
-        :param:         {None}      -
         """
 
         self.start_x = start[1]
@@ -272,8 +267,6 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
     
     :return:                    {list}  Returns list of all point the agent can view, point is list are stored as
                                         tuple with both elements being integer (y-location, x-location).
-
-    :raise:                     {None}  No raises constructed
     """
 
     points_in_vision = []
