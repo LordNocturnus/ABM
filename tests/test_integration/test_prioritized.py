@@ -54,7 +54,7 @@ class Test_Integration_Prioritized(unittest.TestCase):
 
                 # Solve 
                 my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-                paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+                paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing=False).find_solution([])
                 
                 # Check paths
                 collision = bool(collisions.detect_collisions(paths))
