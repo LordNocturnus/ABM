@@ -8,6 +8,12 @@ from single_agent_planner_v2 import get_location
 
 
 class Collision:
+    """
+        Class 
+
+
+    
+    """
 
     def __init__(self,
                  agent_0: int,
@@ -77,6 +83,20 @@ def detect_collision(agent_0: int,
                      agent_1: int,
                      path_0: list[tuple[int, int]],
                      path_1: list[tuple[int, int]]) -> typing.Optional[Collision]:
+    """
+        Function to detect the first collision (indexed by time), between two agents paths. Required function of the
+        main function detect_collisions.
+
+    :param agent_0: {int}       The unique identifier of agent 0
+    
+    :param agent_1: {int}       The unique identifier of agent 1
+
+    :param path_0:  {list}      The path of agent 0
+
+    :param path_1:  {list}      The path of agent 1
+
+    :return:        {Collision} Collision object, containing the details of the identified collision.   
+    """
 
     ##############################
     # Task 3.1: Return the first collision that occurs between two robot paths (or None if there is no collision)
@@ -84,25 +104,50 @@ def detect_collision(agent_0: int,
     #           A vertex collision occurs if both robots occupy the same location at the same timestep
     #           An edge collision occurs if the robots swap their location at the same timestep.
     #           You should use "get_location(path, t)" to get the location of a robot at time t.
+    
+    # Go over the two paths of the agent check for either an vertex or edge collision.
     for i in range(max(len(path_0), len(path_1))):
+
+        # Vertex 
         if get_location(path_0, i) == get_location(path_1, i):
             return Collision(agent_0, agent_1, i, get_location(path_0, i))
+        # Edge
         elif get_location(path_0, i) == get_location(path_1, i + 1) and \
                 get_location(path_0, i + 1) == get_location(path_1, i):
             return Collision(agent_0, agent_1, i + 1, get_location(path_0, i), get_location(path_0, i + 1))
+    
     return None
 
 
 def detect_collisions(paths: list[list[tuple[int, int]]]) -> dict[tuple[int, int], Collision]:
+    """
+        Function to generate a list of first collisions between all agent pairs
+    
+    :param paths:   {list}  List of list of tuple of two integer. Discribing the paths of the various agents, located
+                            within the environment.
+
+    :return:        {dict}  Dictionary containing the identified first collisions between all agent pairs (if a 
+                            colission) exists. Within the dictionary each element is defined by the agents, 
+                            participating in the collision, when the collision occurs and of what type the collision
+                            is (vertex or edge). If no collisions are identified the output is a empty dictionary.
+    """
+
     ##############################
     # Task 3.1: Return a list of first collisions between all robot pairs.
     #           A collision can be represented as dictionary that contains the id of the two robots, the vertex or edge
     #           causing the collision, and the timestep at which the collision occurred.
     #           You should use your detect_collision function to find a collision between two robots.
+    
+    # Initialise ouput dictionary
     res: dict[tuple[int, int], Collision] = dict()
+    
+    # Loop over all possible agent pairs
     for a0, p0 in enumerate(paths[:-1]):
         for a1, p1 in enumerate(paths[a0 + 1:]):
+            
             collision = detect_collision(a0, a0 + a1 + 1, p0, p1)
+            
+            # Check if collision exists
             if collision:
                 res[(a0, a0 + a1 + 1)] = collision
     return res
