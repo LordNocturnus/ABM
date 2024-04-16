@@ -10,7 +10,7 @@ def move(loc: tuple[int, int], dir_idx: int) -> tuple[int, int]:
     return loc[0] + utils.DIRECTIONS[dir_idx][0], loc[1] + utils.DIRECTIONS[dir_idx][1]
 
 
-def get_sum_of_cost(paths: abc.Iterable[abc.Sized]) -> int:
+def get_sum_of_cost(paths: list[list[tuple[int, int]]]) -> int:
     return sum([len(p) - 1 for p in paths])
 
 
@@ -65,12 +65,15 @@ def a_star(my_map: list[list[bool]],
     constraint_table = constraints.ConstraintTable(constraint_list, agent)
     open_list: list["AStarNode"] = []
     closed_list = dict()
+    infinite_g_val = dict()
     earliest_goal_timestep = 0
+
     root = AStarNode(start_loc, 0, h_values[start_loc], 0)
     heapq.heappush(open_list, root)
     closed_list[(root.loc, root.step)] = root
     while len(open_list) > 0:
         curr = heapq.heappop(open_list)
+
         if curr.loc == goal_loc and curr.step >= earliest_goal_timestep:
             found = True
             if curr.step + 1 < len(constraint_table):
@@ -81,6 +84,12 @@ def a_star(my_map: list[list[bool]],
                         break
             if found:
                 return curr.get_path()
+
+        if constraint_table.is_infinite and curr.step + 1 >= len(constraint_table):
+            if curr.loc in infinite_g_val and infinite_g_val[curr.loc] <= curr.g_val:
+                continue
+            infinite_g_val[curr.loc] = curr.g_val
+
         for dir_idx in range(5):
             child_loc = move(curr.loc, dir_idx)
             if child_loc[0] < 0 or child_loc[0] >= len(my_map) \
@@ -114,6 +123,7 @@ class AStarNode:
         self.loc = loc
         self.g_val = g_val
         self.h_val = h_val
+        self.score = g_val + h_val
         self.step = step
         self.parent = parent
 
@@ -122,10 +132,6 @@ class AStarNode:
             return self.parent.get_path() + [self.loc]
         else:
             return [self.loc]
-
-    @property
-    def score(self) -> float:
-        return self.g_val + self.h_val
 
     def __lt__(self, other: "AStarNode") -> bool:
         """Return true is "self" is better than "other"."""
