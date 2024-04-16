@@ -3,174 +3,185 @@ This file contains a placeholder for the DistributedPlanningSolver class that ca
 
 Code in this file is just provided as guidance, you are free to deviate from it.
 """
-import multiprocessing
+from collections import abc
 import time as timer
+import multiprocessing
+from multiprocessing import connection
 
-import collisions
-import copy
-import itertools
-
-
-import distributed_agent
-from single_agent_planner_v2 import compute_heuristics, get_sum_of_cost, get_location
-from distributed_agent import DistributedAgent
+from single_agent_planner_v2 import compute_heuristics, get_sum_of_cost
 from prioritized import PrioritizedPlanningSolver
-from cbs import CBSSolver
-import view
+import distributed_agent
+import base_solver
+import constraints
 
 
-class DistributedPlanningSolver(object):
+class DistributedPlanningSolver(base_solver.BaseSolver):
     """A distributed planner"""
 
     def __init__(self,
                  my_map: list[list[bool]],
                  starts: list[tuple[int, int]],
-                 goals: list[tuple[int, int]]) -> None:
+                 goals: list[tuple[int, int]],
+                 score_func: abc.Callable[[list[list[tuple[int, int]]]], int] = get_sum_of_cost,
+                 heuristics_func: abc.Callable[
+                     [list[list[bool]], tuple[int, int]],
+                     dict[tuple[int, int], int]] = compute_heuristics,
+                 printing: bool = True,
+                 solver: type[base_solver.BaseSolver] = PrioritizedPlanningSolver,
+                 view_size: int = -1,
+                 path_limit: int = -1,
+                 **kwargs) -> None:
         """my_map   - list of lists specifying obstacle positions
         starts      - [(x1, y1), (x2, y2), ...] list of start locations
         goals       - [(x1, y1), (x2, y2), ...] list of goal locations
         """
-        self.CPU_time: float = 0.0
-        self.my_map = my_map
-        self.starts = starts
-        self.goals = goals
-        self.num_of_agents = len(goals)
-        self.heuristics: list[dict[tuple[int, int], int]] = []
-
-        # compute heuristics for the low-level search
-        for goal in self.goals:
-            self.heuristics.append(compute_heuristics(my_map, goal))
+        super().__init__(my_map, starts, goals, score_func, heuristics_func, printing)
+        self.solver = solver
+        self.view_size = view_size
+        self.path_limit = path_limit
+        self.kwargs = kwargs
 
         self.visibility_map = dict()
+        self.path_map = dict()
         self.collision_map = dict()
-        self.prev_collisions = dict()
-        self.global_constraints = []
+        self.agent_pos = self.starts
 
-        self.agents: list[DistributedAgent] = []
-        # T.B.D.
+        self.processes: list[multiprocessing.Process] = []
+        self.pipes: list[multiprocessing.connection.Connection] = []
         
-    def find_solution(self, cbs: bool = False) -> list[list[tuple[int, int]]]:
+    def find_solution(self, base_constraints: list[constraints.Constraint]) -> list[list[tuple[int, int]]]:
         """
-        Finds paths for all agents from start to goal locations. 
+        Finds paths for all agents from start to goal locations.
         
         Returns:
             result (list): with a path [(s,t), .....] for each agent.
         """
         # Initialize constants       
         start_time = timer.time()
-        result: list[list[tuple[int, int]]] = [[]] * self.num_of_agents
-        self.CPU_time = timer.time() - start_time
-        
-        # Initialization of agents
-        # Create agent objects with DistributedAgent class
-        for i in range(self.num_of_agents):
-            self.agents.append(DistributedAgent(self.my_map, self.starts[i], self.goals[i],
-                                                compute_heuristics(self.my_map, self.goals[i]), i))
 
-        # Main planning loop
+        # initialize agents and communication paths
+        for agent_id in range(self.num_of_agents):
+            controller_conn, agent_conn = multiprocessing.Pipe()
+            self.pipes.append(controller_conn)
+            self.processes.append(multiprocessing.Process(target=distributed_agent.run,
+                                                          args=[agent_id,
+                                                                agent_conn,
+                                                                self.starts[agent_id],
+                                                                self.goals[agent_id],
+                                                                self.view_size,
+                                                                self.path_limit,
+                                                                self.my_map,
+                                                                self.heuristics_func,
+                                                                self.score_func,
+                                                                self.solver],
+                                                          kwargs=self.kwargs))
+            self.processes[-1].start()
+            agent_conn.close()
+            self.path_map[agent_id] = self.get_path(agent_id)
 
-        # while loop for goals reached
-        # for each agent create field of view (fov)
-        # if agent is in view communicate current location and x amount of locations of the path
-        # if collision on x amount of locations of path, communicate length of remainder path
-        # create new path
-        # path of agent.id and path of agent(id of state)
-        # constrainst for agent with shorter len(path)
+        while not all([self.get_finished(idx) for idx in range(self.num_of_agents)]):
+            self.poll_view()
+            self.poll_collisions()
 
-        timestep = 0
+            while len(self.collision_map) != 0:
+                self.resolve_collisions()
+                self.poll_collisions()
 
-        while not all([a.finished for a in self.agents]):
+            self.instruct_move()
 
-            print(f"===T=== |>{timestep}<| ===T===")
-            self.calculate_visibility()
-            col = 0
-            while self.collision_avoidance():
-                print(f"===C=== |>{col}<| ===C===")
-                col += 1
-                #break
-
-            # move every agent by one step
-            for agent in self.agents:
-                agent.step()
-                #print(agent.id, agent.pos)
-            #break
-
-            timestep += 1
-
-        # Get final result
-        for i in range(self.num_of_agents):  # Find path for each agent
-            result[i] = self.agents[i].path + self.agents[i].planned_path
+        result = []
+        for agent_id in range(self.num_of_agents):
+            result.append(self.get_result(agent_id))
+            self.terminate_agent(agent_id)
 
         self.CPU_time = timer.time() - start_time
 
         # Print final output
-        print("\n Found a solution! \n")
-        print("CPU time (s):    {:.2f}".format(self.CPU_time))
-        print("Sum of costs:    {}".format(get_sum_of_cost(result)))  # Hint: think about how cost is defined in your implementation
-        print(result)
+        if self.printing:
+            print("\n Found a solution! \n")
+            print("CPU time (s):    {:.2f}".format(self.CPU_time))
+            print("Sum of costs:    {}".format(self.score_func(result)))
+            print(result)
         
         return result
 
-    def calculate_visibility(self) -> None:
+    def terminate_agent(self, idx) -> None:
+        self.pipes[idx].send("terminate")  # TODO: change to integer index
+        self.pipes[idx].close()
+        self.processes[idx].join()
+        self.processes[idx].close()
 
-        for agent in self.agents:
-            fov = agent.get_view()  # field_of_view
-            visible = [a.id for a in self.agents if a.pos in fov and not a == agent]
+    def get_finished(self, idx):
+        self.pipes[idx].send("finished")  # TODO: change to integer index
+        return self.pipes[idx].recv()
 
-            if len(visible) != 0:
-                self.visibility_map[agent.id] = visible
+    def poll_view(self) -> None:
+        self.visibility_map = dict()
+        missing_view = []
+        for p in self.pipes:
+            p.send("view")  # TODO: change to integer index
+            missing_view.append(p)
 
-    def calculate_collisions(self) -> None:
+        while missing_view:
+            for r in multiprocessing.connection.wait(missing_view):
+                idx, fov = r.recv()
+                visible = [a for a, pos in enumerate(self.agent_pos) if pos in fov and not a == idx]
+                if len(visible) != 0:
+                    self.visibility_map[idx] = visible
+                missing_view.remove(r)
+
+    def get_path(self, idx: int) -> tuple[list[tuple[int, int]], int]:
+        self.pipes[idx].send("path")  # TODO: change to integer index
+        return self.pipes[idx].recv()
+
+    def poll_collisions(self) -> None:
         self.collision_map = dict()
-        for idx in self.visibility_map.keys():
-            collision_list = []
-            for idx_2 in self.visibility_map[idx]:
-                collision = collisions.detect_collision(idx, idx_2,
-                                                        self.agents[idx].get_path(), self.agents[idx_2].get_path())
-                if collision:
-                    collision_list.append(collision)
-            if len(collision_list) != 0:
-                self.collision_map[idx] = collision_list
+        missing_collision = []
+        for agent_id in self.visibility_map.keys():
+            self.pipes[agent_id].send("collision")
+            self.pipes[agent_id].send([self.path_map[a] for a in self.visibility_map[agent_id]])
+            missing_collision.append(self.pipes[agent_id])
 
-    def check_repeating_collisions(self) -> collisions.Collision:
-        for key in self.collision_map.keys():
-            if key in self.prev_collisions.keys():
-                for c in self.collision_map[key]:
-                    for c2 in self.prev_collisions[key]:
-                        if c == c2:
-                            return c
-        self.prev_collisions = self.collision_map
+        while missing_collision:
+            for r in multiprocessing.connection.wait(missing_collision):
+                idx, collisions = r.recv()
+                if len(collisions) != 0:
+                    self.collision_map[idx] = collisions
+                missing_collision.remove(r)
 
-    def collision_avoidance(self) -> bool:
-        self.calculate_collisions()
-        if len(self.collision_map) == 0:
-            return False
+    def instruct_move(self) -> None:
+        missing_move = []
+        for p in self.pipes:
+            p.send("move")  # TODO: change to integer index
+            missing_move.append(p)
 
-        repeat = self.check_repeating_collisions()
-        if repeat:
-            constraint_0, constraint_1 = repeat.standard_splitting()
-            if len(self.agents[repeat.agent_0].planned_path) < len(self.agents[repeat.agent_1].planned_path):
-                self.global_constraints.append(constraint_0)
-            else:
-                self.global_constraints.append(constraint_1)
-            #raise ValueError("Found Repeating Collision")
+        while missing_move:
+            for r in multiprocessing.connection.wait(missing_move):
+                idx, path = r.recv()
+                self.path_map[idx] = path
+                missing_move.remove(r)
 
-        messages = []
-        agents_to_run = []
-        for idx in self.collision_map.keys():
-            messages.append(set([self.agents[c.agent_1].message for c in self.collision_map[idx]]))
-            agents_to_run.append(self.agents[idx])
+    def get_result(self, idx: int) -> list[tuple[int, int]]:
+        self.pipes[idx].send("result")  # TODO: change to integer index
+        return self.pipes[idx].recv()
 
-        #print(len(messages), len(self.global_constraints))
+    def get_message(self, idx: int) -> list[tuple[int, int]]:
+        self.pipes[idx].send("message")  # TODO: change to integer index
+        return self.pipes[idx].recv()
 
-        for idx in range(len(messages)):
-            self.agents[agents_to_run[idx].id] = distributed_agent.run_cbs(agents_to_run[idx], messages[idx], self.global_constraints)
+    def resolve_collisions(self) -> None:
+        messages = dict()
+        for agent_id in self.collision_map.keys():
+            messages[agent_id] = [self.get_message(c.agent_1) for c in self.collision_map[agent_id]]
+        missing_resolve = []
+        for agent_id in self.collision_map.keys():
+            self.pipes[agent_id].send("resolve")
+            self.pipes[agent_id].send(messages[agent_id])
+            missing_resolve.append(self.pipes[agent_id])
 
-        """with multiprocessing.Pool(processes=len(agents_to_run)) as pool:
-            res = pool.starmap(distributed_agent_class.run_cbs,
-                               zip(agents_to_run, messages, itertools.repeat(self.global_constraints)))
-        for a in res:
-            self.agents[a.id] = a"""
-        return True
-
+        while missing_resolve:
+            for r in multiprocessing.connection.wait(missing_resolve):
+                idx, path = r.recv()
+                self.path_map[idx] = path
+                missing_resolve.remove(r)
 

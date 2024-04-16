@@ -49,6 +49,13 @@ def get_location(path: list[tuple[int, int]], time: int) -> tuple[int, int]:
         return path[-1]
 
 
+def pad_path(path: list[tuple[int, int]], length: int) -> list[tuple[int, int]]:
+    if length <= len(path):
+        return path[:length]
+    else:
+        return path + [path[-1]] * (length - len(path))
+
+
 def a_star(my_map: list[list[bool]],
            start_loc: tuple[int, int],
            goal_loc: tuple[int, int],

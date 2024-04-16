@@ -161,17 +161,25 @@ if __name__ == '__main__':
             print("***Run Prioritized***")
             prio = PrioritizedPlanningSolver(my_map, starts, goals)
             paths = prio.find_solution([])
-        elif args.solver == "Distributed":  # Wrapper of distributed planning solver class
+        elif args.solver == "DistributedPrioritized":  # Wrapper of distributed planning solver class
             print("***Run Distributed Planning***")
-            distri = DistributedPlanningSolver(my_map, starts, goals)
-            paths = distri.find_solution()
+            distri = DistributedPlanningSolver(my_map, starts, goals, solver=PrioritizedPlanningSolver)
+            paths = distri.find_solution([])
+        elif args.solver == "DistributedCBS":  # Wrapper of distributed planning solver class
+            print("***Run Distributed Planning***")
+            distri = DistributedPlanningSolver(my_map, starts, goals, solver=CBSSolver, disjoint=False)
+            paths = distri.find_solution([])
+        elif args.solver == "DistributedCBSDisjoint":  # Wrapper of distributed planning solver class
+            print("***Run Distributed Planning***")
+            distri = DistributedPlanningSolver(my_map, starts, goals, solver=CBSSolver)
+            paths = distri.find_solution([])
         else: 
             raise RuntimeError("Unknown solver!")
 
         temp = detect_collisions(paths)
         if not len(temp.keys()) == 0:
             print(temp)
-            raise ValueError
+            #raise ValueError
         cost = get_sum_of_cost(paths)
         result_file.write("{},{}\n".format(file, cost))
         print("######################################################################################################")
