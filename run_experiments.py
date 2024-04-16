@@ -154,11 +154,11 @@ if __name__ == '__main__':
         elif args.solver == "Independent":
             print("***Run Independent***")
             indep = IndependentSolver(my_map, starts, goals)
-            paths = indep.find_solution()
+            paths = indep.find_solution([])
         elif args.solver == "Prioritized":
             print("***Run Prioritized***")
             prio = PrioritizedPlanningSolver(my_map, starts, goals)
-            paths = prio.find_solution()
+            paths = prio.find_solution([])
         elif args.solver == "Distributed":  # Wrapper of distributed planning solver class
             print("***Run Distributed Planning***")
             distri = DistributedPlanningSolver(my_map, starts, goals) #!!!TODO: add your own distributed planning implementation here.

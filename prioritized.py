@@ -1,40 +1,36 @@
-import typing
+from collections import abc
 import math
 import numpy as np  # type: ignore
 import time as timer
+import warnings
 
 import constraints
 from single_agent_planner_v2 import compute_heuristics, a_star, get_sum_of_cost, get_location
-from constraints import Constraint
-
-import warnings
+import base_solver
 
 
-class PrioritizedPlanningSolver(object):
+class PrioritizedPlanningSolver(base_solver.BaseSolver):
     """A planner that plans for each robot sequentially."""
 
     def __init__(self,
                  my_map: list[list[bool]],
                  starts: list[tuple[int, int]],
-                 goals: list[tuple[int, int]]) -> None:
+                 goals: list[tuple[int, int]],
+                 score_func: abc.Callable[[list[list[tuple[int, int]]]], int] = get_sum_of_cost,
+                 heuristics_func: abc.Callable[
+                     [list[list[bool]], tuple[int, int]],
+                     dict[tuple[int, int], int]] = compute_heuristics,
+                 printing: bool = True,
+                 recursive: bool = True,
+                 **kwargs) -> None:
         """my_map   - list of lists specifying obstacle positions
         starts      - [(x1, y1), (x2, y2), ...] list of start locations
         goals       - [(x1, y1), (x2, y2), ...] list of goal locations
         """
+        super().__init__(my_map, starts, goals, score_func, heuristics_func, printing)
+        self.recursive = recursive
 
-        self.my_map = my_map
-        self.starts = starts
-        self.goals = goals
-        self.num_of_agents = len(goals)
-
-        self.CPU_time: float = 0.0
-
-        # compute heuristics for the low-level search
-        self.heuristics = []
-        for goal in self.goals:
-            self.heuristics.append(compute_heuristics(my_map, goal))
-
-    def find_solution(self, recursive: bool = True) -> list[list[tuple[int, int]]]:
+    def find_solution(self, base_constraints: list[constraints.Constraint]) -> list[list[tuple[int, int]]]:
         """ Finds paths for all agents from their start locations to their goal locations."""
 
         start_time = timer.time()
