@@ -1,30 +1,31 @@
+from collections import abc
 import time as timer
-import typing
+
 from single_agent_planner_v2 import compute_heuristics, a_star, get_sum_of_cost
+import base_solver
+import constraints
 
 
-class IndependentSolver(object):
+class IndependentSolver(base_solver.BaseSolver):
     """A planner that plans for each robot independently."""
 
-    def __init__(self, my_map: typing.Any, starts: list[tuple[int, int]], goals: list[tuple[int, int]]) -> None:
+    def __init__(self,
+                 my_map: list[list[bool]],
+                 starts: list[tuple[int, int]],
+                 goals: list[tuple[int, int]],
+                 score_func: abc.Callable[[list[list[tuple[int, int]]]], int] = get_sum_of_cost,
+                 heuristics_func: abc.Callable[
+                     [list[list[bool]], tuple[int, int]],
+                     dict[tuple[int, int], int]] = compute_heuristics,
+                 printing: bool = True,
+                 **kwargs) -> None:
         """my_map   - list of lists specifying obstacle positions
         starts      - [(x1, y1), (x2, y2), ...] list of start locations
         goals       - [(x1, y1), (x2, y2), ...] list of goal locations
         """
+        super().__init__(my_map, starts, goals, score_func, heuristics_func, printing)
 
-        self.my_map = my_map
-        self.starts = starts
-        self.goals = goals
-        self.num_of_agents = len(goals)
-
-        self.CPU_time: float = 0.0
-
-        # compute heuristics for the low-level search
-        self.heuristics = []
-        for goal in self.goals:
-            self.heuristics.append(compute_heuristics(my_map, goal))
-
-    def find_solution(self) -> list[list[tuple[int, int]]]:
+    def find_solution(self, base_constraints: list[constraints.Constraint]) -> list[list[tuple[int, int]]]:
         """ Finds paths for all agents from their start locations to their goal locations."""
 
         start_time = timer.time()
@@ -35,7 +36,7 @@ class IndependentSolver(object):
 
         for i in range(self.num_of_agents):  # Find path for each agent
             path = a_star(self.my_map, self.starts[i], self.goals[i], self.heuristics[i],
-                          i, [])
+                          i, base_constraints)
             if path is None:
                 raise BaseException('No solutions')
             result.append(path)
@@ -43,9 +44,9 @@ class IndependentSolver(object):
         ##############################
 
         self.CPU_time = timer.time() - start_time
-
-        print("\n Found a solution! \n")
-        print("CPU time (s):    {:.2f}".format(self.CPU_time))
-        print("Sum of costs:    {}".format(get_sum_of_cost(result)))
+        if self.printing:
+            print("\n Found a solution! \n")
+            print("CPU time (s):    {:.2f}".format(self.CPU_time))
+            print("Sum of costs:    {}".format(get_sum_of_cost(result)))
 
         return result
