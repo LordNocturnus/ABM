@@ -1,4 +1,6 @@
 import unittest
+import os
+import pathlib
 
 import run_experiments
 import collisions
@@ -9,6 +11,8 @@ from prioritized import PrioritizedPlanningSolver
 from distributed import DistributedPlanningSolver
 
 from single_agent_planner_v2 import get_sum_of_cost
+
+os.chdir(pathlib.Path(__file__).parent.parent.parent)
 
 
 class Test_Integration_Map_1(unittest.TestCase):
@@ -40,7 +44,7 @@ class Test_Integration_Map_1(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -58,7 +62,7 @@ class Test_Integration_Map_1(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -76,7 +80,7 @@ class Test_Integration_Map_1(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -134,7 +138,7 @@ class Test_Integration_Map_2(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -152,7 +156,7 @@ class Test_Integration_Map_2(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -170,7 +174,7 @@ class Test_Integration_Map_2(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -228,7 +232,7 @@ class Test_Integration_Map_3(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -246,7 +250,7 @@ class Test_Integration_Map_3(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -264,7 +268,7 @@ class Test_Integration_Map_3(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -322,7 +326,7 @@ class Test_Integration_Map_4(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -340,7 +344,7 @@ class Test_Integration_Map_4(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -358,7 +362,7 @@ class Test_Integration_Map_4(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -416,7 +420,7 @@ class Test_Integration_Map_5(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -434,7 +438,7 @@ class Test_Integration_Map_5(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -452,7 +456,7 @@ class Test_Integration_Map_5(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -510,7 +514,7 @@ class Test_Integration_Map_6(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -528,7 +532,7 @@ class Test_Integration_Map_6(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -546,7 +550,7 @@ class Test_Integration_Map_6(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -604,7 +608,7 @@ class Test_Integration_Map_7(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -622,7 +626,7 @@ class Test_Integration_Map_7(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -640,7 +644,7 @@ class Test_Integration_Map_7(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -698,7 +702,7 @@ class Test_Integration_Map_8(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -716,7 +720,7 @@ class Test_Integration_Map_8(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -734,7 +738,7 @@ class Test_Integration_Map_8(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -792,7 +796,7 @@ class Test_Integration_Map_9(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -810,7 +814,7 @@ class Test_Integration_Map_9(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -828,7 +832,7 @@ class Test_Integration_Map_9(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -886,7 +890,7 @@ class Test_Integration_Map_10(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -904,7 +908,7 @@ class Test_Integration_Map_10(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -922,7 +926,7 @@ class Test_Integration_Map_10(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -980,7 +984,7 @@ class Test_Integration_Map_11(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -998,7 +1002,7 @@ class Test_Integration_Map_11(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1016,7 +1020,7 @@ class Test_Integration_Map_11(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -1074,7 +1078,7 @@ class Test_Integration_Map_12(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -1092,7 +1096,7 @@ class Test_Integration_Map_12(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1110,7 +1114,7 @@ class Test_Integration_Map_12(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -1168,7 +1172,7 @@ class Test_Integration_Map_13(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -1186,7 +1190,7 @@ class Test_Integration_Map_13(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1204,7 +1208,7 @@ class Test_Integration_Map_13(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -1262,7 +1266,7 @@ class Test_Integration_Map_14(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -1280,7 +1284,7 @@ class Test_Integration_Map_14(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1298,7 +1302,7 @@ class Test_Integration_Map_14(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -1356,7 +1360,7 @@ class Test_Integration_Map_15(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -1374,7 +1378,7 @@ class Test_Integration_Map_15(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1392,7 +1396,7 @@ class Test_Integration_Map_15(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -1450,7 +1454,7 @@ class Test_Integration_Map_16(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -1468,7 +1472,7 @@ class Test_Integration_Map_16(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1486,7 +1490,7 @@ class Test_Integration_Map_16(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -1544,7 +1548,7 @@ class Test_Integration_Map_17(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -1562,7 +1566,7 @@ class Test_Integration_Map_17(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1580,7 +1584,7 @@ class Test_Integration_Map_17(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -1638,7 +1642,7 @@ class Test_Integration_Map_18(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -1656,7 +1660,7 @@ class Test_Integration_Map_18(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1674,7 +1678,7 @@ class Test_Integration_Map_18(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -1732,7 +1736,7 @@ class Test_Integration_Map_19(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -1750,7 +1754,7 @@ class Test_Integration_Map_19(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1768,7 +1772,7 @@ class Test_Integration_Map_19(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -1826,7 +1830,7 @@ class Test_Integration_Map_20(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -1844,7 +1848,7 @@ class Test_Integration_Map_20(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1862,7 +1866,7 @@ class Test_Integration_Map_20(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -1920,7 +1924,7 @@ class Test_Integration_Map_21(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -1938,7 +1942,7 @@ class Test_Integration_Map_21(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -1956,7 +1960,7 @@ class Test_Integration_Map_21(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2014,7 +2018,7 @@ class Test_Integration_Map_22(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2032,7 +2036,7 @@ class Test_Integration_Map_22(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2050,7 +2054,7 @@ class Test_Integration_Map_22(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2108,7 +2112,7 @@ class Test_Integration_Map_23(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2126,7 +2130,7 @@ class Test_Integration_Map_23(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2144,7 +2148,7 @@ class Test_Integration_Map_23(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2202,7 +2206,7 @@ class Test_Integration_Map_24(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2220,7 +2224,7 @@ class Test_Integration_Map_24(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2238,7 +2242,7 @@ class Test_Integration_Map_24(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2296,7 +2300,7 @@ class Test_Integration_Map_25(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2314,7 +2318,7 @@ class Test_Integration_Map_25(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2332,7 +2336,7 @@ class Test_Integration_Map_25(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2390,7 +2394,7 @@ class Test_Integration_Map_26(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2408,7 +2412,7 @@ class Test_Integration_Map_26(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2426,7 +2430,7 @@ class Test_Integration_Map_26(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2484,7 +2488,7 @@ class Test_Integration_Map_27(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2502,7 +2506,7 @@ class Test_Integration_Map_27(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2520,7 +2524,7 @@ class Test_Integration_Map_27(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2578,7 +2582,7 @@ class Test_Integration_Map_28(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2596,7 +2600,7 @@ class Test_Integration_Map_28(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2614,7 +2618,7 @@ class Test_Integration_Map_28(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2672,7 +2676,7 @@ class Test_Integration_Map_29(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2690,7 +2694,7 @@ class Test_Integration_Map_29(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2708,7 +2712,7 @@ class Test_Integration_Map_29(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2766,7 +2770,7 @@ class Test_Integration_Map_30(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2784,7 +2788,7 @@ class Test_Integration_Map_30(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2802,7 +2806,7 @@ class Test_Integration_Map_30(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2860,7 +2864,7 @@ class Test_Integration_Map_31(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2878,7 +2882,7 @@ class Test_Integration_Map_31(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2896,7 +2900,7 @@ class Test_Integration_Map_31(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -2954,7 +2958,7 @@ class Test_Integration_Map_32(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -2972,7 +2976,7 @@ class Test_Integration_Map_32(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -2990,7 +2994,7 @@ class Test_Integration_Map_32(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3048,7 +3052,7 @@ class Test_Integration_Map_33(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -3066,7 +3070,7 @@ class Test_Integration_Map_33(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -3084,7 +3088,7 @@ class Test_Integration_Map_33(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3142,7 +3146,7 @@ class Test_Integration_Map_34(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -3160,7 +3164,7 @@ class Test_Integration_Map_34(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -3178,7 +3182,7 @@ class Test_Integration_Map_34(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3236,7 +3240,7 @@ class Test_Integration_Map_35(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -3254,7 +3258,7 @@ class Test_Integration_Map_35(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -3272,7 +3276,7 @@ class Test_Integration_Map_35(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3330,7 +3334,7 @@ class Test_Integration_Map_36(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -3348,7 +3352,7 @@ class Test_Integration_Map_36(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -3366,7 +3370,7 @@ class Test_Integration_Map_36(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3424,7 +3428,7 @@ class Test_Integration_Map_37(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -3442,7 +3446,7 @@ class Test_Integration_Map_37(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -3460,7 +3464,7 @@ class Test_Integration_Map_37(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3518,7 +3522,7 @@ class Test_Integration_Map_38(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -3536,7 +3540,7 @@ class Test_Integration_Map_38(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -3554,7 +3558,7 @@ class Test_Integration_Map_38(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3612,7 +3616,7 @@ class Test_Integration_Map_39(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -3630,7 +3634,7 @@ class Test_Integration_Map_39(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -3648,7 +3652,7 @@ class Test_Integration_Map_39(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3706,7 +3710,7 @@ class Test_Integration_Map_40(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -3724,7 +3728,7 @@ class Test_Integration_Map_40(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -3742,7 +3746,7 @@ class Test_Integration_Map_40(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3800,7 +3804,7 @@ class Test_Integration_Map_41(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -3818,7 +3822,7 @@ class Test_Integration_Map_41(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -3836,7 +3840,7 @@ class Test_Integration_Map_41(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3894,7 +3898,7 @@ class Test_Integration_Map_42(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -3912,7 +3916,7 @@ class Test_Integration_Map_42(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -3930,7 +3934,7 @@ class Test_Integration_Map_42(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -3988,7 +3992,7 @@ class Test_Integration_Map_43(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -4006,7 +4010,7 @@ class Test_Integration_Map_43(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -4024,7 +4028,7 @@ class Test_Integration_Map_43(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -4082,7 +4086,7 @@ class Test_Integration_Map_44(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -4100,7 +4104,7 @@ class Test_Integration_Map_44(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -4118,7 +4122,7 @@ class Test_Integration_Map_44(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -4176,7 +4180,7 @@ class Test_Integration_Map_45(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -4194,7 +4198,7 @@ class Test_Integration_Map_45(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -4212,7 +4216,7 @@ class Test_Integration_Map_45(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -4270,7 +4274,7 @@ class Test_Integration_Map_46(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -4288,7 +4292,7 @@ class Test_Integration_Map_46(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -4306,7 +4310,7 @@ class Test_Integration_Map_46(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -4364,7 +4368,7 @@ class Test_Integration_Map_47(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -4382,7 +4386,7 @@ class Test_Integration_Map_47(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -4400,7 +4404,7 @@ class Test_Integration_Map_47(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -4458,7 +4462,7 @@ class Test_Integration_Map_48(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -4476,7 +4480,7 @@ class Test_Integration_Map_48(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -4494,7 +4498,7 @@ class Test_Integration_Map_48(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -4552,7 +4556,7 @@ class Test_Integration_Map_49(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -4570,7 +4574,7 @@ class Test_Integration_Map_49(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -4588,7 +4592,7 @@ class Test_Integration_Map_49(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
@@ -4646,7 +4650,7 @@ class Test_Integration_Map_50(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = PrioritizedPlanningSolver(my_map_arr, starts, goals, printing = False).find_solution([])
         
         # Cost
         print(f"==>Prioritized: cost {get_sum_of_cost(paths)}")
@@ -4664,7 +4668,7 @@ class Test_Integration_Map_50(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(False)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = False).find_solution([])
         
         # Cost
         print(f"==>CBS-standard: cost {get_sum_of_cost(paths)}")
@@ -4682,7 +4686,7 @@ class Test_Integration_Map_50(unittest.TestCase):
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = CBSSolver(my_map_arr, starts, goals).find_solution(True)
+        paths = CBSSolver(my_map_arr, starts, goals, printing = False, disjoint = True).find_solution([])
         
         # Cost
         print(f"==>CBS-disjoint: cost {get_sum_of_cost(paths)}")
