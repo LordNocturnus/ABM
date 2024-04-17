@@ -2,10 +2,9 @@ from collections import abc
 import math
 import numpy as np  # type: ignore
 import time as timer
-import warnings
 
 import constraints
-from single_agent_planner import compute_heuristics, a_star, get_sum_of_cost, get_location
+from single_agent_planner import compute_heuristics, a_star, get_sum_of_cost
 import base_solver
 
 
@@ -17,8 +16,8 @@ class PrioritizedPlanningSolver(base_solver.BaseSolver):
     
     :param CPU_time:        {float}     Value to keep track of the cpu time required for the solver to complete the 
                                         planning
-    :param my_map:          {list}      List of list of boolean, describing the map environment. The location of the 
-                                        boolean value within the list describes the location within its location within 
+    :param my_map:          {list}      List of list of boolean, describing the map environment. The location of the
+                                        boolean value within the list describes the location within its location within
                                         the map.
     :param starts:          {list}      List of starting positions for the agents. Given as list of tuple of integer,
                                         where each each tuple is of the following form (y, x)
@@ -26,9 +25,9 @@ class PrioritizedPlanningSolver(base_solver.BaseSolver):
     :param goals:           {list}      List of goal/ end positions for the agents. Given as list of tuple of integer,
                                         where each each tuple is of the following form (y, x)
                                         [(x1, y1), (x2, y2), ...]
-    :param printing:        {bool}      Variable to enable and disable printing within the model. This allows for the user 
+    :param printing:        {bool}      Variable to enable and disable printing within the model. This allows for the user
                                         to specify if they would like to receive the solver outcome after every run or not.
-                                        True enables printing while false disables this behavior. 
+                                        True enables printing while false disables this behavior.
     :param num_of_agents:   {int}       The number of agents within the environment. Extracted from the supplied goal or 
                                         start positions.
     :param heuristics:      {list}      List containing the heuristics.
@@ -90,14 +89,14 @@ class PrioritizedPlanningSolver(base_solver.BaseSolver):
         """
             Finds paths for all agents from their start locations to their goal locations. Overwrites the baseclass
             find_solution function.
-            The solve_prioritized main idea it to allocate path to the various agents from start to finish, where the 
+            The solve_prioritized main idea it to allocate path to the various agents from start to finish, where the
             paths are assigned based on pre-assigned priorities. First a full path is assigned to the agent with the
             highest priority. Once this agent has its full path assigned trough the use of a space time A* implementation
             the next agent may be planned. This is the agent with the second highest priority. The second agent is now
-            planned keeping in mind the path of the first agent. This procedure is performed until all agents have been 
-            allocated a path. It may happen under the current priority distribution that problem is not solvable. Within 
+            planned keeping in mind the path of the first agent. This procedure is performed until all agents have been
+            allocated a path. It may happen under the current priority distribution that problem is not solvable. Within
             this case the priorities will be shuffled/ reassigned and recursively solved, until either the maximum recursive
-            depth is reach, the problem is solved or no solution can be found based.  
+            depth is reach, the problem is solved or no solution can be found based.
 
         :param base_constraints:    {list}              Constraints to be considered during the solve procedure
         :param depth:               {int}               How many recursion steps have been taken so far. Used to
@@ -109,7 +108,6 @@ class PrioritizedPlanningSolver(base_solver.BaseSolver):
         :raise:                                         RecursionError
         :raise:                                         BaseException
         """
-
 
         result = []
         constraint_list: list[constraints.Constraint] = [*base_constraints]

@@ -14,6 +14,10 @@ def get_sum_of_cost(paths: list[list[tuple[int, int]]]) -> int:
     return sum([len(p) - 1 for p in paths])
 
 
+def get_longest_path_cost(paths: list[list[tuple[int, int]]]) -> int:
+    return max([len(p) - 1 for p in paths])
+
+
 def compute_heuristics(my_map: list[list[bool]], goal: tuple[int, int]) -> dict[tuple[int, int], int]:
     # Use Dijkstra to build a shortest-path tree rooted at the goal location
     open_list: list[tuple[int, tuple[int, int]]] = []

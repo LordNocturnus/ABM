@@ -11,13 +11,9 @@ class MapGenerator(object):
         Point of discussion meeting 15-4-24 // If time have various random generator for unique cases
 
     :param map:         {np.NDArray}    Environment map, where 1 indicates a wall, and 0 indicates walkable space.
-
     :param rng:         {generator}     Random number generator generator object, required to set the seed of the rng
                                         process.
-
     :param candidates:  {np.NDArray}    Intermediate step for random agent location generator using prime factorisation.
-
-    :param str_output:  {str}           -
     """
 
     def __init__(self, path: str, seed: int = 0) -> None:
@@ -25,7 +21,6 @@ class MapGenerator(object):
             Initialise map geneator object.
         
         :param path:    {str}   Path to the map file.
-
         :param seed:    {int}   Set the seed of the rng process.
         """
         with open(path, "r") as f:
@@ -40,7 +35,6 @@ class MapGenerator(object):
         yrange = np.arange(0, self.map.shape[1])
         xgrid, ygrid = np.meshgrid(yrange, xrange)
         self.candidates = utils.pos_to_prime(xgrid, ygrid)[self.map == 0]
-        self.str_output = ""
 
     def generate(self, agents: int = 7) -> tuple[npt.NDArray[int], list[tuple[int, int]], list[tuple[int, int]]]:
         """
