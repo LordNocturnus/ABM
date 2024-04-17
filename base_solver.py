@@ -36,7 +36,8 @@ class BaseSolver:
                  printing: bool,
                  **kwargs) -> None:
         """
-            Initialise an instance of the BaseSolver class.
+            Initialise an instance of the BaseSolver class. Calls heuristics_func to fill self.heuristics with data for
+            each agent.
 
         :param my_map:          {list}      List of list of boolean, describing the map environment. True indicates a
                                             wall.
