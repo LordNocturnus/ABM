@@ -9,13 +9,12 @@ import multiprocessing
 from multiprocessing import connection
 
 import collisions
-import constraints
 import single_agent_planner
 import base_solver
 
 
 class DistributedAgent(object):
-    """DistributedAgent object to be used in the distributed planner."""
+    """"""
 
     def __init__(self,
                  my_map: list[list[bool]],
@@ -30,10 +29,6 @@ class DistributedAgent(object):
                  **kwargs
                  ) -> None:
         """
-        my_map   - list of lists specifying obstacle positions
-        starts      - (x1, y1) start location
-        goals       - (x1, y1) goal location
-        heuristics  - heuristic to goal location
         """
         self.my_map = my_map
         self.pos = start
@@ -58,12 +53,12 @@ class DistributedAgent(object):
         self.path = [self.pos]
 
         ## Initial Path finding procedure
-        planned_path = single_agent_planner_v2.a_star(my_map,
-                                                      self.pos,
-                                                      self.goal,
-                                                      self.heuristics_func(self.my_map, self.goal),
-                                                      self.id,
-                                                      self.global_constraints)
+        planned_path = single_agent_planner.a_star(my_map,
+                                                   self.pos,
+                                                   self.goal,
+                                                   self.heuristics_func(self.my_map, self.goal),
+                                                   self.id,
+                                                   self.global_constraints)
         if planned_path is None:
             raise ValueError('No solutions')
         else:
@@ -94,7 +89,7 @@ class DistributedAgent(object):
 
     def get_path(self) -> tuple[int, list[tuple[int, int]]]:
         if self.path_limit:
-            return self.id, single_agent_planner_v2.pad_path(self.planned_path, self.path_limit)
+            return self.id, single_agent_planner.pad_path(self.planned_path, self.path_limit)
         else:
             return self.id, self.planned_path
 
@@ -130,7 +125,7 @@ class DistributedAgent(object):
 
         # update path
         self.path.append(self.pos)
-        self.pos = single_agent_planner_v2.get_location(self.planned_path, 1)  # update pos to position of next timestep
+        self.pos = single_agent_planner.get_location(self.planned_path, 1)  # update pos to position of next timestep
 
         self.planned_path = self.planned_path[min(1, len(self.planned_path) - 1):]
         return self.get_path()
