@@ -16,13 +16,11 @@ def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> li
     
     :param agent:           {tuple}         Location of the agent within the map, specified as (y, x), with y and x 
                                             being of type int
-    
     :param view_radius:     {int}           Maximum unrestricted view range of the agent (circular fov)
-    
     :param my_map:          {np.ndarray}    Map provided as numpy array where 1 indicates a wall and zero 
                                             indicates free space. The coordinates of the element represent the 
-                                            coordinates of the envirnoment element within the map. 
-
+                                            coordinates of the environment element within the map. 
+    
     :return:                {list}          A list of coordinate values, stored as a tuple, with each coordinate being 
                                             an integer. Indicating which agents, agent `agent` can view within the map.
                                             The agent cannot see itself, is a design feature implemented by default 
@@ -58,37 +56,30 @@ def fov_blocking(agent: tuple[int, int], view_radius: int,
     """
         Fov_blocking generates a list containing the coordinate values indicating which positions, the specified agent
         can view, considering obstacles. The coordinates are supplied as [(y, x), (y, x), (y, x), (y, x), ...]
-    
         Example output for agent located at (1,1) view view-radius 2
-
         my_map;
             . . . .
             . 0 @ .
             . @ @ .
             . . . .
-
         output -> [(1, -1), (0, 0), (1, 0), (2, 0), (-1, 1), (0, 1), (0, 2)]
-    
-        Methode used. Basic version ray evaluation code, which evaluated rays going to all possible points within 
-        the unrestricted view of the agent. By then evaulating if the ray intersetcs with an obstacle it can be 
-        determined if that location can be viewed or not. Geomteric formulation for checking intersection was 
+        Method used. Basic version ray evaluation code, which evaluated rays going to all possible points within 
+        the unrestricted view of the agent. By then evaluating if the ray intersects with an obstacle it can be 
+        determined if that location can be viewed or not. Geometric formulation for checking intersection was 
         based on https;//stackoverflow.com/a/4977569
     
     :param agent:           {tuple}         Location of the agent within the map, specified as (y, x), with y and x 
                                             being of type int
-
     :param view_radius:     {int}           Maximum unrestricted view range of the agent (circular fov)
-    
     :param my_map:          {np.ndarray}    Map provided as numpy array where 1 indicates a wall and zero 
                                             indicates free space. The coordinates of the element represent the 
-                                            coordinates of the envirnoment element within the map. 
-
+                                            coordinates of the environment element within the map. 
     :param DEBUG:           {bool}          Optional boolean argument to enable (True) and disable (False), debug mode.
                                             By default the debug model is disabled, and for safety the debug features
                                             have been commented out. An enabled debug mode will provide the user with a 
-                                            snapshot of the agents view from a specific point at a timestep. This will 
-                                            happen for each timestep, position and agent the function is evaluated. 
-                                            Therfore this feature should be activated with precaution.
+                                            snapshot of the agents view from a specific point at a timestamp. This will 
+                                            happen for each timestamp, position and agent the function is evaluated. 
+                                            Therefore this feature should be activated with precaution.
     
     :return:                {list}          A list of coordinate values, stored as a tuple, with each coordinate being 
                                             an integer. Indicating which agents, agent `agent` can view within the map.
@@ -107,36 +98,30 @@ def fov_blocking(agent: tuple[int, int], view_radius: int,
 
 class Box:
     """
-        A box object, required for the ray intersection implmentation. It functions as an object representation of 
+        A box object, required for the ray intersection implementation. It functions as an object representation of 
         the various obstacles within the map. To create an obstacle the following code is used `Box((10, 5))`. 
         This creates the box object for the obstacle located at y = 10 and x = 5.
 
     :param x:           {int}       x location of the obstacle
-
     :param y:           {int}       y location of the obstacle
-
     :param segments:    {list}      List containing 4 lists of two coordinates given as tuple. Each list of two 
-                                    points discribes the bounding line of the square shaped object. The square 
-                                    shaped objects' perimiter is fully defined by 4 pairs of coordinates.
-
+                                    points describes the bounding line of the square shaped object. The square 
+                                    shaped objects' perimeter is fully defined by 4 pairs of coordinates.
     :param bounds:      {list}      List containing 4 lists of two coordinates given as tuple. Each list of two 
-                                    points discribes the bounding line of the square shaped object. The square 
-                                    shaped objects' perimiter is fully defined by 4 pairs of coordinates.
-    
+                                    points describes the bounding line of the square shaped object. The square 
+                                    shaped objects' perimeter is fully defined by 4 pairs of coordinates.
     :param padding:     {float}     Negative padding added to the line segments to tune the vision of an agent. 
-                                    And therfore allow for vision around a corner.
-
+                                    And therefore allow for vision around a corner.
     :param out:         {list}      Intermediate variable for the bounds property to supply the main class with 
                                     the bounding segments.
-    
     :param location:    {tuple}     Location of the obstacle passed to the __init__ function.
     """
 
     def __init__(self, location: tuple[int, int]) -> None:
         """
-            Initliase the object
+            Initiate the object
 
-        :param locations:   {tuple}     Location of the obstacle supplied as (y-location, x-location) both of type int.
+        :param location:   {tuple}     Location of the obstacle supplied as (y-location, x-location) both of type int.
         """
         self.x = location[1]
         self.y = location[0]
@@ -145,7 +130,7 @@ class Box:
     @property
     def bounds(self) -> list[list[tuple[float, float]]]:
         """
-            returns the coordinates representing the lines segements representing to bounds of the 
+            returns the coordinates representing the lines segments representing to bounds of the 
             square shaped obstacle.  
 
         :return:    {tuple}    Location of the obstacle supplied as (y-location, x-location) both of type int.
@@ -164,49 +149,31 @@ class Ray:
         analyse if the agent can view another point within its environment. Required for the `fov_blocking` function
 
     :param start_x:     {int}       x location of vertex starting location
-    
     :param start_y:     {int}       y location of vertex starting location
-
     :param end_x:       {int}       x location of vertex ending location
-    
     :param end_y:       {int}       y location of vertex ending location
-
     :param x00:         {int}       Intermediate value for intersection detection. Equal to start_x 
-
     :param y00:         {int}       Intermediate value for intersection detection. Equal to start_y 
-
     :param x01:         {int}       Intermediate value for intersection detection.
-
     :param y01:         {int}       Intermediate value for intersection detection.
-
     :param x10:         {float}     Intermediate value for intersection detection. 
-
     :param y10:         {float}     Intermediate value for intersection detection.
-
     :param x11:         {float}     Intermediate value for intersection detection.
-
     :param y11:         {float}     Intermediate value for intersection detection.
-
     :param s:           {float}     Values to evaluate if an intersection exists between a ray and a Box.
-
     :param t:           {float}     Values to evaluate if an intersection exists between a ray and a Box
-
     :param d:           {float}     Values to evaluate if an intersection exists between a ray and a Box
-
     :param obstacles:   {list}      List containing all obstacles located within the map. Stored as list of
                                     Box objects.
-
     :param obstacle:    {object}    Single Box object from obstacles list.  
-
     :param segment:     {list}      Element of the segments (bounds representation) attribute of the box object.
     """
 
     def __init__(self, start: tuple[int, int], end: tuple[int, int]) -> None:
         """
-            Initliase the Ray object
+            Initiate the Ray object
 
         :param start:   {tuple}     (y, x) location of vertex starting location, supplied as type int within tuple
-
         :param end:     {tuple}     (y, x) location of vertex starting location, supplied as type int within tuple
         """
 
@@ -219,7 +186,6 @@ class Ray:
         """
             Check if the ray intersects with any obstacles.
 
-        
         :param obstacles:   {list}  List containing the Box objects within the environment
         
         :return:            {bool}  True if ray does not intersect with any obstacles within the environment, else False.
@@ -234,7 +200,7 @@ class Ray:
                 y10, x10 = segment[0][0], segment[0][1]
                 y11, x11 = segment[1][0] - segment[0][0], segment[1][1] - segment[0][1]
 
-                # d = x11 y01 - x01 y11 : if 0 two lines are parralel  
+                # d = x11 y01 - x01 y11 : if 0 two lines are parallel  
                 d = x11 * y01 - x01 * y11
                 if d == 0:
                     continue
@@ -254,19 +220,14 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
         Returns the points the agent can be view based on the its view radius, the obstacles and the agents within 
         the environment. 
 
+    :param agent_loc:   {tuple} The agent location provided as (y-location, x-location), both of type int
+    :param view_radius: {int}   Maximum unrestricted view range of the agent
+    :param obstacles:   {list}  Locations of all obstacles within the map supplied as a list of Box objects.
+    :param DEBUG:       {bool}  Optional, default False. Enables plotting functionality to view the agents' view.
+                                Provides a graphic fiv representation for every timestamp, point and agent being evaluated.
     
-    :param agent_loc:           {tuple} The agent location provided as (y-location, x-location), both of type int
-    
-    :param view_radius:         {int}   Maximum unrestricted view range of the agent
-    
-    :param obstacle_locations:  {list}  Locations of all obstacles within the map supplied as a list of Box objects.
-
-    :param DEBUG:               {bool}  Optional, default False. Enables plotting functionality to view the agents' 
-                                        view. Provides a graphic fiv representation for every timestep, point and 
-                                        agent being evaluated.
-    
-    :return:                    {list}  Returns list of all point the agent can view, point is list are stored as
-                                        tuple with both elements being integer (y-location, x-location).
+    :return:            {list}  Returns list of all point the agent can view, point is list are stored as 
+                                tuple with both elements being integer (y-location, x-location).
     """
 
     points_in_vision = []
@@ -278,11 +239,11 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
                 continue
 
             elif math.sqrt(i ** 2 + j ** 2) <= view_radius:
-                # Evaulate ray from origin to end point
+                # Evaluate ray from origin to end point
                 # Goal is to determine if the end point can be seen/ evaluated
                 line = Ray(agent_loc, (j + agent_loc[0], i + agent_loc[1]))
 
-                # Visualise points the agent can see 
+                # Visualize points the agent can see 
                 if line.check_view_v2(obstacles):
                     # Point can be seen
                     points_in_vision.append((j + agent_loc[0], i + agent_loc[1]))
@@ -303,12 +264,12 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
     #                 plt.scatter(agent_loc[1],agent_loc[0],color='c')
 
     #             elif math.sqrt(i**2 + j**2) <= r:
-    #                 # Evaulate ray from origin to end point
+    #                 # Evaluate ray from origin to end point
     #                 # Goal is to determine if the end point can be seen/ evaluated
 
     #                 line = Ray(agent_loc, (j+agent_loc[0], i+agent_loc[1]))
 
-    #                 # Visualise points the agent can see 
+    #                 # Visualize points the agent can see 
     #                 if line.check_view_v2(obstacles):
     #                     # Point can be seen
     #                     ax.scatter(i+agent_loc[1], j+agent_loc[0],color='b')
@@ -316,7 +277,7 @@ def agent_vision(agent_loc: tuple[int, int], view_radius: int, obstacles: list[B
     #                     # Point cannot be seen
     #                     ax.scatter(i+agent_loc[1], j+agent_loc[0],color='r')
 
-    #     # Visualise objects
+    #     # Visualize objects
     #     for obstacle in obstacles:
 
     #         rect = plt.Rectangle((obstacle.x-0.5, obstacle.y-0.5), 1, 1, linewidth=1, edgecolor='k', facecolor='none')
