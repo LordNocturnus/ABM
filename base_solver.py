@@ -68,10 +68,9 @@ class BaseSolver:
     def find_solution(self, base_constraints: list[constraints.Constraint]) -> list[list[tuple[int, int]]]:
         """
             Find solution function, used as a template for the the main solvers
-        
+
         :param base_constraints:    {list}  Constraints to be considered during the solve procedure
 
-        :return:                    {list}  Returns the paths traversed by all agents
-        
+        :raise:                             NotImplementedError
         """
         raise NotImplementedError
