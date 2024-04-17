@@ -42,18 +42,17 @@ from independent import IndependentSolver
 from prioritized import PrioritizedPlanningSolver
 from distributed import DistributedPlanningSolver
 
-from single_agent_planner_v2 import get_sum_of_cost
-
 import numpy as np
 import pandas as pd
 
+import itertools
 
 ## Create initial database structure
 
 std_df_prioritized = pd.DataFrame([], columns=["uid", "agents", "cost", "time", "failed"])
 std_df_cbs_standard = pd.DataFrame([], columns=["uid", "agents", "cost", "time", "failed"])
 std_df_cbs_disjoint = pd.DataFrame([], columns=["uid", "agents", "cost", "time", "failed"])
-std_df_failed = pd.DataFrame([], columns=["uid", "scenario"])
+std_df_failed = pd.DataFrame([], columns=["uid", "solver", "scenario"])
 
 ## Generate results 
 
@@ -65,9 +64,9 @@ solvers = ["prioritized",
            "distributed cbs-disjoint"
            ]
 maps = ["assignment_1", "assignment_2", "assignment_3"]
-agents = list(range(1,15))
-vr = list(range(2,10))
-ff = list(range(2,10))
+agents = list(range(2,15))
+view_size = list(range(2,10))
+path_limit = list(range(2,10))
 
 
 path1 = f"maps/{maps[0]}.map"
@@ -84,8 +83,6 @@ map_generators = [map_1, map_2, map_3]
 
 def fail_output(my_map: np.ndarray, starts: list[tuple[int, int]], goals: list[tuple[int, int]]) -> str:
     out = ""
-
-    out += "prioritized\n"
 
     out += str(np.shape(my_map)).replace("(", "").replace(")", "\n").replace(",", "")
 
@@ -177,10 +174,8 @@ while i < 10:
         map_generator: map_gen.MapGenerator
 
         num_agents = int(np.random.choice(agents, size=1, replace=False)[0])
-        view_range = int(np.random.choice(vr, size=1, replace=False)[0])
-        path_comms = int(np.random.choice(ff, size=1, replace=False)[0])
 
-        print(f"{i:0{5}} | solving for => {map_name=}, {num_agents=}, {view_range=}, {path_comms=}")
+        print(f"{i:0{5}} | solving for => {map_name=}, {num_agents=}")
 
         # Initial conditions
         my_map, starts, goals = map_generator.generate(num_agents)
@@ -194,7 +189,7 @@ while i < 10:
         # Prioritized
         cost, time, collision = run_prioritized(my_map, starts, goals)
 
-        if collision:
+        if not collision:
             # add to specific general data storage
             std_df_prioritized = pd.concat([std_df_prioritized, 
                                             pd.DataFrame([[uid, num_agents, cost, time, collision]],
@@ -203,8 +198,8 @@ while i < 10:
         else:
             # Add to failure cases
             std_df_failed = pd.concat([std_df_failed,
-                                        pd.DataFrame([[uid, fail_output(my_map, starts, goals)]],
-                                                    columns=["uid", "scenario"])],
+                                        pd.DataFrame([[uid, "prioritized", fail_output(my_map, starts, goals)]],
+                                                    columns=["uid", "solver","scenario"])],
                                         ignore_index=True)
 
         # cbs standard
@@ -238,6 +233,17 @@ while i < 10:
                                         pd.DataFrame([[uid, fail_output(my_map, starts, goals)]],
                                                     columns=["uid", "scenario"])],
                                         ignore_index=True)
+            
+        ## for distributed systems
+        view_range = np.random.choice(view_size, size=4, replace=False)
+        path_comms = np.random.choice(path_limit, size=4, replace=False)
+
+        for el in list(itertools.product(view_range, path_comms)):
+            view_range_sigle = el[0]
+            path_comms = el[1]
+
+            # ... run the solvers ...
+
 
         i += 1
 
