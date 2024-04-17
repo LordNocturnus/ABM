@@ -45,36 +45,14 @@ from distributed import DistributedPlanningSolver
 from single_agent_planner_v2 import get_sum_of_cost
 
 import numpy as np
+import pandas as pd
 
 
 ## Create initial database structure
-connection = sql.connect("results.db")
-cursor = connection.cursor()
-cursor.execute("DROP TABLE IF EXISTS prioritized")
-cursor.execute("DROP TABLE IF EXISTS cbs_standard")
-cursor.execute("DROP TABLE IF EXISTS cbs_disjoint")
-cursor.execute("""CREATE TABLE prioritized(
-               uid TEXT,
-               agents INTEGER,
-               cost INTEGER,
-               time FLOAT,
-               failed BIT
-               )""")
-cursor.execute("""CREATE TABLE cbs_standard(
-               uid TEXT,
-               agents INTEGER,
-               cost INTEGER,
-               time FLOAT,
-               failed BIT
-               )""")
-cursor.execute("""CREATE TABLE cbs_disjoint(
-               uid TEXT,
-               agents INTEGER,
-               cost INTEGER,
-               time FLOAT,
-               failed BIT
-               )""")
 
+std_df_prioritized = pd.DataFrame([], columns=["uid", "agents", "cost", "time", "failed"])
+std_df_cbs_standard = pd.DataFrame([], columns=["uid", "agents", "cost", "time", "failed"])
+std_df_cbs_disjoint = pd.DataFrame([], columns=["uid", "agents", "cost", "time", "failed"])
 
 ## Generate results 
 
@@ -162,7 +140,7 @@ def run_cbs_disjoint(my_map: np.ndarray,
 
 i = 0
 
-while i < 1000:
+while i < 10:
 
     for map_name, map_generator in zip(maps, map_generators):
         # Map_path
@@ -185,22 +163,28 @@ while i < 1000:
 
         ## Run for each solver
         cost, time, collision = run_prioritized(my_map, starts, goals)
-        
-        cursor.execute("INSERT INTO prioritized VALUES (?, ?, ?, ?, ?)",
-                       (uid, num_agents, cost, time, collision))
+
+        std_df_prioritized = pd.concat([std_df_prioritized, 
+                                        pd.DataFrame([[uid, num_agents, cost, time, collision]],
+                                                     columns=["uid", "agents", "cost", "time", "failed"])], 
+                                       ignore_index=True)
         
         cost, time, collision = run_cbs_standard(my_map, starts, goals)
         
-        cursor.execute("INSERT INTO cbs_standard VALUES (?, ?, ?, ?, ?)",
-                       (uid, num_agents, cost, time, collision))
+        std_df_cbs_standard = pd.concat([std_df_cbs_standard, 
+                                         pd.DataFrame([[uid, num_agents, cost, time, collision]],
+                                                      columns=["uid", "agents", "cost", "time", "failed"])], 
+                                        ignore_index=True)
         
         cost, time, collision = run_cbs_disjoint(my_map, starts, goals)
         
-        cursor.execute("INSERT INTO cbs_disjoint VALUES (?, ?, ?, ?, ?)",
-                       (uid, num_agents, cost, time, collision))
-
-        connection.commit()
+        std_df_cbs_disjoint = pd.concat([std_df_cbs_disjoint, 
+                                         pd.DataFrame([[uid, num_agents, cost, time, collision]],
+                                                      columns=["uid", "agents", "cost", "time", "failed"])], 
+                                        ignore_index=True)
 
         i += 1
 
-connection.close()
+print(std_df_prioritized.head())
+print(std_df_cbs_standard.head())
+print(std_df_cbs_disjoint.head())
