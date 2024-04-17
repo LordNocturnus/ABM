@@ -140,7 +140,8 @@ class ConstraintTable:
     def __init__(self, constraints: list[Constraint], agent: int) -> None:
         """
             Initialization function for the ConstraintTable class. Iterates through all provided constraints and uses
-            Constraint.compile_constraint
+            Constraint.compile_constraint() to apply the given constraint to the given agent. Furthermore filters
+            infinite constraints from the finite constraints.
 
         :param constraints: {list}  list of all constraints currently in scope for the pathfinding potentially not all
                                     applying to the given agent
@@ -158,6 +159,28 @@ class ConstraintTable:
         self.infinite_constraints.sort(key=lambda x: x.step)
 
     def is_constrained(self, current_loc: tuple[int, int], next_loc: tuple[int, int], step: int) -> bool:
+        """
+            function used to check if a given planed next location is valid or if it violates a constraint. First
+            iterates through all finite constraints until it has reached once that have the same timestep then compares
+            for each positive constraint if the next location is not equal to the required location or incase of a
+            negative vertex constrain if the next location is equal to the first constraint location. For negative edge
+            constraints it is necessary to check if the current location is equal to location one and if the next
+            location is equal to the second location. Positive edge constraints do not occur due the the way
+            constraint.compile_constraint() works.
+            If there are any infinite constraints present and the timestep is less than the smallest start timestep then
+            it also iterates through the infinite negative constraints and compares the next location to the constraints
+            first location.
+
+        :param current_loc: {tuple} current location of the agent
+        :param next_loc:    {tuple} next planned location
+        :param step:        {int}   current timestep
+
+        :return:            {bool}  next move violates a finite positive vertex constraint
+        :return:            {bool}  next move violates a finite negative vertex constraint
+        :return:            {bool}  next move violates a finite negative edge constraint
+        :return:            {bool}  next move violates an infinite constraint
+        :return:            {bool}  no constraints have been violated
+        """
         if step < len(self):
             for c in self.finite_constraints:
                 if c.step < step:
@@ -182,9 +205,21 @@ class ConstraintTable:
 
     @property
     def is_infinite(self):
+        """
+            property returning if any infinite constraints are present
+
+        :return:    {bool}  true if any infinite constraints exist
+        """
         return len(self.infinite_constraints) != 0
 
     def __len__(self) -> int:
+        """
+            implementation of len for ConstraintTable to return the maximum timestep at which a finite constraint
+            occurs plus one
+
+        :return:    {int}   last finite timestep plus one
+        :return:    {int}   if no constraints are present return 0
+        """
         try:
             return self.finite_constraints[-1].step + 1
         except IndexError:
