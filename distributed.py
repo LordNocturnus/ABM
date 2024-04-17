@@ -8,7 +8,7 @@ import time as timer
 import multiprocessing
 from multiprocessing import connection
 
-from single_agent_planner_v2 import compute_heuristics, get_sum_of_cost
+from single_agent_planner import compute_heuristics, get_sum_of_cost
 from prioritized import PrioritizedPlanningSolver
 import distributed_agent
 import base_solver

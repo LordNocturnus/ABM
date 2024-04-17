@@ -5,7 +5,7 @@ import time as timer
 import warnings
 
 import constraints
-from single_agent_planner_v2 import compute_heuristics, a_star, get_sum_of_cost, get_location
+from single_agent_planner import compute_heuristics, a_star, get_sum_of_cost, get_location
 import base_solver
 
 

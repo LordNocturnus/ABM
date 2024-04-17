@@ -10,7 +10,7 @@ from multiprocessing import connection
 
 import collisions
 import constraints
-import single_agent_planner_v2
+import single_agent_planner
 import base_solver
 
 

@@ -8,7 +8,7 @@ from independent import IndependentSolver
 from prioritized import PrioritizedPlanningSolver
 from distributed import DistributedPlanningSolver
 
-from single_agent_planner_v2 import get_sum_of_cost
+from single_agent_planner import get_sum_of_cost
 
 
 class Test_Integration_Map_1(unittest.TestCase):

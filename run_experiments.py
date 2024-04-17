@@ -15,7 +15,7 @@ from prioritized import PrioritizedPlanningSolver
 from distributed import DistributedPlanningSolver  # Placeholder for Distributed Planning
 from visualize import Animation
 from collisions import detect_collisions
-from single_agent_planner_v2 import get_sum_of_cost
+from single_agent_planner import get_sum_of_cost
 
 import map_gen
 

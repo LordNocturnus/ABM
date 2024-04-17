@@ -4,7 +4,7 @@ import utils
 import numpy.typing as npt  # type: ignore
 import numpy as np
 
-from single_agent_planner_v2 import get_location
+from single_agent_planner import get_location
 
 
 class Collision:

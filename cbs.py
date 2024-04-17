@@ -5,7 +5,7 @@ import typing
 import constraints
 import collisions
 
-from single_agent_planner_v2 import compute_heuristics, a_star, get_sum_of_cost
+from single_agent_planner import compute_heuristics, a_star, get_sum_of_cost
 import base_solver
 
 
