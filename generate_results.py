@@ -53,6 +53,7 @@ import pandas as pd
 std_df_prioritized = pd.DataFrame([], columns=["uid", "agents", "cost", "time", "failed"])
 std_df_cbs_standard = pd.DataFrame([], columns=["uid", "agents", "cost", "time", "failed"])
 std_df_cbs_disjoint = pd.DataFrame([], columns=["uid", "agents", "cost", "time", "failed"])
+std_df_failed = pd.DataFrame([], columns=["uid", "scenario"])
 
 ## Generate results 
 
@@ -64,7 +65,7 @@ solvers = ["prioritized",
            "distributed cbs-disjoint"
            ]
 maps = ["assignment_1", "assignment_2", "assignment_3"]
-agents = list(range(1,5))
+agents = list(range(1,15))
 vr = list(range(2,10))
 ff = list(range(2,10))
 
@@ -79,6 +80,33 @@ path3 = f"maps/{maps[2]}.map"
 map_3 = map_gen.MapGenerator(path3)
 
 map_generators = [map_1, map_2, map_3]
+
+
+def fail_output(my_map: np.ndarray, starts: list[tuple[int, int]], goals: list[tuple[int, int]]) -> str:
+    out = ""
+
+    out += "prioritized\n"
+
+    out += str(np.shape(my_map)).replace("(", "").replace(")", "\n").replace(",", "")
+
+    my_map_str = my_map.astype(str)
+    my_map_str[my_map_str == "1"] = "@"
+    my_map_str = my_map_str.tolist()
+
+    for line in my_map_str:
+        out += " ".join(line)
+        out += " "
+        out += "\n"
+    
+    out += f"{len(starts)}\n"
+
+    for start, goal in zip(starts, goals):
+        out += " ".join(map(str, start))
+        out += " "
+        out += " ".join(map(str, goal))
+        out += "\n"
+    
+    return out
 
 
 def run_prioritized(my_map: np.ndarray, 
@@ -140,7 +168,7 @@ def run_cbs_disjoint(my_map: np.ndarray,
 
 i = 0
 
-while i < 1000:
+while i < 10:
 
     for map_name, map_generator in zip(maps, map_generators):
         # Map_path
@@ -166,7 +194,7 @@ while i < 1000:
         # Prioritized
         cost, time, collision = run_prioritized(my_map, starts, goals)
 
-        if not collision:
+        if collision:
             # add to specific general data storage
             std_df_prioritized = pd.concat([std_df_prioritized, 
                                             pd.DataFrame([[uid, num_agents, cost, time, collision]],
@@ -174,11 +202,12 @@ while i < 1000:
                                             ignore_index=True)
         else:
             # Add to failure cases
-            pass
-
+            std_df_failed = pd.concat([std_df_failed,
+                                        pd.DataFrame([[uid, fail_output(my_map, starts, goals)]],
+                                                    columns=["uid", "scenario"])],
+                                        ignore_index=True)
 
         # cbs standard
-
         cost, time, collision = run_cbs_standard(my_map, starts, goals)
         
         if not collision:
@@ -189,7 +218,10 @@ while i < 1000:
                                             ignore_index=True)
         else:
             # add to failure cases
-            pass
+            std_df_failed = pd.concat([std_df_failed,
+                                        pd.DataFrame([[uid, fail_output(my_map, starts, goals)]],
+                                                    columns=["uid", "scenario"])],
+                                        ignore_index=True)
         
         # cbs disjoint
         cost, time, collision = run_cbs_disjoint(my_map, starts, goals)
@@ -202,10 +234,14 @@ while i < 1000:
                                             ignore_index=True)
         else:
             # add to failure cases
-            pass
+            std_df_failed = pd.concat([std_df_failed,
+                                        pd.DataFrame([[uid, fail_output(my_map, starts, goals)]],
+                                                    columns=["uid", "scenario"])],
+                                        ignore_index=True)
 
         i += 1
 
 print(std_df_prioritized.head())
 print(std_df_cbs_standard.head())
 print(std_df_cbs_disjoint.head())
+print(std_df_failed.head())
