@@ -15,7 +15,6 @@ def map_vis(map_name: str, num_agents: int = 0) -> None:
                                 instance maps are provided or assignment maps.
     
     :param num_agents:  {int}   number of agents to be spawned within the map.
-
     """
     if "assignment" in map_name:
         my_map, agents_start, agents_end = MapGenerator(f"maps/{map_name}.map").generate(num_agents)
