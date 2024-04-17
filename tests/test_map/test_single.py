@@ -10,7 +10,7 @@ from independent import IndependentSolver
 from prioritized import PrioritizedPlanningSolver
 from distributed import DistributedPlanningSolver
 
-from single_agent_planner_v2 import get_sum_of_cost
+from single_agent_planner import get_sum_of_cost
 
 os.chdir(pathlib.Path(__file__).parent.parent.parent)
 

@@ -9,7 +9,7 @@ import collisions
 
 from cbs import CBSSolver
 
-from single_agent_planner_v2 import get_sum_of_cost
+from single_agent_planner import get_sum_of_cost
 
 
 class Test_Integration_CBS_Standard(unittest.TestCase):
