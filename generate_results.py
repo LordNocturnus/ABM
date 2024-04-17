@@ -140,7 +140,7 @@ def run_cbs_disjoint(my_map: np.ndarray,
 
 i = 0
 
-while i < 10:
+while i < 1000:
 
     for map_name, map_generator in zip(maps, map_generators):
         # Map_path
@@ -152,7 +152,7 @@ while i < 10:
         view_range = int(np.random.choice(vr, size=1, replace=False)[0])
         path_comms = int(np.random.choice(ff, size=1, replace=False)[0])
 
-        print(f"{i:0{4}} | solving for => {map_name=}, {num_agents=}, {view_range=}, {path_comms=}")
+        print(f"{i:0{5}} | solving for => {map_name=}, {num_agents=}, {view_range=}, {path_comms=}")
 
         # Initial conditions
         my_map, starts, goals = map_generator.generate(num_agents)
@@ -162,26 +162,47 @@ while i < 10:
         uid = hashlib.sha256(uid.encode()).hexdigest()
 
         ## Run for each solver
+
+        # Prioritized
         cost, time, collision = run_prioritized(my_map, starts, goals)
 
-        std_df_prioritized = pd.concat([std_df_prioritized, 
-                                        pd.DataFrame([[uid, num_agents, cost, time, collision]],
-                                                     columns=["uid", "agents", "cost", "time", "failed"])], 
-                                       ignore_index=True)
-        
+        if not collision:
+            # add to specific general data storage
+            std_df_prioritized = pd.concat([std_df_prioritized, 
+                                            pd.DataFrame([[uid, num_agents, cost, time, collision]],
+                                                        columns=["uid", "agents", "cost", "time", "failed"])], 
+                                            ignore_index=True)
+        else:
+            # Add to failure cases
+            pass
+
+
+        # cbs standard
+
         cost, time, collision = run_cbs_standard(my_map, starts, goals)
         
-        std_df_cbs_standard = pd.concat([std_df_cbs_standard, 
-                                         pd.DataFrame([[uid, num_agents, cost, time, collision]],
-                                                      columns=["uid", "agents", "cost", "time", "failed"])], 
-                                        ignore_index=True)
+        if not collision:
+            # add to specific general data storage
+            std_df_cbs_standard = pd.concat([std_df_cbs_standard, 
+                                            pd.DataFrame([[uid, num_agents, cost, time, collision]],
+                                                        columns=["uid", "agents", "cost", "time", "failed"])], 
+                                            ignore_index=True)
+        else:
+            # add to failure cases
+            pass
         
+        # cbs disjoint
         cost, time, collision = run_cbs_disjoint(my_map, starts, goals)
         
-        std_df_cbs_disjoint = pd.concat([std_df_cbs_disjoint, 
-                                         pd.DataFrame([[uid, num_agents, cost, time, collision]],
-                                                      columns=["uid", "agents", "cost", "time", "failed"])], 
-                                        ignore_index=True)
+        if not collision:
+            # add to specific general data storage
+            std_df_cbs_disjoint = pd.concat([std_df_cbs_disjoint, 
+                                            pd.DataFrame([[uid, num_agents, cost, time, collision]],
+                                                        columns=["uid", "agents", "cost", "time", "failed"])], 
+                                            ignore_index=True)
+        else:
+            # add to failure cases
+            pass
 
         i += 1
 
