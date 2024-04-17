@@ -214,8 +214,8 @@ while i < 10:
         else:
             # add to failure cases
             std_df_failed = pd.concat([std_df_failed,
-                                        pd.DataFrame([[uid, fail_output(my_map, starts, goals)]],
-                                                    columns=["uid", "scenario"])],
+                                        pd.DataFrame([[uid, "cbs_standard",fail_output(my_map, starts, goals)]],
+                                                    columns=["uid", "solver", "scenario"])],
                                         ignore_index=True)
         
         # cbs disjoint
@@ -230,8 +230,8 @@ while i < 10:
         else:
             # add to failure cases
             std_df_failed = pd.concat([std_df_failed,
-                                        pd.DataFrame([[uid, fail_output(my_map, starts, goals)]],
-                                                    columns=["uid", "scenario"])],
+                                        pd.DataFrame([[uid, "cbs_disjoint", fail_output(my_map, starts, goals)]],
+                                                    columns=["uid", "solver","scenario"])],
                                         ignore_index=True)
             
         ## for distributed systems
