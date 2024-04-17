@@ -7,7 +7,10 @@ import math
 def fov(agent: tuple[int, int], view_radius: int, my_map: np.ndarray[int]) -> list[tuple[int, int]]:
     """
         Fov generates a list containing coordinate values indicating which agents, the specified agent x can view,
-        while ignoring obstacles. Here each coordinate represent the following -> (y-coordinate, x-coordinate) 
+        while ignoring obstacles. The view or not view condition is purely based on if the points are located within 
+        the fov radius provided. If the point is located within this range it can be viewed else it cannot. To evaluate 
+        this distance the square root is taken of the sum of the squares of the distances between both points. 
+        Here each coordinate represent the following -> (y-coordinate, x-coordinate) 
         of the points agent x can view.
     
         Example case; 
@@ -66,7 +69,8 @@ def fov_blocking(agent: tuple[int, int], view_radius: int,
         Method used. Basic version ray evaluation code, which evaluated rays going to all possible points within 
         the unrestricted view of the agent. By then evaluating if the ray intersects with an obstacle it can be 
         determined if that location can be viewed or not. Geometric formulation for checking intersection was 
-        based on https;//stackoverflow.com/a/4977569
+        based on https;//stackoverflow.com/a/4977569. If a ray intersect with any obstacle, it is determined that 
+        the point to which the ray traverses is not viewable.
     
     :param agent:           {tuple}         Location of the agent within the map, specified as (y, x), with y and x 
                                             being of type int
@@ -184,7 +188,10 @@ class Ray:
 
     def check_view_v2(self, obstacles: list[Box]) -> bool:
         """
-            Check if the ray intersects with any obstacles.
+            Check if the ray intersects with any obstacles. Trough the use of an intersection algorithm. Geometric 
+            formulation for checking intersection was based on https;//stackoverflow.com/a/4977569. If a ray intersect 
+            with any segment of an obstacle, it is determined that the point to which the ray traverses is not viewable.
+            therefor the method will immediately return false, without any further considerations.
 
         :param obstacles:   {list}  List containing the Box objects within the environment
         

@@ -17,28 +17,21 @@ class PrioritizedPlanningSolver(base_solver.BaseSolver):
     
     :param CPU_time:        {float}     Value to keep track of the cpu time required for the solver to complete the 
                                         planning
-
-    :param my_map:          {list}      List of list of boolean, discribing the map environment. The location of the 
-                                        boolean value within the list disribes the location within its location within 
+    :param my_map:          {list}      List of list of boolean, describing the map environment. The location of the 
+                                        boolean value within the list describes the location within its location within 
                                         the map.
-
-    :param starts:          {list}      List of starting positions for the agents. Given as list of tuple of ineteger,
+    :param starts:          {list}      List of starting positions for the agents. Given as list of tuple of integer,
                                         where each each tuple is of the following form (y, x)
                                         [(x1, y1), (x2, y2), ...]
-
-    :param goals:           {list}      List of goal/ end positions for the agents. Given as list of tuple of ineteger,
+    :param goals:           {list}      List of goal/ end positions for the agents. Given as list of tuple of integer,
                                         where each each tuple is of the following form (y, x)
                                         [(x1, y1), (x2, y2), ...]
-
-    :param printing:        {bool}      Vriable to enable and disable prtining within the model. This allows for the user 
+    :param printing:        {bool}      Variable to enable and disable printing within the model. This allows for the user 
                                         to specify if they would like to receive the solver outcome after every run or not.
-                                        True enables printing while false disables this behaviour. 
-    
+                                        True enables printing while false disables this behavior. 
     :param num_of_agents:   {int}       The number of agents within the environment. Extracted from the supplied goal or 
                                         start positions.
-    
-    :param heuritics:       {list}      List containing the heuristics.
-
+    :param heuristics:      {list}      List containing the heuristics.
     :param recursive:       {bool}      Boolean value enabling and disabling recursive mode (...)
     """
 
@@ -57,35 +50,29 @@ class PrioritizedPlanningSolver(base_solver.BaseSolver):
         """
             Initialise an instance of the BaseSolver class.
 
-        :param my_map:          {list}      List of list of boolean, discribing the map environment. The location of the 
-                                            boolean value within the list disribes the location within its location within 
+        :param my_map:          {list}      List of list of boolean, describing the map environment. The location of the 
+                                            boolean value within the list describes the location within its location within 
                                             the map.
-
-        :param starts:          {list}      List of starting positions for the agents. Given as list of tuple of ineteger,
+        :param starts:          {list}      List of starting positions for the agents. Given as list of tuple of integer,
                                             where each each tuple is of the following form (y, x).
-
-        :param goals:           {list}      List of goal/end positions for the agents. Given as list of tuple of ineteger,
+        :param goals:           {list}      List of goal/end positions for the agents. Given as list of tuple of integer,
                                             where each each tuple is of the following form (y, x).
-
         :param score_func:      {function}  Score function 
-
-        :param heuristics_func: {function}  Heuristics funtion
-
-        :param printing:        {bool}      Variable to enable and disable prtining within the model. This allows for the 
+        :param heuristics_func: {function}  Heuristics function
+        :param printing:        {bool}      Variable to enable and disable printing within the model. This allows for the 
                                             user to specify if they would like to receive the solver outcome after every 
-                                            run or not. True enables printing while false disables this behaviour. 
-        
+                                            run or not. True enables printing while false disables this behavior. 
         :param recursive:       {bool}      Boolean value enabling and disabling recursive mode (...) 
         """
         
         self.recursive = recursive
 
     def find_solution(self, base_constraints: list[constraints.Constraint]) -> list[list[tuple[int, int]]]:
-        """ 
+        """
             Finds paths for all agents from their start locations to their goal locations. Overwrites the baseclass
             find_solution function.
 
-        :param base_constraints:    {list}          Constraints to be condisdered during the solve procedure
+        :param base_constraints:    {list}          Constraints to be considered during the solve procedure
 
         :return:                    {list}          Returns the paths traversed by all agents
         """
@@ -100,22 +87,27 @@ class PrioritizedPlanningSolver(base_solver.BaseSolver):
     def solve_prioritized(self,
                           base_constraints: list[constraints.Constraint],
                           depth: int = 0) -> list[list[tuple[int, int]]]:
-        """ 
+        """
             Finds paths for all agents from their start locations to their goal locations. Overwrites the baseclass
             find_solution function.
+            The solve_prioritized main idea it to allocate path to the various agents from start to finish, where the 
+            paths are assigned based on pre-assigned priorities. First a full path is assigned to the agent with the
+            highest priority. Once this agent has its full path assigned trough the use of a space time A* implementation
+            the next agent may be planned. This is the agent with the second highest priority. The second agent is now
+            planned keeping in mind the path of the first agent. This procedure is performed until all agents have been 
+            allocated a path. It may happen under the current priority distribution that problem is not solvable. Within 
+            this case the priorities will be shuffled/ reassigned and recursively solved, until either the maximum recursive
+            depth is reach, the problem is solved or no solution can be found based.  
 
-        :param base_constraints:    {list}              Constraints to be condisdered during the solve procedure
-
+        :param base_constraints:    {list}              Constraints to be considered during the solve procedure
         :param depth:               {int}               How many recursion steps have been taken so far. Used to
                                                         ensure failure incase of infinite recursion.
-        
+
+        :return:                    {list}              Returns the paths traversed by all agents, recursive
         :return:                    {list}              Returns the paths traversed by all agents
-        
-        :raise:                     {BaseException}     Raises a base exption, when no solution can be found for 
-                                                        the specified scenario.
-        
-        :raise:                     {RecursionError}    Raises a base exption, when no solution can be found for 
-                                                        the specified scenario.
+
+        :raise:                                         RecursionError
+        :raise:                                         BaseException
         """
 
 

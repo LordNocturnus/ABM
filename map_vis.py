@@ -9,7 +9,13 @@ from matplotlib import colors
 
 def map_vis(map_name: str, num_agents: int = 0) -> None:
     """
-    Create illustrations of the various test case maps
+        Create illustrations of the various test case maps
+
+    :param map_name:    {str}   name of the map, the path will automatically be adapted based of if
+                                instance maps are provided or assignment maps.
+    
+    :param num_agents:  {int}   number of agents to be spawned within the map.
+
     """
     if "assignment" in map_name:
         my_map, agents_start, agents_end = MapGenerator(f"maps/{map_name}.map").generate(num_agents)
