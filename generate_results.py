@@ -110,6 +110,7 @@ def fail_output(my_map: np.ndarray, starts: list[tuple[int, int]], goals: list[t
 
     my_map_str = my_map.astype(str)
     my_map_str[my_map_str == "1"] = "@"
+    my_map_str[my_map_str == "0"] = "."
     my_map_str = my_map_str.tolist()
 
     for line in my_map_str:
@@ -149,7 +150,7 @@ def run_solver(my_map: np.ndarray,
     except:
         cost.value = 0
         time.value = 0
-        collision.value = 0
+        collision.value = 1
 
 
 def run_prioritized(my_map: np.ndarray, 
