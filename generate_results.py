@@ -75,7 +75,7 @@ solvers = ["prioritized",
            "distributed cbs-disjoint"
            ]
 maps = ["assignment_1", "assignment_2", "assignment_3"]
-agents = list(range(2, 15))
+agents = list(range(2, 21))
 view_size = list(range(2, 10))
 path_limit = list(range(2, 10))
 view_path_tuples = []
@@ -96,7 +96,7 @@ map_3 = map_gen.MapGenerator(path3)
 map_generators = [map_1, map_2, map_3]
 
 score_function = get_longest_path_cost
-timeout = 10 * 60
+timeout = 5 * 60
 
 cost_value = multiprocessing.Value("i", 9999)
 time_value = multiprocessing.Value("d", 9999.0)
@@ -246,6 +246,8 @@ if __name__ == "__main__":
                                               kwargs={"score_func": score_function})
             process.start()
             process.join(timeout=timeout)
+            if process.exitcode is None:
+                collision_value.value = 9
             if process.exitcode is not None and process.exitcode == 0 and not collision_value.value:
                 # add to specific general data storage
                 std_df_prioritized = pd.concat([std_df_prioritized,
@@ -278,6 +280,8 @@ if __name__ == "__main__":
                                                       "disjoint": False})
             process.start()
             process.join(timeout=timeout)
+            if process.exitcode is None:
+                collision_value.value = 9
             if process.exitcode is not None and process.exitcode == 0 and not collision_value.value:
                 # add to specific general data storage
                 std_df_cbs_standard = pd.concat([std_df_cbs_standard,
@@ -310,6 +314,8 @@ if __name__ == "__main__":
                                                       "disjoint": True})
             process.start()
             process.join(timeout=timeout)
+            if process.exitcode is None:
+                collision_value.value = 9
             if process.exitcode is not None and process.exitcode == 0 and not collision_value.value:
                 # add to specific general data storage
                 std_df_cbs_disjoint = pd.concat([std_df_cbs_disjoint,
@@ -347,6 +353,8 @@ if __name__ == "__main__":
                                                           "path_limit": path_limit})
                 process.start()
                 process.join(timeout=timeout)
+                if process.exitcode is None:
+                    collision_value.value = 9
                 if process.exitcode is not None and process.exitcode == 0 and not collision_value.value:
                     process.close()
                     # add to specific general data storage
@@ -400,6 +408,8 @@ if __name__ == "__main__":
                                                           "disjoint": False})
                 process.start()
                 process.join(timeout=timeout)
+                if process.exitcode is None:
+                    collision_value.value = 9
                 if process.exitcode is not None and process.exitcode == 0 and not collision_value.value:
                     process.close()
                     # add to specific general data storage
@@ -453,6 +463,8 @@ if __name__ == "__main__":
                                                           "disjoint": True})
                 process.start()
                 process.join(timeout=timeout)
+                if process.exitcode is None:
+                    collision_value.value = 9
                 if process.exitcode is not None and process.exitcode == 0 and not collision_value.value:
                     process.close()
                     # add to specific general data storage

@@ -143,7 +143,6 @@ class DistributedPlanningSolver(base_solver.BaseSolver):
             self.processes[-1].start()
             agent_conn.close()
 
-        #start_time = timer.time()
         # initialize agent with first independently planned path and request path message
         for agent_id in range(self.num_of_agents):
             self.pipes[agent_id].send("init")
@@ -158,9 +157,6 @@ class DistributedPlanningSolver(base_solver.BaseSolver):
             c = 0
 
             while len(self.collision_map) != 0:
-                print(s, c, len(self.collision_map))
-                for key in self.collision_map.keys():
-                    print(key, self.collision_map[key])
                 self.resolve_collisions()
                 self.poll_collisions()
                 c += 1

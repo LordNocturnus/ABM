@@ -175,10 +175,6 @@ class DistributedAgent(object):
         result = solver.find_solution(self.global_constraints)
         self.planned_path = result[idx][min(1, len(result[idx]) - 1):]
 
-        if self.id == 3:
-            print(self.id, "after planning ", self.path, self.planned_path)
-            print("debug")
-
         return self.get_path()
 
 
