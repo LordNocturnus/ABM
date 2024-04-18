@@ -163,15 +163,15 @@ if __name__ == '__main__':
             paths = prio.find_solution([])
         elif args.solver == "DistributedPrioritized":  # Wrapper of distributed planning solver class
             print("***Run Distributed Planning***")
-            distri = DistributedPlanningSolver(my_map, starts, goals, solver=PrioritizedPlanningSolver)
+            distri = DistributedPlanningSolver(my_map, starts, goals, solver=PrioritizedPlanningSolver, view_size=3, path_limit=3)
             paths = distri.find_solution([])
         elif args.solver == "DistributedCBS":  # Wrapper of distributed planning solver class
             print("***Run Distributed Planning***")
-            distri = DistributedPlanningSolver(my_map, starts, goals, solver=CBSSolver, disjoint=False)
+            distri = DistributedPlanningSolver(my_map, starts, goals, solver=CBSSolver, disjoint=False, view_size=3, path_limit=3)
             paths = distri.find_solution([])
         elif args.solver == "DistributedCBSDisjoint":  # Wrapper of distributed planning solver class
             print("***Run Distributed Planning***")
-            distri = DistributedPlanningSolver(my_map, starts, goals, solver=CBSSolver)
+            distri = DistributedPlanningSolver(my_map, starts, goals, solver=CBSSolver, view_size=3, path_limit=3)
             paths = distri.find_solution([])
         else: 
             raise RuntimeError("Unknown solver!")

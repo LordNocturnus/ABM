@@ -12,6 +12,7 @@ import math
 import collisions
 import single_agent_planner
 import base_solver
+import view
 
 
 class DistributedAgent(object):
@@ -80,12 +81,7 @@ class DistributedAgent(object):
         """
             returns every coordinate visible to this agent
         """
-        ret = []
-        for x in range(len(self.my_map)):
-            for y in range(len(self.my_map[x])):
-                if not self.my_map[x][y]:
-                    ret.append((x, y))
-        return ret
+        return view.fov_blocking(self.path[-1], self.view_size, self.my_map)
 
     def get_path(self) -> tuple[int, list[tuple[int, int]]]:
         if self.path_limit:
@@ -120,8 +116,6 @@ class DistributedAgent(object):
 
         if math.sqrt((self.path[-1][0] - self.planned_path[0][0]) ** 2 +
                      (self.path[-1][1] - self.planned_path[0][1]) ** 2) > 1:
-            #print(self.id, "teleporting", self.path[-1], self.planned_path[0])
-            #print(self.id, self.path, self.planned_path)
             raise ValueError("Teleporting detected")
 
         # update constraints for new timestep
@@ -134,9 +128,6 @@ class DistributedAgent(object):
         self.path.append(single_agent_planner.get_location(self.planned_path, 0))
 
         self.planned_path = self.planned_path[min(1, len(self.planned_path) - 1):]
-
-        if self.id == 2:
-            print(self.id, "pathlength", len(self.planned_path))
 
         # clear memory
         self.message_memory = [self.message]
