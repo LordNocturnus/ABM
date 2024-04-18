@@ -79,3 +79,6 @@ def map_vis(map_name: str, num_agents: int = 0) -> None:
 #     map_vis(f'test_{i}')
 
 # map_vis("assignment_3")
+
+# map_vis("hypotheses/hypothesis_1")
+# map_vis("hypotheses/hypothesis_2")
