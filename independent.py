@@ -1,5 +1,6 @@
 from collections import abc
 import time as timer
+import numpy.typing as npt
 
 from single_agent_planner import compute_heuristics, a_star, get_sum_of_cost
 import base_solver
@@ -28,12 +29,12 @@ class IndependentSolver(base_solver.BaseSolver):
     :param heuristics:      {list}      List containing the heuristics.
     """
     def __init__(self,
-                 my_map: list[list[bool]],
+                 my_map: npt.NDArray[bool],
                  starts: list[tuple[int, int]],
                  goals: list[tuple[int, int]],
                  score_func: abc.Callable[[list[list[tuple[int, int]]]], int] = get_sum_of_cost,
                  heuristics_func: abc.Callable[
-                     [list[list[bool]], tuple[int, int]],
+                     [npt.NDArray[bool], tuple[int, int]],
                      dict[tuple[int, int], int]] = compute_heuristics,
                  printing: bool = True,
                  **kwargs) -> None:

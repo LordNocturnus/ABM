@@ -5,6 +5,8 @@ Code in this file is just provided as guidance, you are free to deviate from it.
 """
 from collections import abc
 import time as timer
+import numpy as np
+import numpy.typing as npt
 import multiprocessing
 from multiprocessing import connection
 
@@ -55,12 +57,12 @@ class DistributedPlanningSolver(base_solver.BaseSolver):
     """
 
     def __init__(self,
-                 my_map: list[list[bool]],
+                 my_map: npt.NDArray[bool],
                  starts: list[tuple[int, int]],
                  goals: list[tuple[int, int]],
                  score_func: abc.Callable[[list[list[tuple[int, int]]]], int] = get_sum_of_cost,
                  heuristics_func: abc.Callable[
-                     [list[list[bool]], tuple[int, int]],
+                     [npt.NDArray[bool], tuple[int, int]],
                      dict[tuple[int, int], int]] = compute_heuristics,
                  printing: bool = True,
                  solver: type[base_solver.BaseSolver] = PrioritizedPlanningSolver,
@@ -142,15 +144,24 @@ class DistributedPlanningSolver(base_solver.BaseSolver):
             agent_conn.close()
             self.path_map[agent_id] = self.get_path(agent_id)
 
+        s = 0
+
         while not all([self.get_finished(idx) for idx in range(self.num_of_agents)]):
             self.poll_view()
             self.poll_collisions()
 
+            c = 0
+
             while len(self.collision_map) != 0:
+                print(s, c, len(self.collision_map))
+                for key in self.collision_map.keys():
+                    print(key, self.collision_map[key])
                 self.resolve_collisions()
                 self.poll_collisions()
+                c += 1
 
             self.instruct_move()
+            s += 1
 
         result = []
         for agent_id in range(self.num_of_agents):

@@ -1,4 +1,6 @@
 import collections.abc as abc
+import numpy as np
+import numpy.typing as npt
 
 import constraints
 
@@ -28,11 +30,11 @@ class BaseSolver:
     """
 
     def __init__(self,
-                 my_map: list[list[bool]],
+                 my_map: npt.NDArray[bool],
                  starts: list[tuple[int, int]],
                  goals: list[tuple[int, int]],
                  score_func: abc.Callable[[list[list[tuple[int, int]]]], int],
-                 heuristics_func: abc.Callable[[list[list[bool]], tuple[int, int]], dict[tuple[int, int], int]],
+                 heuristics_func: abc.Callable[[npt.NDArray[bool], tuple[int, int]], dict[tuple[int, int], int]],
                  printing: bool,
                  **kwargs) -> None:
         """

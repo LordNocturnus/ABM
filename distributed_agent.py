@@ -7,6 +7,8 @@ Code in this file is just provided as guidance, you are free to deviate from it.
 from collections import abc
 import multiprocessing
 from multiprocessing import connection
+import numpy as np
+import numpy.typing as npt
 import math
 
 import collisions
@@ -19,13 +21,13 @@ class DistributedAgent(object):
     """"""
 
     def __init__(self,
-                 my_map: list[list[bool]],
+                 my_map: npt.NDArray[bool],
                  start: tuple[int, int],
                  goal: tuple[int, int],
                  view_size: int,
                  path_limit: int,
                  agent_id: int,
-                 heuristics_func: abc.Callable[[list[list[bool]], tuple[int, int]], dict[tuple[int, int], int]],
+                 heuristics_func: abc.Callable[[npt.NDArray[bool], tuple[int, int]], dict[tuple[int, int], int]],
                  score_func: abc.Callable[[list[list[tuple[int, int]]]], int],
                  solver: type[base_solver.BaseSolver],
                  **kwargs
@@ -182,8 +184,8 @@ def run(agent_id: int,
         goal: tuple[int, int],
         view_size: int,
         path_limit: int,
-        my_map: list[list[bool]],
-        heuristics_func: abc.Callable[[list[list[bool]], tuple[int, int]], dict[tuple[int, int], int]],
+        my_map: npt.NDArray[bool],
+        heuristics_func: abc.Callable[[npt.NDArray[bool], tuple[int, int]], dict[tuple[int, int], int]],
         score_func: abc.Callable[[list[list[tuple[int, int]]]], int],
         solver: type[base_solver.BaseSolver],
         **kwargs) -> None:

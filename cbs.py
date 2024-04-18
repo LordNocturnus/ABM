@@ -1,5 +1,7 @@
 from collections import abc
 import time as timer
+import numpy as np
+import numpy.typing as npt
 import heapq
 import typing
 import constraints
@@ -93,12 +95,12 @@ class CBSSolver(base_solver.BaseSolver):
     """
 
     def __init__(self,
-                 my_map: list[list[bool]],
+                 my_map: npt.NDArray[bool],
                  starts: list[tuple[int, int]],
                  goals: list[tuple[int, int]],
                  score_func: abc.Callable[[list[list[tuple[int, int]]]], int] = get_sum_of_cost,
                  heuristics_func: abc.Callable[
-                     [list[list[bool]], tuple[int, int]],
+                     [npt.NDArray[bool], tuple[int, int]],
                      dict[tuple[int, int], int]] = compute_heuristics,
                  printing: bool = True,
                  disjoint: bool = True,

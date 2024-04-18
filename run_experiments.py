@@ -8,6 +8,8 @@ Note: To make the animation work in Spyder you should set graphics backend to 'A
 import argparse
 import glob
 import os
+import numpy as np
+import numpy.typing as npt
 from pathlib import Path
 from cbs import CBSSolver
 from independent import IndependentSolver
@@ -22,7 +24,7 @@ import map_gen
 SOLVER = "Independent"
 
 
-def print_mapf_instance(my_map: list[list[bool]],
+def print_mapf_instance(my_map: npt.NDArray[bool],
                         starts: list[tuple[int, int]],
                         goals: list[tuple[int, int]]) -> None:
     """
@@ -41,7 +43,7 @@ def print_mapf_instance(my_map: list[list[bool]],
     print_locations(my_map, goals)
 
 
-def print_locations(my_map: list[list[bool]],
+def print_locations(my_map: npt.NDArray[bool],
                     locations: list[tuple[int, int]]) -> None:
     """
     See docstring print_mapf_instance function above.
@@ -62,7 +64,7 @@ def print_locations(my_map: list[list[bool]],
     print(to_print)
 
 
-def import_mapf_instance(filename: str) -> tuple[list[list[bool]], list[tuple[int, int]], list[tuple[int, int]]]:
+def import_mapf_instance(filename: str) -> tuple[npt.NDArray[bool], list[tuple[int, int]], list[tuple[int, int]]]:
     """
     Imports mapf instance from instances folder. Expects input as a .txt file in the following format:
         Line1: #rows #columns (number of rows and columns)
@@ -110,7 +112,7 @@ def import_mapf_instance(filename: str) -> tuple[list[list[bool]], list[tuple[in
             sx, sy, gx, gy = [int(x) for x in line.split(' ')]
             starts.append((sx, sy))
             goals.append((gx, gy))
-    return my_map, starts, goals
+    return np.asarray(my_map, dtype=bool), starts, goals
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 import typing
 from collections import abc
+import numpy.typing as npt
 import heapq
 
 import constraints
@@ -18,7 +19,7 @@ def get_longest_path_cost(paths: list[list[tuple[int, int]]]) -> int:
     return max([len(p) - 1 for p in paths])
 
 
-def compute_heuristics(my_map: list[list[bool]], goal: tuple[int, int]) -> dict[tuple[int, int], int]:
+def compute_heuristics(my_map: npt.NDArray[bool], goal: tuple[int, int]) -> dict[tuple[int, int], int]:
     # Use Dijkstra to build a shortest-path tree rooted at the goal location
     open_list: list[tuple[int, tuple[int, int]]] = []
     closed_list = dict()
@@ -60,7 +61,7 @@ def pad_path(path: list[tuple[int, int]], length: int) -> list[tuple[int, int]]:
         return path + [path[-1]] * (length - len(path))
 
 
-def a_star(my_map: list[list[bool]],
+def a_star(my_map: npt.NDArray[bool],
            start_loc: tuple[int, int],
            goal_loc: tuple[int, int],
            h_values: dict[tuple[int, int], int],
