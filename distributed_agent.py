@@ -55,8 +55,15 @@ class DistributedAgent(object):
         self.global_constraints = []
         self.path = [start]
 
+        self.collision_memory = []
+        self.repeat = None
+
+        self.message_memory = None
+        self.planned_path = None
+
+    def init_path(self):
         ## Initial Path finding procedure
-        planned_path = single_agent_planner.a_star(my_map,
+        planned_path = single_agent_planner.a_star(self.my_map,
                                                    self.path[-1],
                                                    self.goal,
                                                    self.heuristics_func(self.my_map, self.goal),
@@ -68,8 +75,6 @@ class DistributedAgent(object):
             self.planned_path = planned_path[min(1, len(planned_path) - 1):]
 
         self.message_memory = [self.message]
-        self.collision_memory = []
-        self.repeat = None
 
     @property
     def finished(self) -> bool:
@@ -196,6 +201,8 @@ def run(agent_id: int,
             break
         if message == "terminate":
             break
+        elif message == "init":
+            agent.init_path()
         elif message == "finished":
             conn.send(agent.finished)
         elif message == "view":

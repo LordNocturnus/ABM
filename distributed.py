@@ -142,6 +142,11 @@ class DistributedPlanningSolver(base_solver.BaseSolver):
                                                           kwargs=self.kwargs))
             self.processes[-1].start()
             agent_conn.close()
+
+        #start_time = timer.time()
+        # initialize agent with first independently planned path and request path message
+        for agent_id in range(self.num_of_agents):
+            self.pipes[agent_id].send("init")
             self.path_map[agent_id] = self.get_path(agent_id)
 
         s = 0
