@@ -130,7 +130,17 @@ class PrioritizedPlanningSolver(base_solver.BaseSolver):
                 self.starts[a], self.starts[a - 1] = self.starts[a - 1], self.starts[a]
                 self.goals[a], self.goals[a - 1] = self.goals[a - 1], self.goals[a]
                 self.heuristics[a], self.heuristics[a - 1] = self.heuristics[a - 1], self.heuristics[a]
+                for c in base_constraints:
+                    if c.agent == a:
+                        c.agent -= 1
+                    elif c.agent == a - 1:
+                        c.agent += 1
                 result = self.solve_prioritized(base_constraints, depth + 1)
+                for c in base_constraints:
+                    if c.agent == a:
+                        c.agent -= 1
+                    elif c.agent == a - 1:
+                        c.agent += 1
                 result[a - 1], result[a] = result[a], result[a - 1]
                 return result
             result.append(path)

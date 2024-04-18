@@ -181,7 +181,7 @@ if __name__ == '__main__':
         temp = detect_collisions(paths)
         if not len(temp.keys()) == 0:
             print(temp)
-            #raise ValueError
+            raise ValueError
         cost = get_sum_of_cost(paths)
         result_file.write("{},{}\n".format(file, cost))
         print("######################################################################################################")

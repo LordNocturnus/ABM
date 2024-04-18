@@ -65,7 +65,7 @@ class DistributedAgent(object):
         if planned_path is None:
             raise ValueError('No solutions')
         else:
-            self.planned_path = planned_path[1:]
+            self.planned_path = planned_path[min(1, len(planned_path) - 1):]
 
         self.message_memory = [self.message]
         self.collision_memory = []
@@ -87,21 +87,20 @@ class DistributedAgent(object):
 
     def get_path(self) -> tuple[int, list[tuple[int, int]]]:
         if self.path_limit:
-            return self.id, single_agent_planner.pad_path(self.planned_path, self.path_limit)
+            return self.id, [self.path[-1]] + single_agent_planner.pad_path(self.planned_path, self.path_limit - 1)
         else:
-            return self.id, self.planned_path
+            return self.id, [self.path[-1]] + self.planned_path
 
     def check_collisions(self, paths: list[tuple[int, list[tuple[int, int]]]]):
         collision_list = []
         for path in paths:
             collision = collisions.detect_collision(self.id,
                                                     path[0],
-                                                    single_agent_planner.pad_path(self.planned_path,
-                                                                                  self.path_limit),
+                                                    self.get_path()[1],
                                                     path[1])
 
             if collision:
-                collision.step += 1
+                #collision.step += 1
                 collision_list.append(collision)
                 found = False
                 for c in self.collision_memory:
@@ -150,7 +149,7 @@ class DistributedAgent(object):
             if not found:
                 self.message_memory.append(message)
 
-        restrictions = sorted(self.message_memory, key=lambda x: x[2], reverse=True)
+        restrictions = sorted(self.message_memory, key=lambda x: (x[2], x[3]), reverse=True)
         idx = 0
         for i, restriction in enumerate(restrictions):
             if restriction[3] == self.id:
@@ -171,9 +170,9 @@ class DistributedAgent(object):
         result = solver.find_solution(self.global_constraints)
         self.planned_path = result[idx][min(1, len(result[idx]) - 1):]
 
-        #if self.id == 2:
-        #    print(self.id, "after planning ", self.path, self.planned_path)
-        #    print("debug")
+        if self.id == 3:
+            print(self.id, "after planning ", self.path, self.planned_path)
+            print("debug")
 
         return self.get_path()
 

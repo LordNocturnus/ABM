@@ -261,7 +261,8 @@ class DistributedPlanningSolver(base_solver.BaseSolver):
             the path map
         """
         missing_move = []
-        for p in self.pipes:
+        for i, p in enumerate(self.pipes):
+            self.agent_pos[i] = self.path_map[i][1][1]
             p.send("move")
             missing_move.append(p)
 
