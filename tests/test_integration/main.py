@@ -1,7 +1,8 @@
 import unittest
+import sys
 
 from tests.test_integration.test_cbs import Test_Integration_CBS_Disjoint, Test_Integration_CBS_Standard
-from tests.test_integration.test_distributed import Test_Integration_Distributed
+from tests.test_integration.test_distributed import Test_Integration_Distributed_CBS_Disjoint, Test_Integration_Distributed_CBS_Standard, Test_Integration_Distributed_Prioritized
 from tests.test_integration.test_independent import Test_Integration_Independent
 from tests.test_integration.test_prioritized import Test_Integration_Prioritized
 
@@ -25,7 +26,11 @@ if __name__ == '__main__':
     test_suite.addTests(test_loader.loadTestsFromTestCase(Test_Integration_CBS_Standard))
     test_suite.addTests(test_loader.loadTestsFromTestCase(Test_Integration_CBS_Disjoint))
     test_suite.addTests(test_loader.loadTestsFromTestCase(Test_Integration_Independent))
-    test_suite.addTests(test_loader.loadTestsFromTestCase(Test_Integration_Distributed))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(Test_Integration_Distributed_Prioritized))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(Test_Integration_Distributed_CBS_Standard))
+    test_suite.addTests(test_loader.loadTestsFromTestCase(Test_Integration_Distributed_CBS_Disjoint))
 
     runner = unittest.TextTestRunner()
     result = runner.run(test_suite)
+
+    sys.exit()

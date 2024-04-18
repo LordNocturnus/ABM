@@ -90,15 +90,21 @@ class Test_Integration_Map_1(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -106,7 +112,57 @@ class Test_Integration_Map_1(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_2(unittest.TestCase):
@@ -184,15 +240,21 @@ class Test_Integration_Map_2(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -200,7 +262,57 @@ class Test_Integration_Map_2(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_3(unittest.TestCase):
@@ -278,15 +390,21 @@ class Test_Integration_Map_3(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -294,7 +412,57 @@ class Test_Integration_Map_3(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_4(unittest.TestCase):
@@ -372,15 +540,21 @@ class Test_Integration_Map_4(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -388,7 +562,57 @@ class Test_Integration_Map_4(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_5(unittest.TestCase):
@@ -466,15 +690,21 @@ class Test_Integration_Map_5(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -482,7 +712,57 @@ class Test_Integration_Map_5(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_6(unittest.TestCase):
@@ -560,15 +840,21 @@ class Test_Integration_Map_6(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -576,7 +862,57 @@ class Test_Integration_Map_6(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_7(unittest.TestCase):
@@ -654,15 +990,21 @@ class Test_Integration_Map_7(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -670,7 +1012,57 @@ class Test_Integration_Map_7(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_8(unittest.TestCase):
@@ -748,15 +1140,21 @@ class Test_Integration_Map_8(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -764,7 +1162,57 @@ class Test_Integration_Map_8(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_9(unittest.TestCase):
@@ -842,15 +1290,21 @@ class Test_Integration_Map_9(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -858,7 +1312,57 @@ class Test_Integration_Map_9(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_10(unittest.TestCase):
@@ -936,15 +1440,21 @@ class Test_Integration_Map_10(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -952,7 +1462,57 @@ class Test_Integration_Map_10(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_11(unittest.TestCase):
@@ -1030,15 +1590,21 @@ class Test_Integration_Map_11(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1046,7 +1612,57 @@ class Test_Integration_Map_11(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_12(unittest.TestCase):
@@ -1124,15 +1740,21 @@ class Test_Integration_Map_12(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1140,7 +1762,57 @@ class Test_Integration_Map_12(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_13(unittest.TestCase):
@@ -1218,15 +1890,21 @@ class Test_Integration_Map_13(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1234,7 +1912,57 @@ class Test_Integration_Map_13(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_14(unittest.TestCase):
@@ -1312,15 +2040,21 @@ class Test_Integration_Map_14(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1328,7 +2062,57 @@ class Test_Integration_Map_14(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_15(unittest.TestCase):
@@ -1406,15 +2190,21 @@ class Test_Integration_Map_15(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1422,7 +2212,57 @@ class Test_Integration_Map_15(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_16(unittest.TestCase):
@@ -1500,15 +2340,21 @@ class Test_Integration_Map_16(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1516,7 +2362,57 @@ class Test_Integration_Map_16(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_17(unittest.TestCase):
@@ -1594,15 +2490,21 @@ class Test_Integration_Map_17(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1610,7 +2512,57 @@ class Test_Integration_Map_17(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_18(unittest.TestCase):
@@ -1688,15 +2640,21 @@ class Test_Integration_Map_18(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1704,7 +2662,57 @@ class Test_Integration_Map_18(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_19(unittest.TestCase):
@@ -1782,15 +2790,21 @@ class Test_Integration_Map_19(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1798,7 +2812,57 @@ class Test_Integration_Map_19(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_20(unittest.TestCase):
@@ -1876,15 +2940,21 @@ class Test_Integration_Map_20(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1892,7 +2962,57 @@ class Test_Integration_Map_20(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_21(unittest.TestCase):
@@ -1970,15 +3090,21 @@ class Test_Integration_Map_21(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -1986,7 +3112,57 @@ class Test_Integration_Map_21(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_22(unittest.TestCase):
@@ -2064,15 +3240,21 @@ class Test_Integration_Map_22(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -2080,7 +3262,57 @@ class Test_Integration_Map_22(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_23(unittest.TestCase):
@@ -2158,15 +3390,21 @@ class Test_Integration_Map_23(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -2174,7 +3412,57 @@ class Test_Integration_Map_23(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_24(unittest.TestCase):
@@ -2252,15 +3540,21 @@ class Test_Integration_Map_24(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -2268,7 +3562,57 @@ class Test_Integration_Map_24(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_25(unittest.TestCase):
@@ -2346,15 +3690,21 @@ class Test_Integration_Map_25(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -2362,7 +3712,57 @@ class Test_Integration_Map_25(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_26(unittest.TestCase):
@@ -2440,15 +3840,21 @@ class Test_Integration_Map_26(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -2456,7 +3862,57 @@ class Test_Integration_Map_26(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_27(unittest.TestCase):
@@ -2534,15 +3990,21 @@ class Test_Integration_Map_27(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -2550,7 +4012,57 @@ class Test_Integration_Map_27(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_28(unittest.TestCase):
@@ -2628,15 +4140,21 @@ class Test_Integration_Map_28(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -2644,7 +4162,57 @@ class Test_Integration_Map_28(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_29(unittest.TestCase):
@@ -2722,15 +4290,21 @@ class Test_Integration_Map_29(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -2738,7 +4312,57 @@ class Test_Integration_Map_29(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_30(unittest.TestCase):
@@ -2816,15 +4440,21 @@ class Test_Integration_Map_30(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -2832,7 +4462,57 @@ class Test_Integration_Map_30(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_31(unittest.TestCase):
@@ -2910,15 +4590,21 @@ class Test_Integration_Map_31(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -2926,7 +4612,57 @@ class Test_Integration_Map_31(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_32(unittest.TestCase):
@@ -3004,15 +4740,21 @@ class Test_Integration_Map_32(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3020,7 +4762,57 @@ class Test_Integration_Map_32(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_33(unittest.TestCase):
@@ -3098,15 +4890,21 @@ class Test_Integration_Map_33(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3114,7 +4912,57 @@ class Test_Integration_Map_33(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_34(unittest.TestCase):
@@ -3192,15 +5040,21 @@ class Test_Integration_Map_34(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3208,7 +5062,57 @@ class Test_Integration_Map_34(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_35(unittest.TestCase):
@@ -3286,15 +5190,21 @@ class Test_Integration_Map_35(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3302,7 +5212,57 @@ class Test_Integration_Map_35(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_36(unittest.TestCase):
@@ -3380,15 +5340,21 @@ class Test_Integration_Map_36(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3396,7 +5362,57 @@ class Test_Integration_Map_36(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_37(unittest.TestCase):
@@ -3474,15 +5490,21 @@ class Test_Integration_Map_37(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3490,7 +5512,57 @@ class Test_Integration_Map_37(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_38(unittest.TestCase):
@@ -3568,15 +5640,21 @@ class Test_Integration_Map_38(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3584,7 +5662,57 @@ class Test_Integration_Map_38(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_39(unittest.TestCase):
@@ -3662,15 +5790,21 @@ class Test_Integration_Map_39(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3678,7 +5812,57 @@ class Test_Integration_Map_39(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_40(unittest.TestCase):
@@ -3756,15 +5940,21 @@ class Test_Integration_Map_40(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3772,7 +5962,57 @@ class Test_Integration_Map_40(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_41(unittest.TestCase):
@@ -3850,15 +6090,21 @@ class Test_Integration_Map_41(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3866,7 +6112,57 @@ class Test_Integration_Map_41(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_42(unittest.TestCase):
@@ -3944,15 +6240,21 @@ class Test_Integration_Map_42(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -3960,7 +6262,57 @@ class Test_Integration_Map_42(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_43(unittest.TestCase):
@@ -4038,15 +6390,21 @@ class Test_Integration_Map_43(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -4054,7 +6412,57 @@ class Test_Integration_Map_43(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_44(unittest.TestCase):
@@ -4132,15 +6540,21 @@ class Test_Integration_Map_44(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -4148,7 +6562,57 @@ class Test_Integration_Map_44(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_45(unittest.TestCase):
@@ -4226,15 +6690,21 @@ class Test_Integration_Map_45(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -4242,7 +6712,57 @@ class Test_Integration_Map_45(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_46(unittest.TestCase):
@@ -4320,15 +6840,21 @@ class Test_Integration_Map_46(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -4336,7 +6862,57 @@ class Test_Integration_Map_46(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_47(unittest.TestCase):
@@ -4414,15 +6990,21 @@ class Test_Integration_Map_47(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -4430,7 +7012,57 @@ class Test_Integration_Map_47(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_48(unittest.TestCase):
@@ -4508,15 +7140,21 @@ class Test_Integration_Map_48(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -4524,7 +7162,57 @@ class Test_Integration_Map_48(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_49(unittest.TestCase):
@@ -4602,15 +7290,21 @@ class Test_Integration_Map_49(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -4618,7 +7312,57 @@ class Test_Integration_Map_49(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 
 class Test_Integration_Map_50(unittest.TestCase):
@@ -4696,15 +7440,21 @@ class Test_Integration_Map_50(unittest.TestCase):
 
         self.assertFalse(collision, msg=f"Failed to find solution using CBS-disjoint for map {my_map}.")
 
-    def test_Distributed(self):
+    def test_Distributed_Prioritized(self):
             
         # Map: my_map
         my_map = self.scenario
-        print(f"==> Solving: {my_map} using distributed <==")
+        print(f"==> Solving: {my_map} using distributed-Prioritized <==")
 
         # Solve 
         my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
-        paths = DistributedPlanningSolver(my_map_arr, starts, goals).find_solution()
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=PrioritizedPlanningSolver, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
         
         # Cost
         print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
@@ -4712,7 +7462,57 @@ class Test_Integration_Map_50(unittest.TestCase):
         # Check paths
         collision = bool(collisions.detect_collisions(paths))
 
-        self.assertFalse(collision, msg=f"Failed to find solution using distributed for map {my_map}.")
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-Prioritized for map {my_map}.")
+
+    def test_Distributed_CBS_Standard(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Standard <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver,
+                                          disjoint=False, 
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Standard for map {my_map}.")
+    
+    def test_Distributed_CBS_Disjoint(self):
+            
+        # Map: my_map
+        my_map = self.scenario
+        print(f"==> Solving: {my_map} using distributed-CBS-Disjoint <==")
+
+        # Solve 
+        my_map_arr, starts, goals = run_experiments.import_mapf_instance(my_map)
+        paths = DistributedPlanningSolver(my_map_arr, 
+                                          starts, 
+                                          goals, 
+                                          solver=CBSSolver, 
+                                          disjoint=True,
+                                          view_size=3, 
+                                          path_limit=3,
+                                          printing=False).find_solution([])
+        
+        # Cost
+        print(f"==>Distributed: cost {get_sum_of_cost(paths)}")
+
+        # Check paths
+        collision = bool(collisions.detect_collisions(paths))
+
+        self.assertFalse(collision, msg=f"Failed to find solution using distributed-CBS-Disjoint for map {my_map}.")
 
 #### ---- End of tests ---- ####
 if __name__ == "__main__":

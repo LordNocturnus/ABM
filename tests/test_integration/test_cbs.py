@@ -3,6 +3,7 @@ import re
 import glob
 import os
 import pathlib
+import sys
 
 import run_experiments
 import collisions
@@ -116,3 +117,4 @@ class Test_Integration_CBS_Disjoint(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    sys.exit()
