@@ -7,6 +7,7 @@ Code in this file is just provided as guidance, you are free to deviate from it.
 from collections import abc
 import multiprocessing
 from multiprocessing import connection
+import math
 
 import collisions
 import single_agent_planner
@@ -31,7 +32,6 @@ class DistributedAgent(object):
         """
         """
         self.my_map = my_map
-        self.pos = start
         self.goal = goal
         self.id = agent_id
         self.heuristics_func = heuristics_func
@@ -50,11 +50,11 @@ class DistributedAgent(object):
             self.path_limit = path_limit
 
         self.global_constraints = []
-        self.path = [self.pos]
+        self.path = [start]
 
         ## Initial Path finding procedure
         planned_path = single_agent_planner.a_star(my_map,
-                                                   self.pos,
+                                                   self.path[-1],
                                                    self.goal,
                                                    self.heuristics_func(self.my_map, self.goal),
                                                    self.id,
@@ -62,7 +62,7 @@ class DistributedAgent(object):
         if planned_path is None:
             raise ValueError('No solutions')
         else:
-            self.planned_path = planned_path
+            self.planned_path = planned_path[1:]
 
         self.message_memory = [self.message]
         self.collision_memory = []
@@ -70,11 +70,11 @@ class DistributedAgent(object):
 
     @property
     def finished(self) -> bool:
-        return self.pos == self.goal
+        return self.path[-1] == self.goal
 
     @property
     def message(self) -> tuple[tuple[int, int], tuple[int, int], int, int]:
-        return self.pos, self.goal, len(self.planned_path), self.id
+        return self.path[-1], self.goal, len(self.planned_path), self.id
 
     def get_view(self) -> list[tuple[int, int]]:
         """
@@ -96,9 +96,14 @@ class DistributedAgent(object):
     def check_collisions(self, paths: list[tuple[int, list[tuple[int, int]]]]):
         collision_list = []
         for path in paths:
-            collision = collisions.detect_collision(self.id, path[0], self.planned_path, path[1])
+            collision = collisions.detect_collision(self.id,
+                                                    path[0],
+                                                    single_agent_planner.pad_path(self.planned_path,
+                                                                                  self.path_limit),
+                                                    path[1])
 
             if collision:
+                collision.step += 1
                 collision_list.append(collision)
                 found = False
                 for c in self.collision_memory:
@@ -112,10 +117,12 @@ class DistributedAgent(object):
         return collision_list
 
     def move(self) -> tuple[int, list[tuple[int, int]]]:
-        # clear memory
-        self.message_memory = [self.message]
-        self.collision_memory = []
-        self.repeat = None
+
+        if math.sqrt((self.path[-1][0] - self.planned_path[0][0]) ** 2 +
+                     (self.path[-1][1] - self.planned_path[0][1]) ** 2) > 1:
+            #print(self.id, "teleporting", self.path[-1], self.planned_path[0])
+            #print(self.id, self.path, self.planned_path)
+            raise ValueError("Teleporting detected")
 
         # update constraints for new timestep
         for c in self.global_constraints:
@@ -124,10 +131,17 @@ class DistributedAgent(object):
                 self.global_constraints.remove(c)
 
         # update path
-        self.path.append(self.pos)
-        self.pos = single_agent_planner.get_location(self.planned_path, 1)  # update pos to position of next timestep
+        self.path.append(single_agent_planner.get_location(self.planned_path, 0))
 
         self.planned_path = self.planned_path[min(1, len(self.planned_path) - 1):]
+
+        if self.id == 2:
+            print(self.id, "pathlength", len(self.planned_path))
+
+        # clear memory
+        self.message_memory = [self.message]
+        self.collision_memory = []
+        self.repeat = None
         return self.get_path()
 
     def resolve_collisions(self,
@@ -136,7 +150,7 @@ class DistributedAgent(object):
         for message in messages:
             found = False
             for i, mem in enumerate(self.message_memory):
-                if mem[0] == message[0]:
+                if mem[3] == message[3]:
                     self.message_memory[i] = message
                     found = True
                     break
@@ -162,7 +176,12 @@ class DistributedAgent(object):
         solver = self.solver(self.my_map, [a[0] for a in restrictions], [a[1] for a in restrictions], self.score_func,
                              self.heuristics_func, printing=False, **self.kwargs)
         result = solver.find_solution(self.global_constraints)
-        self.planned_path = result[idx]
+        self.planned_path = result[idx][min(1, len(result[idx]) - 1):]
+
+        #if self.id == 2:
+        #    print(self.id, "after planning ", self.path, self.planned_path)
+        #    print("debug")
+
         return self.get_path()
 
 
@@ -177,10 +196,12 @@ def run(agent_id: int,
         score_func: abc.Callable[[list[list[tuple[int, int]]]], int],
         solver: type[base_solver.BaseSolver],
         **kwargs) -> None:
-    #print(f"Init agent {agent_id}")
     agent = DistributedAgent(my_map, start, goal, view_size, path_limit, agent_id, heuristics_func, score_func, solver, **kwargs)
     while True:
-        message = conn.recv()
+        try:
+            message = conn.recv()
+        except EOFError:
+            break
         if message == "terminate":
             break
         elif message == "finished":
@@ -190,7 +211,10 @@ def run(agent_id: int,
         elif message == "path":
             conn.send(agent.get_path())
         elif message == "collision":
-            paths = conn.recv()
+            try:
+                paths = conn.recv()
+            except EOFError:
+                break
             conn.send((agent.id, agent.check_collisions(paths)))
         elif message == "move":
             conn.send((agent.id, agent.move()))
@@ -200,6 +224,9 @@ def run(agent_id: int,
             conn.send(agent.message)
         elif message == "resolve":
             messages = conn.recv()
-            conn.send((agent.id, agent.resolve_collisions(messages)))
+            try:
+                conn.send((agent.id, agent.resolve_collisions(messages)))
+            except BrokenPipeError:
+                break
         else:
             raise ValueError("Unknown message")
