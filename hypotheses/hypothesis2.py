@@ -95,12 +95,12 @@ class FailedSolvers(GlobalSolver):
 
     def count_failed(self):
         self.solvers = {
-                "prioritized" : 0,
-                "cbs_standard" : 0,
-                "cbs_disjoint" : 0,
-                "dist_prioritized" : 0,
-                "dist_cbs_standard" : 0,
-                "dist_cbs_disjoint" : 0
+                "prioritized": 0,
+                "cbs_standard": 0,
+                "cbs_disjoint": 0,
+                "dist_prioritized": 0,
+                "dist_cbs_standard": 0,
+                "dist_cbs_disjoint": 0
         }
 
         for solver in self.solvers.keys():
@@ -123,6 +123,14 @@ def create_barchart(data):
     ax.set_ylabel('Failure cases [%]')
     ax.bar(np.arange(0, 6), data.values())
     ax.set_xticks(np.arange(0, 6), data.keys())
+
+def create_histogram(data):
+
+    fig, ax = plt.subplots()
+    ax.hist(data, density=True, bins=np.arange(1,21)-0.5)  # density=False would make counts
+    ax.set_xlabel('Data')
+    ax.set_ylabel('successful runs [%]')
+    ax.set_xticks(np.arange(1,21))
 
 
 # Global solvers
@@ -203,5 +211,19 @@ failure_rate = {
 create_barchart(failure_rate)
 
 # Additional present some unique cases.
+
+
+## Data analysis of succesfull data to explore if
+# Can be used to mention if valid points can be made on the extreme regions, or if just not enough data
+# is available, to reliably comment about these points.
+
+create_histogram(prioritized.data['agents'])
+create_histogram(cbs_standard.data['agents'])
+create_histogram(cbs_disjoint.data['agents'])
+create_histogram(dist_prioritized.data['agents'])
+create_histogram(dist_cbs_standard.data['agents'])
+create_histogram(dist_cbs_disjoint.data['agents'])
+
+# similar for the vision
 
 plt.show()
