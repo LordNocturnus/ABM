@@ -59,24 +59,28 @@ class GlobalSolver:
         self.solver = solver_name
         self.data = pd.read_csv(path)
 
-        self.uid    = self.data["uid"]
-        self.cost   = self.data["cost"]
-        self.time   = self.data["time"]
+        self.uid = self.data["uid"]
+        self.cost = self.data["cost"]
+        self.time = self.data["time"]
         self.agents = self.data["agents"]
 
+    def agents_vs_cost(self):
+        pass
 
-class DistributedSolver:
+
+class DistributedSolver(GlobalSolver):
 
     def __init__(self, path: str, solver_name: str) -> None:
-        self.solver = solver_name
-        self.data = pd.read_csv(path)
+        super().__init__(path, solver_name)
 
-        self.uid            = self.data["uid"]
-        self.cost           = self.data["cost"]
-        self.time           = self.data["time"]
-        self.agents         = self.data["agents"]
-        self.path_limit     = self.data["path limit"]
-        self.view_distance  = self.data["view size"]
+        self.path_limit = self.data["path limit"]
+        self.view_distance = self.data["view size"]
+
+    def collect___(self):
+        return ...
+
+
+
 
 # Global solvers
 prioritized = GlobalSolver("data/data_5min/results_prioritized.csv", "prioritized")
@@ -84,8 +88,8 @@ cbs_standard = GlobalSolver("data/data_5min/results_cbs_standard.csv", "cbs stan
 cbs_disjoint = GlobalSolver("data/data_5min/results_cbs_disjoint.csv", "cbs disjoint")
 
 # Distributed solvers
-dist_prioritized = DistributedSolver()
-dist_cbs_standard = DistributedSolver()
-dist_cbs_disjoint = DistributedSolver()
+dist_prioritized = DistributedSolver("data/data_5min/results_dist_prioritized.csv", "distributed prioritized")
+dist_cbs_standard = DistributedSolver("data/data_5min/results_dist_cbs_standard.csv", "distributed cbs standard")
+dist_cbs_disjoint = DistributedSolver("data/data_5min/results_dist_cbs_disjoint.csv", "distributed cbs disjoint")
 
-print(prioritized.__dict__)
+print()
