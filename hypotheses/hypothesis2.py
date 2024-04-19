@@ -47,11 +47,6 @@ solvers = [
 #
 # Mixture of analyzing the data 
 #
-#
-#
-#
-#
-#
 
 
 class GlobalSolver:
@@ -59,11 +54,6 @@ class GlobalSolver:
     def __init__(self, path: str, solver_name: str) -> None:
         self.solver = solver_name
         self.data = pd.read_csv(path)
-
-        self.uid = self.data["uid"]
-        self.cost = self.data["cost"]
-        self.time = self.data["time"]
-        self.agents = self.data["agents"]
 
     def agents_vs_cost(self):
         """
@@ -86,17 +76,37 @@ class GlobalSolver:
 
         return data
 
+    def get_length(self):
+        return len(self.data.index)
+
 class DistributedSolver(GlobalSolver):
 
     def __init__(self, path: str, solver_name: str) -> None:
         super().__init__(path, solver_name)
 
-        self.path_limit = self.data["path limit"]
-        self.view_distance = self.data["view size"]
-
     def collect___(self):
         return ...
 
+
+class FailedSolvers(GlobalSolver):
+    
+    def __init__(self, path: str, solver_name: str) -> None:
+        super().__init__(path, solver_name)
+
+    def count_failed(self):
+        self.solvers = {
+                "prioritized" : 0,
+                "cbs_standard" : 0,
+                "cbs_disjoint" : 0,
+                "dist_prioritized" : 0,
+                "dist_cbs_standard" : 0,
+                "dist_cbs_disjoint" : 0
+        }
+
+        for solver in self.solvers.keys():
+            self.solvers[solver] = (self.data.solver == solver).sum()
+
+        return self.solvers
 
 def create_boxplot(data):
 
@@ -105,6 +115,14 @@ def create_boxplot(data):
     ax.set_ylabel('Maximum path length [-]')
     ax.boxplot(data.values())
     ax.set_xticklabels(data.keys())
+
+def create_barchart(data):
+
+    fig, ax = plt.subplots()
+    ax.set_xlabel('Solver')
+    ax.set_ylabel('Failure cases [%]')
+    ax.bar(np.arange(0, 6), data.values())
+    ax.set_xticks(np.arange(0, 6), data.keys())
 
 
 # Global solvers
@@ -116,6 +134,9 @@ cbs_disjoint = GlobalSolver("data/data_5min/results_cbs_disjoint.csv", "cbs disj
 dist_prioritized = DistributedSolver("data/data_5min/results_dist_prioritized.csv", "distributed prioritized")
 dist_cbs_standard = DistributedSolver("data/data_5min/results_dist_cbs_standard.csv", "distributed cbs standard")
 dist_cbs_disjoint = DistributedSolver("data/data_5min/results_dist_cbs_disjoint.csv", "distributed cbs disjoint")
+
+# Fauilure cases
+failures = FailedSolvers("data/data_5min/results_failed.csv", "None")
 
 ## Agent vs cost
 prioritized_cost = prioritized.agents_vs_cost()
@@ -166,5 +187,21 @@ compare_solvers(prioritized_cost, dist_prioritized_cost, "average")
 compare_solvers(prioritized_cost, dist_prioritized_cost, "mean")
 compare_solvers(prioritized_cost, dist_prioritized_cost, "Q1")
 compare_solvers(prioritized_cost, dist_prioritized_cost, "Q3")
+
+# Failure cases
+failure = failures.count_failed()
+
+failure_rate = {
+    "prioritized": failure["prioritized"] / (failure["prioritized"] + prioritized.get_length()),
+    "cbs_standard": failure["cbs_standard"] / (failure["cbs_standard"] + cbs_standard.get_length()),
+    "cbs_disjoint": failure["cbs_disjoint"] / (failure["cbs_disjoint"] + cbs_disjoint.get_length()),
+    "dist_prioritized": failure["dist_prioritized"] / (failure["dist_prioritized"] + dist_prioritized.get_length()),
+    "dist_cbs_standard": failure["dist_cbs_standard"] / (failure["dist_cbs_standard"] + dist_cbs_standard.get_length()),
+    "dist_cbs_disjoint": failure["dist_cbs_disjoint"] / (failure["dist_cbs_disjoint"] + dist_cbs_disjoint.get_length()),
+}
+
+create_barchart(failure_rate)
+
+# Additional present some unique cases.
 
 plt.show()
