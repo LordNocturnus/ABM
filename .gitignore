@@ -170,3 +170,6 @@ results.csv
 # Liniter
 LintwormReport.csv
 hash.csv
+
+# Data
+/data
