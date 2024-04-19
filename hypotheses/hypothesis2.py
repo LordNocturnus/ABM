@@ -11,17 +11,6 @@ os.chdir(pathlib.Path(__file__).parent.parent)
 # Styling
 plt.style.use('ggplot')
 
-import dataclasses
-
-solvers = [
-    "Prioritized",
-    "CBS_Standard",
-    "CBS_Disjoint",
-    "Distributed_Prioritized",
-    "Distributed_CBS_Standard",
-    "Distributed_CBS_Disjoint"
-]
-
 # Global planners
 # -> uid (hash based on map and agent location)
 # -> max path length
@@ -44,8 +33,6 @@ solvers = [
 # -> uid
 # -> map saved
 # -> solver data
-#
-# Mixture of analyzing the data 
 #
 
 
@@ -83,9 +70,6 @@ class DistributedSolver(GlobalSolver):
 
     def __init__(self, path: str, solver_name: str) -> None:
         super().__init__(path, solver_name)
-
-    def collect___(self):
-        return ...
 
 
 class FailedSolvers(GlobalSolver):
