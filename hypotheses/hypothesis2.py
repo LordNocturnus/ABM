@@ -2,6 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+import os
+import pathlib
+
+os.chdir(pathlib.Path(__file__).parent.parent)
+
 # Styling
 plt.style.use('ggplot')
 
@@ -52,7 +57,7 @@ class GlobalSolver:
 
     def __init__(self, path: str, solver_name: str) -> None:
         self.solver = solver_name
-        self.data = pd.read_csv(path, sep=",", delimiter="")
+        self.data = pd.read_csv(path)
 
         self.uid    = self.data["uid"]
         self.cost   = self.data["cost"]
@@ -64,7 +69,7 @@ class DistributedSolver:
 
     def __init__(self, path: str, solver_name: str) -> None:
         self.solver = solver_name
-        self.data = pd.read_csv(path, sep=",", delimiter="")
+        self.data = pd.read_csv(path)
 
         self.uid            = self.data["uid"]
         self.cost           = self.data["cost"]
@@ -73,4 +78,14 @@ class DistributedSolver:
         self.path_limit     = self.data["path limit"]
         self.view_distance  = self.data["view size"]
 
+# Global solvers
+prioritized = GlobalSolver("data/data_5min/results_prioritized.csv", "prioritized")
+cbs_standard = GlobalSolver("data/data_5min/results_cbs_standard.csv", "cbs standard")
+cbs_disjoint = GlobalSolver("data/data_5min/results_cbs_disjoint.csv", "cbs disjoint")
 
+# Distributed solvers
+dist_prioritized = DistributedSolver()
+dist_cbs_standard = DistributedSolver()
+dist_cbs_disjoint = DistributedSolver()
+
+print(prioritized.__dict__)
