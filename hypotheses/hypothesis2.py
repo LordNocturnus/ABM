@@ -71,6 +71,39 @@ class DistributedSolver(GlobalSolver):
     def __init__(self, path: str, solver_name: str) -> None:
         super().__init__(path, solver_name)
 
+    def viewsize_vs_cpu(self):
+        """
+        Save data the box plots can be created where x are the number of agents, and y is the cost
+        """
+        unique = self.data["view size"].unique()
+
+        data = {}
+
+        for agents in range(2,11):
+            if agents in sorted(unique):
+                data[agents] = self.data.loc[self.data['view size'] == agents, "time"]
+            else:
+                data[agents] = [0]
+
+        return data
+    
+    def pathlimit_vs_cpu(self):
+        """
+        Save data the box plots can be created where x are the number of agents, and y is the cost
+        """
+        unique = self.data["path limit"].unique()
+
+        data = {}
+
+        for agents in range(2,11):
+            if agents in sorted(unique):
+                data[agents] = self.data.loc[self.data['path limit'] == agents, "time"]
+            else:
+                data[agents] = [0]
+
+        return data
+    
+    # maybe effect on cost
 
 class FailedSolvers(GlobalSolver):
     
@@ -128,7 +161,8 @@ dist_cbs_standard = DistributedSolver("data/data_5min/results_dist_cbs_standard.
 dist_cbs_disjoint = DistributedSolver("data/data_5min/results_dist_cbs_disjoint.csv", "distributed cbs disjoint")
 
 # Fauilure cases
-failures = FailedSolvers("data/data_5min/results_failed.csv", "None")
+glob_failures = FailedSolvers("data/data_5min/results_failed.csv", "None")
+dist_failures = FailedSolvers("data/data_5min/results_dist_failed.csv", "None")
 
 ## Agent vs cost
 prioritized_cost = prioritized.agents_vs_cost()
@@ -181,15 +215,16 @@ compare_solvers(prioritized_cost, dist_prioritized_cost, "Q1")
 compare_solvers(prioritized_cost, dist_prioritized_cost, "Q3")
 
 # Failure cases
-failure = failures.count_failed()
+glob_failure = glob_failures.count_failed()
+dist_failure = dist_failures.count_failed()
 
 failure_rate = {
-    "prioritized": failure["prioritized"] / (failure["prioritized"] + prioritized.get_length()),
-    "cbs_standard": failure["cbs_standard"] / (failure["cbs_standard"] + cbs_standard.get_length()),
-    "cbs_disjoint": failure["cbs_disjoint"] / (failure["cbs_disjoint"] + cbs_disjoint.get_length()),
-    "dist_prioritized": failure["dist_prioritized"] / (failure["dist_prioritized"] + dist_prioritized.get_length()),
-    "dist_cbs_standard": failure["dist_cbs_standard"] / (failure["dist_cbs_standard"] + dist_cbs_standard.get_length()),
-    "dist_cbs_disjoint": failure["dist_cbs_disjoint"] / (failure["dist_cbs_disjoint"] + dist_cbs_disjoint.get_length()),
+    "prioritized": glob_failure["prioritized"] / (glob_failure["prioritized"] + prioritized.get_length()),
+    "cbs_standard": glob_failure["cbs_standard"] / (glob_failure["cbs_standard"] + cbs_standard.get_length()),
+    "cbs_disjoint": glob_failure["cbs_disjoint"] / (glob_failure["cbs_disjoint"] + cbs_disjoint.get_length()),
+    "dist_prioritized": dist_failure["dist_prioritized"] / (dist_failure["dist_prioritized"] + dist_prioritized.get_length()),
+    "dist_cbs_standard": dist_failure["dist_cbs_standard"] / (dist_failure["dist_cbs_standard"] + dist_cbs_standard.get_length()),
+    "dist_cbs_disjoint": dist_failure["dist_cbs_disjoint"] / (dist_failure["dist_cbs_disjoint"] + dist_cbs_disjoint.get_length()),
 }
 
 create_barchart(failure_rate)
@@ -211,3 +246,7 @@ create_histogram(dist_cbs_disjoint.data['agents'])
 # similar for the vision
 
 plt.show()
+
+## Filter results to excluded higher agent count
+## check if the cpu vs ... are implemented correctly
+## Investigating more local, with constant factor and changing other
