@@ -23,38 +23,6 @@ solvers = [
     "Distributed_CBS_Disjoint"
 ]
 
-# Global planners
-# -> uid (hash based on map and agent location)
-# -> max path length
-# -> CPU time
-# -> number of agents
-# -> solver used
-# -> collision (True or false)
-#
-# Distributed planners
-# -> uid
-# -> max path length
-# -> CPU time
-# -> number of agents
-# -> solver used
-# -> collision (True or false)
-# -> view distance
-# -> path limit
-#
-# Unsuccessful
-# -> uid
-# -> map saved
-# -> solver data
-#
-# Mixture of analyzing the data
-#
-#
-#
-#
-#
-#
-
-
 class GlobalSolver:
 
     def __init__(self, path: str, solver_name: str) -> None:
@@ -68,7 +36,6 @@ class GlobalSolver:
 
     def agents_vs_cputime(self):
         data = {}
-
         for agent, time in zip(self.agents, self.time):
             if agent not in data:
                 data[agent] = []
@@ -86,7 +53,6 @@ class DistributedSolver(GlobalSolver):
 
     def agents_vs_cputime(self):
         data = {}
-
         for agent, time in zip(self.agents, self.time):
             if agent not in data:
                 data[agent] = []
@@ -107,8 +73,9 @@ dist_cbs_disjoint = DistributedSolver("data/data_1min/results_dist_cbs_disjoint.
 def plot_boxplots_cputime(solver):
     plt.figure(figsize=(10, 6))
     data = solver.agents_vs_cputime()
-    agents = list(data.keys())
-    cpu_times = list(data.values())
+    sorted_data = sorted(data.items())
+    agents = [agent for agent, _ in sorted_data]
+    cpu_times = [cpu_time for _, cpu_time in sorted_data]
     plt.boxplot(cpu_times, labels=agents)
     plt.xlabel('Number of Agents [-]')
     plt.ylabel('CPU Time [s]')
@@ -121,3 +88,23 @@ solvers = [prioritized, cbs_standard, cbs_disjoint, dist_prioritized, dist_cbs_s
 for solver in solvers:
     plot_boxplots_cputime(solver)
 
+
+# stat test
+def statistical_test_unpaired_3(solver1, solver2):
+    data1 = solver1.agents_vs_cputime()
+    data2 = solver2.agents_vs_cputime()
+
+    cpu_time_1 = [cpu_time for cpu_times in data1.values() for cpu_time in cpu_times]
+    cpu_time_2 = [cpu_time for cpu_times in data2.values() for cpu_time in cpu_times]
+
+    t_statistic, p_value = stats.mannwhitneyu(cpu_time_1, cpu_time_2, alternative='less')
+
+    print('T-statistic:', t_statistic)
+    print('P-value:', p_value)
+
+    return t_statistic, p_value
+
+
+statistical_test_unpaired_3(prioritized, dist_prioritized)
+statistical_test_unpaired_3(cbs_disjoint, dist_cbs_disjoint)
+statistical_test_unpaired_3(cbs_standard, dist_cbs_standard)
