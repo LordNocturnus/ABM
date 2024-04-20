@@ -39,7 +39,8 @@ class GlobalSolver:
         for agent, time in zip(self.agents, self.time):
             if agent not in data:
                 data[agent] = []
-            data[agent].append(time)
+            elif agent <= 17:
+                data[agent].append(time)
         return data
 
 
@@ -56,31 +57,33 @@ class DistributedSolver(GlobalSolver):
         for agent, time in zip(self.agents, self.time):
             if agent not in data:
                 data[agent] = []
-            data[agent].append(time)
+            elif agent <= 17:
+                data[agent].append(time)
         return data
 
 
 # Global solvers
 prioritized = GlobalSolver("data/data_1min/results_prioritized.csv", "prioritized")
-cbs_standard = GlobalSolver("data/data_1min/results_cbs_standard.csv", "cbs standard")
-cbs_disjoint = GlobalSolver("data/data_1min/results_cbs_disjoint.csv", "cbs disjoint")
+cbs_standard = GlobalSolver("data/data_1min/results_cbs_standard.csv", "cbs_standard")
+cbs_disjoint = GlobalSolver("data/data_1min/results_cbs_disjoint.csv", "cbs_disjoint")
 
 # Distributed solvers
-dist_prioritized = DistributedSolver("data/data_1min/results_dist_prioritized.csv", "distributed prioritized")
-dist_cbs_standard = DistributedSolver("data/data_1min/results_dist_cbs_standard.csv", "distributed cbs standard")
-dist_cbs_disjoint = DistributedSolver("data/data_1min/results_dist_cbs_disjoint.csv", "distributed cbs disjoint")
+dist_prioritized = DistributedSolver("data/data_1min/results_dist_prioritized.csv", "distributed_prioritized")
+dist_cbs_standard = DistributedSolver("data/data_1min/results_dist_cbs_standard.csv", "distributed_cbs_standard")
+dist_cbs_disjoint = DistributedSolver("data/data_1min/results_dist_cbs_disjoint.csv", "distributed_cbs_disjoint")
+
 
 def plot_boxplots_cputime(solver):
-    plt.figure(figsize=(10, 6))
+    plt.figure()
     data = solver.agents_vs_cputime()
     sorted_data = sorted(data.items())
     agents = [agent for agent, _ in sorted_data]
     cpu_times = [cpu_time for _, cpu_time in sorted_data]
-    plt.boxplot(cpu_times, labels=agents)
+    plt.boxplot(cpu_times[:16], labels=agents[:16])
     plt.xlabel('Number of Agents [-]')
     plt.ylabel('CPU Time [s]')
-    plt.xticks(rotation=45)
     plt.show()
+    plt.savefig(f'figures/{solver.solver}_3.svg', bbox_inches='tight')
 
 
 # plot
