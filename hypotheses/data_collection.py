@@ -50,7 +50,7 @@ class GlobalSolver:
 
         data = {}
 
-        for agents in range(1,21):
+        for agents in range(2,18):
             if agents in sorted(unique):
                 data[agents] = self.data.loc[self.data['agents'] == agents, "cost"]
             else:
@@ -182,6 +182,8 @@ create_boxplot(dist_prioritized_cost)
 
 plt.show()
 
+plt.show()
+
 # Compare outcome
 
 def compare_solvers(solver_1, solver_2, method=str):
@@ -189,7 +191,7 @@ def compare_solvers(solver_1, solver_2, method=str):
                        "equal": 0,
                        "solver 2": 0}
 
-    for i in range(1, 21):
+    for i in range(2, 18):
         if method == "average":
             delta = np.average(solver_1[i]) - np.average(solver_2[i])
         elif method == "mean":
