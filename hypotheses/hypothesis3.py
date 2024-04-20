@@ -84,9 +84,6 @@ class DistributedSolver(GlobalSolver):
         self.path_limit = self.data["path limit"]
         self.view_distance = self.data["view size"]
 
-    def collect___(self):
-        return ...
-
     def agents_vs_cputime(self):
         data = {}
 
@@ -95,6 +92,7 @@ class DistributedSolver(GlobalSolver):
                 data[agent] = []
             data[agent].append(time)
         return data
+
 
 # Global solvers
 prioritized = GlobalSolver("data/data_1min/results_prioritized.csv", "prioritized")
@@ -117,79 +115,9 @@ def plot_boxplots_cputime(solver):
     plt.xticks(rotation=45)
     plt.show()
 
-# def statistical_test_unpaired(solvers):
-#     agent_model, cpu_time_model = solvers[1].agents_vs_cputime().items()
-#     agent_global, cpu_time_global = solvers[0].agents_vs_cputime().items()
-#
-#
-#     t_statistic_3, p_value_3 = stats.ttest_ind(cpu_time_model, cpu_time_global)
-#
-#     # print('T-statistic hypothesis II', t_statistic_2, 'p-value hypothesis II', p_value_2)
-#     print('T-statistic hypothesis III', t_statistic_3, 'p-value hypothesis III', p_value_3)
 
-def statistical_test_unpaired(solver1, solver2):
-    # Extract data for both solvers
-    data1 = solver1.agents_vs_cputime()
-    data2 = solver2.agents_vs_cputime()
+# plot
+solvers = [prioritized, cbs_standard, cbs_disjoint, dist_prioritized, dist_cbs_standard, dist_cbs_disjoint]
+for solver in solvers:
+    plot_boxplots_cputime(solver)
 
-    # Iterate over unique agent counts
-    unique_agents = set(data1.keys()).union(data2.keys())
-    for agent_count in unique_agents:
-        cpu_times1 = data1.get(agent_count, [])
-        cpu_times2 = data2.get(agent_count, [])
-
-        # Perform unpaired t-test
-        t_statistic, p_value = stats.ttest_ind(cpu_times1, cpu_times2)
-
-        # Print the results
-        print(f'Agent Count: {agent_count}')
-        print('T-statistic:', t_statistic)
-        print('P-value:', p_value)
-        print()
-
-# def statistical_test_paired(solver1, solver2):
-#     # Extract data for both solvers
-#     data1 = solver1
-#     data2 = solver2
-#
-#     # Iterate over unique agent counts
-#     unique_agents = set(data1.keys()).intersection(data2.keys())
-#     for agent_count in unique_agents:
-#         cpu_times1 = data1.get(agent_count, [])
-#         cpu_times2 = data2.get(agent_count, [])
-#
-#         # Perform paired t-test
-#         t_statistic, p_value = stats.ttest_rel(cpu_times1, cpu_times2)
-#
-#         # Print the results
-#         print(f'Agent Count: {agent_count}')
-#         print('T-statistic:', t_statistic)
-#         print('P-value:', p_value)
-#         print()
-
-
-def statistical_test_paired(solvers):
-    range_model = x
-    cpu_time_model = y
-    t_statistic_4, p_value_4 = stats.ttest_rel(range_model, cpu_time_model)
-
-    forward_com = x
-    cpu_time_model = y
-    t_statistic_5, p_value_5 = stats.ttest_rel(forward_com, cpu_time_model)
-
-    print('T-statistic hypothesis IV', t_statistic_4, 'p-value hypothesis IV', p_value_4)
-    print('T-statistic hypothesis V', t_statistic_5, 'p-value hypothesis V', p_value_5)
-
-
-#plot
-# solvers = [prioritized, cbs_standard, cbs_disjoint, dist_prioritized, dist_cbs_standard, dist_cbs_disjoint]
-# for solver in solvers:
-#     plot_boxplots_cputime(solver)
-
-#solvers
-solvers_prio = [prioritized, dist_prioritized]
-solvers_cbs = [cbs_standard, dist_cbs_standard]
-solvers_dis = [cbs_disjoint, dist_cbs_disjoint]
-
-#stat tests
-statistical_test_unpaired(prioritized, dist_prioritized)
