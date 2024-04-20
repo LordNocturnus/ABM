@@ -94,24 +94,15 @@ def statistical_test_unpaired_3(solver1, solver2):
     data1 = solver1.agents_vs_cputime()
     data2 = solver2.agents_vs_cputime()
 
-    statistical_test_data = {}
+    cpu_time_1 = [cpu_time for cpu_times in data1.values() for cpu_time in cpu_times]
+    cpu_time_2 = [cpu_time for cpu_times in data2.values() for cpu_time in cpu_times]
 
-    unique_agents = set(data1.keys()).union(data2.keys())
-    for agent_number in unique_agents:
-        cpu_times1 = data1.get(agent_number, [])
-        cpu_times2 = data2.get(agent_number, [])
+    t_statistic, p_value = stats.mannwhitneyu(cpu_time_1, cpu_time_2, alternative='less')
 
-        t_statistic, p_value = stats.mannwhitneyu(cpu_times1, cpu_times2, alternative='less')
+    print('T-statistic:', t_statistic)
+    print('P-value:', p_value)
 
-        statistical_test_data[agent_number] = (t_statistic, p_value)
-
-        # Print the results
-        print(f'Agent Count: {agent_number}')
-        print('T-statistic:', t_statistic)
-        print('P-value:', p_value)
-        print()
-
-    return statistical_test_data
+    return t_statistic, p_value
 
 
 statistical_test_unpaired_3(prioritized, dist_prioritized)
