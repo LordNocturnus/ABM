@@ -106,3 +106,5 @@ def statistical_test_unpaired_3(solver1, solver2):
 
 
 statistical_test_unpaired_3(prioritized, dist_prioritized)
+statistical_test_unpaired_3(cbs_disjoint, dist_cbs_disjoint)
+statistical_test_unpaired_3(cbs_standard, dist_cbs_standard)
