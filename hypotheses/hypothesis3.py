@@ -101,7 +101,7 @@ def statistical_test_unpaired_3(solver1, solver2):
         cpu_times1 = data1.get(agent_number, [])
         cpu_times2 = data2.get(agent_number, [])
 
-        t_statistic, p_value = stats.mannwhitneyu(cpu_times1, cpu_times2)
+        t_statistic, p_value = stats.mannwhitneyu(cpu_times1, cpu_times2, alternative='less')
 
         statistical_test_data[agent_number] = (t_statistic, p_value)
 
