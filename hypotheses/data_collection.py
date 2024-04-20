@@ -151,18 +151,18 @@ def create_histogram(data):
 
 
 # Global solvers
-prioritized = GlobalSolver("data/data_5min/results_prioritized.csv", "prioritized")
-cbs_standard = GlobalSolver("data/data_5min/results_cbs_standard.csv", "cbs standard")
-cbs_disjoint = GlobalSolver("data/data_5min/results_cbs_disjoint.csv", "cbs disjoint")
+prioritized = GlobalSolver("data/data_v3/results_prioritized.csv", "prioritized")
+cbs_standard = GlobalSolver("data/data_v3/results_cbs_standard.csv", "cbs standard")
+cbs_disjoint = GlobalSolver("data/data_v3/results_cbs_disjoint.csv", "cbs disjoint")
 
 # Distributed solvers
-dist_prioritized = DistributedSolver("data/data_5min/results_dist_prioritized.csv", "distributed prioritized")
-dist_cbs_standard = DistributedSolver("data/data_5min/results_dist_cbs_standard.csv", "distributed cbs standard")
-dist_cbs_disjoint = DistributedSolver("data/data_5min/results_dist_cbs_disjoint.csv", "distributed cbs disjoint")
+dist_prioritized = DistributedSolver("data/data_v3/results_dist_prioritized.csv", "distributed prioritized")
+dist_cbs_standard = DistributedSolver("data/data_v3/results_dist_cbs_standard.csv", "distributed cbs standard")
+dist_cbs_disjoint = DistributedSolver("data/data_v3/results_dist_cbs_disjoint.csv", "distributed cbs disjoint")
 
-# Fauilure cases
-glob_failures = FailedSolvers("data/data_5min/results_failed.csv", "None")
-dist_failures = FailedSolvers("data/data_5min/results_dist_failed.csv", "None")
+# Failure cases
+glob_failures = FailedSolvers("data/data_v3/results_failed.csv", "None")
+dist_failures = FailedSolvers("data/data_v3/results_dist_failed.csv", "None")
 
 ## Agent vs cost
 prioritized_cost = prioritized.agents_vs_cost()
@@ -245,8 +245,19 @@ create_histogram(dist_cbs_disjoint.data['agents'])
 
 # similar for the vision
 
-plt.show()
+# plt.show()
 
 ## Filter results to excluded higher agent count
 ## check if the cpu vs ... are implemented correctly
 ## Investigating more local, with constant factor and changing other
+
+# dist_prioritized.pathlimit_vs_cpu()[10]
+# fig, ax = plt.subplots()
+# ax.hist(dist_prioritized.pathlimit_vs_cpu()[10], density=False)  # density=False would make counts
+
+# # plt.show()
+
+# fig, ax = plt.subplots()
+# ax.hist(dist_cbs_disjoint.data["time"], density=False, bins=150)  # density=False would make counts
+
+# plt.show()
