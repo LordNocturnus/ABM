@@ -125,13 +125,16 @@ class FailedSolvers(GlobalSolver):
 
         return self.solvers
 
-def create_boxplot(data):
+def create_boxplot(data, name: str):
 
     fig, ax = plt.subplots()
     ax.set_xlabel('Number of agents [-]')
     ax.set_ylabel('Maximum path length [-]')
     ax.boxplot(data.values())
     ax.set_xticklabels(data.keys())
+    ax.set_ylim([0, 70])
+    plt.savefig(f'figures/{name}.svg', bbox_inches='tight')
+    plt.close()
 
 def create_barchart(data):
 
@@ -174,14 +177,12 @@ dist_cbs_standard_cost = dist_cbs_standard.agents_vs_cost()
 dist_cbs_disjoint_cost = dist_cbs_disjoint.agents_vs_cost()
 
 # Create regular boxplots
-create_boxplot(prioritized_cost)
-create_boxplot(cbs_standard_cost)
-create_boxplot(cbs_disjoint_cost)
-create_boxplot(dist_prioritized_cost)
-create_boxplot(dist_cbs_standard_cost)
-create_boxplot(dist_cbs_disjoint_cost)
-
-plt.show()
+create_boxplot(prioritized_cost, "prioritised")
+# create_boxplot(cbs_standard_cost)
+# create_boxplot(cbs_disjoint_cost)
+create_boxplot(dist_prioritized_cost, "distributed_prioritised")
+# create_boxplot(dist_cbs_standard_cost)
+# create_boxplot(dist_cbs_disjoint_cost)
 
 # Compare outcome
 
@@ -234,7 +235,7 @@ create_barchart(failure_rate)
 # Additional present some unique cases.
 
 
-## Data analysis of succesfull data to explore if
+## Data analysis of successful data to explore if
 # Can be used to mention if valid points can be made on the extreme regions, or if just not enough data
 # is available, to reliably comment about these points.
 
@@ -245,13 +246,10 @@ create_histogram(dist_prioritized.data['agents'])
 create_histogram(dist_cbs_standard.data['agents'])
 create_histogram(dist_cbs_disjoint.data['agents'])
 
+
 # similar for the vision
 
 # plt.show()
-
-## Filter results to excluded higher agent count
-## check if the cpu vs ... are implemented correctly
-## Investigating more local, with constant factor and changing other
 
 # dist_prioritized.pathlimit_vs_cpu()[10]
 # fig, ax = plt.subplots()
