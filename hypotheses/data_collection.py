@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 
 import os
@@ -151,18 +150,18 @@ def create_histogram(data):
 
 
 # Global solvers
-prioritized = GlobalSolver("data/data_v3/results_prioritized.csv", "prioritized")
-cbs_standard = GlobalSolver("data/data_v3/results_cbs_standard.csv", "cbs standard")
-cbs_disjoint = GlobalSolver("data/data_v3/results_cbs_disjoint.csv", "cbs disjoint")
+prioritized = GlobalSolver("results_prioritized.csv", "prioritized")
+cbs_standard = GlobalSolver("results_cbs_standard.csv", "cbs standard")
+cbs_disjoint = GlobalSolver("results_cbs_disjoint.csv", "cbs disjoint")
 
 # Distributed solvers
-dist_prioritized = DistributedSolver("data/data_v3/results_dist_prioritized.csv", "distributed prioritized")
-dist_cbs_standard = DistributedSolver("data/data_v3/results_dist_cbs_standard.csv", "distributed cbs standard")
-dist_cbs_disjoint = DistributedSolver("data/data_v3/results_dist_cbs_disjoint.csv", "distributed cbs disjoint")
+dist_prioritized = DistributedSolver("results_dist_prioritized.csv", "distributed prioritized")
+dist_cbs_standard = DistributedSolver("results_dist_cbs_standard.csv", "distributed cbs standard")
+dist_cbs_disjoint = DistributedSolver("results_dist_cbs_disjoint.csv", "distributed cbs disjoint")
 
 # Failure cases
-glob_failures = FailedSolvers("data/data_v3/results_failed.csv", "None")
-dist_failures = FailedSolvers("data/data_v3/results_dist_failed.csv", "None")
+glob_failures = FailedSolvers("results_failed.csv", "None")
+dist_failures = FailedSolvers("results_dist_failed.csv", "None")
 
 ## Agent vs cost
 prioritized_cost = prioritized.agents_vs_cost()
@@ -175,11 +174,13 @@ dist_cbs_disjoint_cost = dist_cbs_disjoint.agents_vs_cost()
 
 # Create regular boxplots
 create_boxplot(prioritized_cost)
-create_boxplot(cbs_standard_cost)
-create_boxplot(cbs_disjoint_cost)
+#create_boxplot(cbs_standard_cost)
+#create_boxplot(cbs_disjoint_cost)
 create_boxplot(dist_prioritized_cost)
-create_boxplot(dist_cbs_standard_cost)
-create_boxplot(dist_cbs_disjoint_cost)
+#create_boxplot(dist_cbs_standard_cost)
+#create_boxplot(dist_cbs_disjoint_cost)
+
+plt.show()
 
 # Compare outcome
 

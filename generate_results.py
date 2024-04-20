@@ -153,63 +153,6 @@ def run_solver(my_map: np.ndarray,
         collision.value = 1
 
 
-def run_prioritized(my_map: np.ndarray, 
-                    starts: list[tuple[int, int]], 
-                    goals: list[tuple[int, int]]) -> tuple[int, float, bool]:
-    
-    # Solve using prioritized
-    try:
-        paths = PrioritizedPlanningSolver(my_map, starts, goals, printing=False, recursive=False).find_solution([])
-
-        cost = sum([len(el) for el in paths])
-        time = 1
-
-        # Check paths
-        collision = bool(collisions.detect_collisions(paths))
-    except BaseException:
-        cost, time, collision = 0, 0, 1
-
-    return cost, time, collision
-
-
-def run_cbs_standard(my_map: np.ndarray,
-                     starts: list[tuple[int, int]], 
-                     goals: list[tuple[int, int]]) -> tuple[int, float, bool]:
-    
-    # Solve using prioritized
-    try:
-        paths = CBSSolver(my_map, starts, goals, printing=False, disjoint=False).find_solution([])
-
-        cost = sum([len(el) for el in paths])
-        time = 1
-
-        # Check paths
-        collision = bool(collisions.detect_collisions(paths))
-    except BaseException:
-        cost, time, collision = 0, 0, 1
-
-    return cost, time, collision
-
-
-def run_cbs_disjoint(my_map: np.ndarray,
-                     starts: list[tuple[int, int]], 
-                     goals: list[tuple[int, int]]) -> tuple[int, float, bool]:
-    
-    # Solve using prioritized
-    try:
-        paths = CBSSolver(my_map, starts, goals, printing=False, disjoint=True).find_solution([])
-
-        cost = sum([len(el) for el in paths])
-        time = 1
-
-        # Check paths
-        collision = bool(collisions.detect_collisions(paths))
-    except BaseException:
-        cost, time, collision = 0, 0, 1
-
-    return cost, time, collision
-
-
 if __name__ == "__main__":
     i = 0
 
@@ -249,6 +192,7 @@ if __name__ == "__main__":
             if process.exitcode is None:
                 collision_value.value = 9
             if process.exitcode is not None and process.exitcode == 0 and not collision_value.value:
+                process.close()
                 # add to specific general data storage
                 std_df_prioritized = pd.concat([std_df_prioritized,
                                                 pd.DataFrame([[uid,
@@ -260,6 +204,7 @@ if __name__ == "__main__":
                                                ignore_index=True)
                 std_df_prioritized.to_csv("results_prioritized.csv", index=False, encoding="UTF-8")
             else:
+                process.terminate()
                 # Add to failure cases
                 std_df_failed = pd.concat([std_df_failed,
                                            pd.DataFrame([[uid, "prioritized", fail_output(my_map, starts, goals)]],
@@ -283,6 +228,7 @@ if __name__ == "__main__":
             if process.exitcode is None:
                 collision_value.value = 9
             if process.exitcode is not None and process.exitcode == 0 and not collision_value.value:
+                process.close()
                 # add to specific general data storage
                 std_df_cbs_standard = pd.concat([std_df_cbs_standard,
                                                 pd.DataFrame([[uid,
@@ -294,6 +240,7 @@ if __name__ == "__main__":
                                                 ignore_index=True)
                 std_df_cbs_standard.to_csv("results_cbs_standard.csv", index=False, encoding="UTF-8")
             else:
+                process.terminate()
                 # Add to failure cases
                 std_df_failed = pd.concat([std_df_failed,
                                            pd.DataFrame([[uid, "cbs_standard", fail_output(my_map, starts, goals)]],
@@ -317,6 +264,7 @@ if __name__ == "__main__":
             if process.exitcode is None:
                 collision_value.value = 9
             if process.exitcode is not None and process.exitcode == 0 and not collision_value.value:
+                process.close()
                 # add to specific general data storage
                 std_df_cbs_disjoint = pd.concat([std_df_cbs_disjoint,
                                                  pd.DataFrame([[uid,
@@ -328,6 +276,7 @@ if __name__ == "__main__":
                                                 ignore_index=True)
                 std_df_cbs_disjoint.to_csv("results_cbs_disjoint.csv", index=False, encoding="UTF-8")
             else:
+                process.terminate()
                 # Add to failure cases
                 std_df_failed = pd.concat([std_df_failed,
                                            pd.DataFrame([[uid, "cbs_disjoint", fail_output(my_map, starts, goals)]],
