@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     uniques = data["uid"].unique()
 
-    for unique in uniques[:5]:
+    for unique in uniques:
         rel = data.loc[data["uid"] == unique]
         
         if len(set(rel["path limit"])) >= 4:
