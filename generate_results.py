@@ -29,7 +29,6 @@
 #       - Afterwards the output is stored for each and a new scenario is generated
 # ________________________________________________________________________________________________________________________
 import os
-import sqlite3 as sql
 import hashlib
 import multiprocessing
 import random
